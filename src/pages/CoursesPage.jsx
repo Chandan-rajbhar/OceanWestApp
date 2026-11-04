@@ -272,7 +272,7 @@ export default function CoursesPage({
                       ) : (
                         <>
                           <Plus size={12} strokeWidth={2.5} />
-                          <span>Add Platter</span>
+                          <span>Add</span>
                         </>
                       )}
                     </button>
@@ -551,13 +551,13 @@ export default function CoursesPage({
                         >
                           {isSelected ? (
                             <>
-                              <Check size={13} strokeWidth={3} />
+                              <Check size={12} strokeWidth={3} />
                               <span>In Menu</span>
                             </>
                           ) : (
                             <>
-                              <Plus size={13} strokeWidth={2.5} />
-                              <span>Add to Menu</span>
+                              <Plus size={12} strokeWidth={2.5} />
+                              <span>Add</span>
                             </>
                           )}
                         </button>

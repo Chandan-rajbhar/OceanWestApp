@@ -9,11 +9,26 @@ import {
   Sparkles,
   ChevronRight,
   ShieldCheck,
-  Utensils
+  Utensils,
+  Calculator,
+  Sliders,
+  Scale,
+  Camera,
+  CheckSquare,
+  Phone,
+  MessageSquare
 } from 'lucide-react';
 import { DISCIPLINES } from '../data/cateringData';
+import ImageWithFallback from '../components/ImageWithFallback';
 
-export default function DisciplinesPage() {
+export default function DisciplinesPage({
+  onOpenQuotationModal,
+  onOpenCustomizationModal,
+  onOpenServingGuide,
+  onOpenGallery,
+  onOpenChecklistModal,
+  onOpenSupportModal
+}) {
   return (
     <div className="disciplines-page">
       {/* ------------------------------------------------------------------ */}
@@ -32,6 +47,55 @@ export default function DisciplinesPage() {
             From 800-guest waterfront galas to 14-hour high-velocity film locations across British Columbia,
             Ocean West crafts customized dining programs engineered with passion, precision, and Michelin-trained rigor.
           </p>
+
+          {/* Quick Helper Tools Grid (Uniform 40px Height, Clean Layout) */}
+          <div className="services-tools-grid" style={{ marginTop: '16px' }}>
+            <button
+              type="button"
+              className="services-tool-chip"
+              onClick={onOpenQuotationModal}
+              title="Generate a custom quotation estimate"
+            >
+              <Calculator size={14} style={{ color: '#BA8D5B' }} />
+              <span>Quotation Slip</span>
+            </button>
+            <button
+              type="button"
+              className="services-tool-chip"
+              onClick={onOpenCustomizationModal}
+              title="Configure service style and staffing tier"
+            >
+              <Sliders size={14} style={{ color: '#BA8D5B' }} />
+              <span>Custom Setup</span>
+            </button>
+            <button
+              type="button"
+              className="services-tool-chip"
+              onClick={onOpenServingGuide}
+              title="Portion calculator for banquets and courses"
+            >
+              <Scale size={14} style={{ color: '#BA8D5B' }} />
+              <span>Serving Guide</span>
+            </button>
+            <button
+              type="button"
+              className="services-tool-chip"
+              onClick={onOpenGallery}
+              title="Explore event service gallery"
+            >
+              <Camera size={14} style={{ color: '#BA8D5B' }} />
+              <span>Photo Gallery</span>
+            </button>
+            <button
+              type="button"
+              className="services-tool-chip"
+              onClick={onOpenChecklistModal}
+              title="Event planning timeline & checklist"
+            >
+              <CheckSquare size={14} style={{ color: '#BA8D5B' }} />
+              <span>Checklist</span>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -44,8 +108,12 @@ export default function DisciplinesPage() {
             {DISCIPLINES.map((discipline) => (
               <div key={discipline.id} className="discipline-card">
                 <div className="discipline-img-wrap">
-                  <img src={discipline.image} alt={discipline.title} loading="lazy" />
-                  <span className="discipline-tag-badge">{discipline.tag}</span>
+                  <ImageWithFallback
+                    src={discipline.image}
+                    alt={discipline.title}
+                    aspect="16:10"
+                    badge={discipline.tag}
+                  />
                 </div>
                 <div className="discipline-body">
                   <h3 className="discipline-title">{discipline.title}</h3>
@@ -63,14 +131,15 @@ export default function DisciplinesPage() {
                   <div className="discipline-footer">
                     <span className="discipline-meta-item">
                       {discipline.id === 'film' || discipline.id === 'platters' ? (
-                        <Clock size={12} />
+                        <Clock size={13} />
                       ) : (
-                        <Users size={12} />
+                        <Users size={13} />
                       )}
                       <span>{discipline.scale}</span>
                     </span>
                     <Link to={discipline.targetRoute} className="discipline-meta-link">
                       <span>{discipline.linkText}</span>
+                      <ChevronRight size={13} />
                     </Link>
                   </div>
                 </div>
@@ -119,6 +188,43 @@ export default function DisciplinesPage() {
               <ArrowRight size={15} />
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* DIRECT CHEF & CONCIERGE CONTACT CARD                               */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="app-section contact-plum-section" style={{ padding: '0 16px 28px' }}>
+        <div className="contact-plum-card">
+          <div className="contact-plum-icon-circle">
+            <Phone size={22} />
+          </div>
+
+          <h2 className="contact-plum-title">Have Questions About Your Menu?</h2>
+          <p className="contact-plum-sub">
+            Contact Executive Chef Michael Thomas directly for custom culinary creations, dietary
+            modifications, and instant date holds.
+          </p>
+
+          <div className="contact-plum-actions">
+            <a href="tel:6047224857" className="btn-contact-gold-phone">
+              <Phone size={15} />
+              <span>604-722-4857</span>
+            </a>
+
+            <button
+              type="button"
+              className="btn-contact-text-dispatch"
+              onClick={() => onOpenSupportModal && onOpenSupportModal()}
+            >
+              <MessageSquare size={15} />
+              <span>Concierge Support Desk</span>
+            </button>
+          </div>
+
+          <p className="contact-plum-footnote">
+            Serving Vancouver, Surrey, Whistler, Richmond &amp; the Lower Mainland
+          </p>
         </div>
       </section>
     </div>

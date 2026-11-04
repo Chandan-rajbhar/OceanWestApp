@@ -21,7 +21,29 @@ import {
   ChefHat,
   Flame
 } from 'lucide-react';
-import { MENU_COURSES } from '../data/cateringData';
+import { MENU_COURSES, IMAGES, HERO_SLIDES } from '../data/cateringData';
+import ImageWithFallback from '../components/ImageWithFallback';
+
+function getDeduplicatedBadges(course) {
+  const list = [];
+  const seen = new Set();
+  if (course.isSignature) {
+    list.push({ text: 'Signature', type: 'signature' });
+    seen.add('signature');
+  }
+  if (course.isChefSpecial) {
+    list.push({ text: 'Chef Special', type: 'chef-special' });
+    seen.add('chef special');
+  }
+  for (const b of (course.badges || [])) {
+    const norm = (b.text || '').trim().toLowerCase();
+    if (!seen.has(norm)) {
+      seen.add(norm);
+      list.push(b);
+    }
+  }
+  return list.slice(0, 3);
+}
 
 export default function CoursesPage({
   setIsPdfModalOpen,
@@ -39,6 +61,34 @@ export default function CoursesPage({
   const [activeDietaryFilter, setActiveDietaryFilter] = useState('all'); // 'all' | 'vegetarian' | 'vegan' | 'gluten_free' | 'signature' | 'chef_special'
   const [inspectingDish, setInspectingDish] = useState(null);
   const navigate = useNavigate();
+
+  // Featured event platters mapped to existing dish data with authentic pricing
+  const FEATURED_PLATTERS = [
+    {
+      id: 2,
+      title: 'Wild Pacific Sockeye Platter',
+      rate: '$140',
+      dietaryTag: 'GLUTEN-FREE',
+      image: HERO_SLIDES[1]?.image || IMAGES.platter,
+      description: 'Cedar plank wild sockeye salmon, blistered shallots, caper berries, whipped herbed cream.'
+    },
+    {
+      id: 4,
+      title: 'Okanagan Artisanal Charcuterie',
+      rate: '$95',
+      dietaryTag: 'GRAZING BOARD',
+      image: IMAGES.platter,
+      description: 'Cured meats, aged cheeses, raw honeycomb, spiced nuts, fig preserves, artisan sourdough.'
+    },
+    {
+      id: 1,
+      title: 'Farm Harvest Organic Crudité',
+      rate: '$75',
+      dietaryTag: 'VEGAN / GLUTEN-FREE',
+      image: HERO_SLIDES[0]?.image || IMAGES.platter,
+      description: 'Crisp market vegetables, preserved lemon labneh, smoked paprika hummus, seed crisps.'
+    }
+  ];
 
   // Filter logic
   const filteredCourses = MENU_COURSES.filter((course) => {
@@ -137,161 +187,243 @@ export default function CoursesPage({
       </section>
 
       {/* ------------------------------------------------------------------ */}
+      {/* FEATURED READY-TO-SERVE EVENT PLATTERS                             */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="app-section event-platters-section" style={{ padding: '20px 16px 8px' }}>
+        <div className="app-section-header">
+          <div>
+            <span className="app-kicker">READY-TO-SERVE</span>
+            <h2 className="app-heading-serif">Featured Event Platters</h2>
+          </div>
+          <span style={{ fontSize: '10.5px', color: '#7A857E', fontWeight: 600 }}>
+            Chef Prepared &amp; Display Ready
+          </span>
+        </div>
+
+        <div className="platters-compact-list">
+          {FEATURED_PLATTERS.map((platter) => {
+            const isAdded = selectedDishes.some((d) => d.id === platter.id);
+            const sourceDish = MENU_COURSES.find((c) => c.id === platter.id) || platter;
+
+            return (
+              <div
+                key={platter.id}
+                className="compact-platter-card"
+                onClick={() => setInspectingDish(sourceDish)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setInspectingDish(sourceDish);
+                  }
+                }}
+              >
+                <div className="platter-thumbnail-box">
+                  <ImageWithFallback
+                    src={platter.image}
+                    alt={platter.title}
+                    aspect="1:1"
+                  />
+                </div>
+
+                <div className="platter-info-box">
+                  <div className="platter-title-price-row">
+                    <h3 className="platter-title">{platter.title}</h3>
+                    <span className="platter-rate-pill">{platter.rate}</span>
+                  </div>
+
+                  <p className="platter-desc">{platter.description}</p>
+
+                  <div className="platter-action-row">
+                    <span className="platter-dietary-pill">{platter.dietaryTag}</span>
+
+                    <button
+                      type="button"
+                      className={`btn-add-platter ${isAdded ? 'is-added' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleDishInMenu(sourceDish);
+                      }}
+                      aria-label={isAdded ? `Remove ${platter.title}` : `Add ${platter.title}`}
+                    >
+                      {isAdded ? (
+                        <>
+                          <Check size={12} strokeWidth={3} />
+                          <span>Added</span>
+                        </>
+                      ) : (
+                        <>
+                          <Plus size={12} strokeWidth={2.5} />
+                          <span>Add Platter</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
       {/* MENU REPERTOIRE SECTION                                            */}
       {/* ------------------------------------------------------------------ */}
       <section className="ow-section courses-section">
         <div className="ow-container">
-          {/* Category Tabs */}
-          <div className="courses-filter-tabs-wrapper">
-            <div className="courses-filter-tabs" role="tablist" aria-label="Course categories">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeCategory === 'all'}
-                className={`filter-tab-pill ${activeCategory === 'all' ? 'active' : ''}`}
-                onClick={() => setActiveCategory('all')}
-              >
-                All Courses ({MENU_COURSES.length})
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeCategory === 'starters'}
-                className={`filter-tab-pill ${activeCategory === 'starters' ? 'active' : ''}`}
-                onClick={() => setActiveCategory('starters')}
-              >
-                Starters
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeCategory === 'mains'}
-                className={`filter-tab-pill ${activeCategory === 'mains' ? 'active' : ''}`}
-                onClick={() => setActiveCategory('mains')}
-              >
-                Dinner Mains
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeCategory === 'lunch'}
-                className={`filter-tab-pill ${activeCategory === 'lunch' ? 'active' : ''}`}
-                onClick={() => setActiveCategory('lunch')}
-              >
-                Lunch
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeCategory === 'breakfast'}
-                className={`filter-tab-pill ${activeCategory === 'breakfast' ? 'active' : ''}`}
-                onClick={() => setActiveCategory('breakfast')}
-              >
-                Breakfast
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeCategory === 'canapes'}
-                className={`filter-tab-pill ${activeCategory === 'canapes' ? 'active' : ''}`}
-                onClick={() => setActiveCategory('canapes')}
-              >
-                Canapés
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeCategory === 'grazing'}
-                className={`filter-tab-pill ${activeCategory === 'grazing' ? 'active' : ''}`}
-                onClick={() => setActiveCategory('grazing')}
-              >
-                Grazing
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeCategory === 'desserts'}
-                className={`filter-tab-pill ${activeCategory === 'desserts' ? 'active' : ''}`}
-                onClick={() => setActiveCategory('desserts')}
-              >
-                Desserts
-              </button>
-              {favoriteDishes.length > 0 && (
+          {/* Sticky Filter Header Bar with Fade Hint */}
+          <div className="sticky-menu-filters-bar">
+            {/* Category Tabs */}
+            <div className="courses-filter-tabs-wrapper">
+              <div className="courses-filter-tabs" role="tablist" aria-label="Course categories">
                 <button
                   type="button"
                   role="tab"
-                  aria-selected={activeCategory === 'favorites'}
-                  className={`filter-tab-pill ${activeCategory === 'favorites' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('favorites')}
-                  style={{ color: '#BA8D5B' }}
+                  aria-selected={activeCategory === 'all'}
+                  className={`filter-tab-pill ${activeCategory === 'all' ? 'active' : ''}`}
+                  onClick={() => setActiveCategory('all')}
                 >
-                  Favorites ({favoriteDishes.length})
+                  All Courses ({MENU_COURSES.length})
                 </button>
-              )}
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeCategory === 'starters'}
+                  className={`filter-tab-pill ${activeCategory === 'starters' ? 'active' : ''}`}
+                  onClick={() => setActiveCategory('starters')}
+                >
+                  Starters
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeCategory === 'mains'}
+                  className={`filter-tab-pill ${activeCategory === 'mains' ? 'active' : ''}`}
+                  onClick={() => setActiveCategory('mains')}
+                >
+                  Dinner Mains
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeCategory === 'lunch'}
+                  className={`filter-tab-pill ${activeCategory === 'lunch' ? 'active' : ''}`}
+                  onClick={() => setActiveCategory('lunch')}
+                >
+                  Lunch
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeCategory === 'breakfast'}
+                  className={`filter-tab-pill ${activeCategory === 'breakfast' ? 'active' : ''}`}
+                  onClick={() => setActiveCategory('breakfast')}
+                >
+                  Breakfast
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeCategory === 'canapes'}
+                  className={`filter-tab-pill ${activeCategory === 'canapes' ? 'active' : ''}`}
+                  onClick={() => setActiveCategory('canapes')}
+                >
+                  Canapés
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeCategory === 'grazing'}
+                  className={`filter-tab-pill ${activeCategory === 'grazing' ? 'active' : ''}`}
+                  onClick={() => setActiveCategory('grazing')}
+                >
+                  Grazing
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeCategory === 'desserts'}
+                  className={`filter-tab-pill ${activeCategory === 'desserts' ? 'active' : ''}`}
+                  onClick={() => setActiveCategory('desserts')}
+                >
+                  Desserts
+                </button>
+                {favoriteDishes.length > 0 && (
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={activeCategory === 'favorites'}
+                    className={`filter-tab-pill ${activeCategory === 'favorites' ? 'active' : ''}`}
+                    onClick={() => setActiveCategory('favorites')}
+                  >
+                    Favorites ({favoriteDishes.length})
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Secondary Dietary & Specials Filter Strip */}
-          <div className="dietary-filter-substrip">
-            <span className="filter-substrip-label">
-              <Filter size={12} />
-              <span>Filter By:</span>
-            </span>
-            <div className="dietary-filter-pills">
-              <button
-                type="button"
-                className={`sub-filter-pill ${activeDietaryFilter === 'all' ? 'is-active' : ''}`}
-                onClick={() => setActiveDietaryFilter('all')}
-              >
-                All Dietary
-              </button>
-              <button
-                type="button"
-                className={`sub-filter-pill ${activeDietaryFilter === 'vegetarian' ? 'is-active' : ''}`}
-                onClick={() =>
-                  setActiveDietaryFilter(activeDietaryFilter === 'vegetarian' ? 'all' : 'vegetarian')
-                }
-              >
-                Vegetarian
-              </button>
-              <button
-                type="button"
-                className={`sub-filter-pill ${activeDietaryFilter === 'vegan' ? 'is-active' : ''}`}
-                onClick={() =>
-                  setActiveDietaryFilter(activeDietaryFilter === 'vegan' ? 'all' : 'vegan')
-                }
-              >
-                Vegan
-              </button>
-              <button
-                type="button"
-                className={`sub-filter-pill ${activeDietaryFilter === 'gluten_free' ? 'is-active' : ''}`}
-                onClick={() =>
-                  setActiveDietaryFilter(activeDietaryFilter === 'gluten_free' ? 'all' : 'gluten_free')
-                }
-              >
-                Gluten-Free
-              </button>
-              <button
-                type="button"
-                className={`sub-filter-pill ${activeDietaryFilter === 'signature' ? 'is-active' : ''}`}
-                onClick={() =>
-                  setActiveDietaryFilter(activeDietaryFilter === 'signature' ? 'all' : 'signature')
-                }
-              >
-                <Sparkles size={11} />
-                <span>Signatures</span>
-              </button>
-              <button
-                type="button"
-                className={`sub-filter-pill ${activeDietaryFilter === 'chef_special' ? 'is-active' : ''}`}
-                onClick={() =>
-                  setActiveDietaryFilter(activeDietaryFilter === 'chef_special' ? 'all' : 'chef_special')
-                }
-              >
-                <ChefHat size={11} />
-                <span>Chef Specials</span>
-              </button>
+            {/* Secondary Dietary & Specials Filter Strip */}
+            <div className="dietary-filter-substrip">
+              <span className="filter-substrip-label">
+                <Filter size={12} />
+                <span>Filter:</span>
+              </span>
+              <div className="dietary-filter-pills">
+                <button
+                  type="button"
+                  className={`sub-filter-pill ${activeDietaryFilter === 'all' ? 'is-active' : ''}`}
+                  onClick={() => setActiveDietaryFilter('all')}
+                >
+                  All Dietary
+                </button>
+                <button
+                  type="button"
+                  className={`sub-filter-pill ${activeDietaryFilter === 'vegetarian' ? 'is-active' : ''}`}
+                  onClick={() =>
+                    setActiveDietaryFilter(activeDietaryFilter === 'vegetarian' ? 'all' : 'vegetarian')
+                  }
+                >
+                  Vegetarian
+                </button>
+                <button
+                  type="button"
+                  className={`sub-filter-pill ${activeDietaryFilter === 'vegan' ? 'is-active' : ''}`}
+                  onClick={() =>
+                    setActiveDietaryFilter(activeDietaryFilter === 'vegan' ? 'all' : 'vegan')
+                  }
+                >
+                  Vegan
+                </button>
+                <button
+                  type="button"
+                  className={`sub-filter-pill ${activeDietaryFilter === 'gluten_free' ? 'is-active' : ''}`}
+                  onClick={() =>
+                    setActiveDietaryFilter(activeDietaryFilter === 'gluten_free' ? 'all' : 'gluten_free')
+                  }
+                >
+                  Gluten-Free
+                </button>
+                <button
+                  type="button"
+                  className={`sub-filter-pill ${activeDietaryFilter === 'signature' ? 'is-active' : ''}`}
+                  onClick={() =>
+                    setActiveDietaryFilter(activeDietaryFilter === 'signature' ? 'all' : 'signature')
+                  }
+                >
+                  <Sparkles size={11} />
+                  <span>Signatures</span>
+                </button>
+                <button
+                  type="button"
+                  className={`sub-filter-pill ${activeDietaryFilter === 'chef_special' ? 'is-active' : ''}`}
+                  onClick={() =>
+                    setActiveDietaryFilter(activeDietaryFilter === 'chef_special' ? 'all' : 'chef_special')
+                  }
+                >
+                  <ChefHat size={11} />
+                  <span>Chef Specials</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -320,28 +452,33 @@ export default function CoursesPage({
               filteredCourses.map((course) => {
                 const isSelected = selectedDishes.some((d) => d.id === course.id);
                 const isFavorite = favoriteDishes.includes(course.id);
+                const displayBadges = getDeduplicatedBadges(course);
+
                 return (
                   <div key={course.id} className="course-card">
                     <div className="course-card-top-row">
                       <div className="course-badges-row">
-                        {course.isSignature && (
-                          <span className="course-badge signature-badge">Signature</span>
-                        )}
-                        {course.isChefSpecial && (
-                          <span className="course-badge chef-special-badge">Chef Special</span>
-                        )}
-                        {course.badges.map((b, idx) => (
-                          <span key={idx} className={`course-badge ${b.type}`}>
+                        {displayBadges.map((b, idx) => (
+                          <span key={idx} className={`course-badge ${b.type || 'gold'}`}>
                             {b.text}
                           </span>
                         ))}
                       </div>
 
-                      {/* Favorite Button */}
+                      {/* Favorite Button: 44x44 tap target with smooth scale */}
                       <button
                         type="button"
                         className={`course-fav-btn ${isFavorite ? 'favorited' : ''}`}
-                        onClick={() => onToggleFavorite && onToggleFavorite(course)}
+                        onClick={() => {
+                          if (onToggleFavorite) onToggleFavorite(course);
+                          if (showToast) {
+                            showToast(
+                              isFavorite
+                                ? `Removed "${course.title}" from favorites`
+                                : `Saved "${course.title}" to favorites`
+                            );
+                          }
+                        }}
                         title={
                           isFavorite
                             ? `Remove ${course.title} from favorites`
@@ -350,7 +487,7 @@ export default function CoursesPage({
                         aria-label={isFavorite ? `Unfavorite ${course.title}` : `Favorite ${course.title}`}
                       >
                         <Heart
-                          size={16}
+                          size={18}
                           fill={isFavorite ? '#BA8D5B' : 'none'}
                           color={isFavorite ? '#BA8D5B' : '#76837A'}
                         />
@@ -396,12 +533,12 @@ export default function CoursesPage({
                         >
                           {isSelected ? (
                             <>
-                              <Check size={12} strokeWidth={3} />
+                              <Check size={13} strokeWidth={3} />
                               <span>In Menu</span>
                             </>
                           ) : (
                             <>
-                              <Plus size={12} strokeWidth={2.5} />
+                              <Plus size={13} strokeWidth={2.5} />
                               <span>Add to Menu</span>
                             </>
                           )}
@@ -485,14 +622,8 @@ export default function CoursesPage({
             <div className="modal-scroll-body dish-inspect-body">
               {/* Badges Row */}
               <div className="course-badges-row" style={{ marginBottom: '12px' }}>
-                {inspectingDish.isSignature && (
-                  <span className="course-badge signature-badge">Signature Selection</span>
-                )}
-                {inspectingDish.isChefSpecial && (
-                  <span className="course-badge chef-special-badge">Executive Chef Special</span>
-                )}
-                {inspectingDish.badges.map((b, idx) => (
-                  <span key={idx} className={`course-badge ${b.type}`}>
+                {getDeduplicatedBadges(inspectingDish).map((b, idx) => (
+                  <span key={idx} className={`course-badge ${b.type || 'gold'}`}>
                     {b.text}
                   </span>
                 ))}

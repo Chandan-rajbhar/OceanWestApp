@@ -54,32 +54,29 @@ export default function Header({
             </div>
           </Link>
 
-          {/* Action Icons Group: 2 Deep Plum Round Buttons */}
+          {/* Action Icons Group: Only 2 Options - Contact & Profile */}
           <div className="app-header-actions">
-            {/* Quick Call Button (Direct Commissary Hotline / Contact Modal) */}
+            {/* 1. Contact / Quick Call Button */}
             <a
               href="tel:6047224857"
               className="app-header-circle-btn"
               title="Call Chef Michael Direct (604-722-4857)"
-              aria-label="Direct Phone Call"
+              aria-label="Contact Direct"
             >
               <Phone size={14} />
             </a>
 
-            {/* Profile / Menu Drawer Toggle with Badge */}
-            <button
-              type="button"
-              className={`app-header-circle-btn ${drawerOpen ? 'is-open' : ''}`}
-              onClick={onToggleDrawer}
-              title="Open Navigation Menu"
-              aria-label="Toggle App Navigation Menu"
-              aria-expanded={drawerOpen}
+            {/* 2. Profile Button: Navigates Directly to the Client Profile Page */}
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                `app-header-circle-btn ${isActive ? 'is-active-tab' : ''}`
+              }
+              title="Client Profile & Account"
+              aria-label="Open Client Profile"
             >
-              {drawerOpen ? <X size={15} /> : <User size={15} />}
-              {selectedDishesCount > 0 && !drawerOpen && (
-                <span className="header-badge-count">{selectedDishesCount}</span>
-              )}
-            </button>
+              <User size={15} />
+            </NavLink>
           </div>
         </div>
 
@@ -142,6 +139,14 @@ export default function Header({
                 onClick={onCloseDrawer}
               >
                 <span>Book &amp; Inquire</span>
+              </NavLink>
+
+              <NavLink
+                to="/profile"
+                className={({ isActive }) => `mobile-drawer-nav-item ${isActive ? 'active' : ''}`}
+                onClick={onCloseDrawer}
+              >
+                <span>Client Profile</span>
               </NavLink>
             </nav>
 

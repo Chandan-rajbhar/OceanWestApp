@@ -34,6 +34,7 @@ import {
   CHEF_PROFILE,
   PACKAGES
 } from '../data/cateringData';
+import ImageWithFallback from '../components/ImageWithFallback';
 
 export default function HomePage({
   setIsAvailabilityModalOpen,
@@ -58,60 +59,14 @@ export default function HomePage({
 }) {
   const navigate = useNavigate();
 
-  // Planner card state
-  const [plannerGuestCount, setPlannerGuestCount] = useState(75);
-  const [plannerOccasion, setPlannerOccasion] = useState('Wedding Reception');
-
-  // Featured event platters mapped to existing dish data with authentic pricing
-  const FEATURED_PLATTERS = [
-    {
-      id: 2,
-      title: 'Wild Pacific Sockeye Platter',
-      rate: '$140',
-      dietaryTag: 'GLUTEN-FREE',
-      image: HERO_SLIDES[1]?.image || IMAGES.platter,
-      description: 'Cedar plank wild sockeye salmon, blistered shallots, caper berries, whipped herbed cream.'
-    },
-    {
-      id: 4,
-      title: 'Okanagan Artisanal Charcuterie',
-      rate: '$95',
-      dietaryTag: 'GRAZING BOARD',
-      image: IMAGES.platter,
-      description: 'Cured meats, aged cheeses, raw honeycomb, spiced nuts, fig preserves, artisan sourdough.'
-    },
-    {
-      id: 1,
-      title: 'Farm Harvest Organic Crudité',
-      rate: '$75',
-      dietaryTag: 'VEGAN / GLUTEN-FREE',
-      image: HERO_SLIDES[0]?.image || IMAGES.platter,
-      description: 'Crisp market vegetables, preserved lemon labneh, smoked paprika hummus, seed crisps.'
-    }
-  ];
-
-  const handlePlannerInquire = () => {
-    if (setFormData) {
-      setFormData((prev) => ({
-        ...prev,
-        category: plannerOccasion,
-        guestCount: String(plannerGuestCount),
-        notes: (prev.notes ? prev.notes + '\n\n' : '') + `[Planned Celebration: ${plannerOccasion} for ${plannerGuestCount} guests]`
-      }));
-    }
-    if (showToast) {
-      showToast(`Prefilled ${plannerOccasion} for ${plannerGuestCount} guests.`);
-    }
-    navigate('/inquiry');
-  };
-
   return (
     <div className="native-app-home">
       {/* ------------------------------------------------------------------ */}
-      {/* 1. LARGE ROUNDED HERO IMAGE CARD                                   */}
+      {/* 1. COMPACT ROUNDED HERO CARD WITH ACCENT BLEND PHOTO (REFERENCE)   */}
       {/* ------------------------------------------------------------------ */}
       <section className="app-hero-card-wrap">
         <div className="app-hero-card">
+          <div className="app-hero-shine" aria-hidden="true" />
           <img
             src={IMAGES.wedding}
             alt="Ocean West Coastal Catering Banquet"
@@ -123,7 +78,7 @@ export default function HomePage({
           <div className="app-hero-card-content">
             {/* Top Amber Location Chip */}
             <div className="hero-location-chip">
-              <MapPin size={11} className="chip-pin-icon" />
+              <MapPin size={9} className="chip-pin-icon" />
               <span>VANCOUVER • SURREY • WHISTLER</span>
             </div>
 
@@ -140,14 +95,14 @@ export default function HomePage({
             <div className="hero-app-actions-row">
               <Link to="/courses" className="btn-hero-explore">
                 <span>Explore Menus</span>
-                <ArrowRight size={14} />
+                <ArrowRight size={12} />
               </Link>
               <button
                 type="button"
                 className="btn-hero-quote"
                 onClick={() => onOpenQuotationModal && onOpenQuotationModal('wedding')}
               >
-                <Phone size={13} />
+                <Phone size={12} />
                 <span>Get a Quote</span>
               </button>
             </div>
@@ -156,10 +111,15 @@ export default function HomePage({
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* 2. THREE STACKED TRUST & EXPERIENCE HIGHLIGHTS                     */}
+      {/* 2. STACKED TRUST & EXPERIENCE HIGHLIGHTS WITH CHEVRONS             */}
       {/* ------------------------------------------------------------------ */}
       <section className="app-trust-highlights-section">
-        <div className="app-trust-card">
+        <button
+          type="button"
+          className="app-trust-card"
+          onClick={() => setIsConsultModalOpen && setIsConsultModalOpen(true)}
+          title="Executive Chef Profile & Philosophy"
+        >
           <div className="trust-icon-badge lavender">
             <Clock size={16} />
           </div>
@@ -167,9 +127,15 @@ export default function HomePage({
             <div className="trust-primary-line">20+ Years Experience</div>
             <div className="trust-secondary-line">Executive Chef Michael Thomas</div>
           </div>
-        </div>
+          <ChevronRight size={15} className="trust-chevron-arrow" />
+        </button>
 
-        <div className="app-trust-card">
+        <button
+          type="button"
+          className="app-trust-card"
+          onClick={() => setIsPlannerModalOpen && setIsPlannerModalOpen(true)}
+          title="Plan Celebrations & Guest Sizing"
+        >
           <div className="trust-icon-badge amber">
             <Users size={16} />
           </div>
@@ -177,16 +143,76 @@ export default function HomePage({
             <div className="trust-primary-line">25 – 500 to Up to 1,200+</div>
             <div className="trust-secondary-line">From intimate dinners to large galas</div>
           </div>
+          <ChevronRight size={15} className="trust-chevron-arrow" />
+        </button>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* 3. EXPLORE EXPERIENCES (3-COLUMN PHOTO CARDS MATCHING REFERENCE)   */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="app-section explore-experiences-preview-section">
+        <div className="app-section-header">
+          <h2 className="app-heading-serif">Explore Experiences</h2>
+          <Link
+            to="/disciplines"
+            className="gold-link"
+            onClick={(e) => {
+              if (onOpenExperiencesModal) {
+                e.preventDefault();
+                onOpenExperiencesModal();
+              }
+            }}
+          >
+            <span>View All</span>
+            <ArrowRight size={12} />
+          </Link>
         </div>
 
-        <div className="app-trust-card">
-          <div className="trust-icon-badge sage">
-            <ShieldCheck size={16} />
-          </div>
-          <div className="trust-text-block">
-            <div className="trust-primary-line">100% Local &amp; Organic</div>
-            <div className="trust-secondary-line">Pacific Coast farm-sourced &amp; ocean-wise</div>
-          </div>
+        <div className="explore-experiences-grid">
+          {/* Card 1: Weddings */}
+          <Link to="/packages" className="experience-thumb-card" title="Weddings & Receptions">
+            <img
+              src={IMAGES.wedding}
+              alt="Weddings & Receptions"
+              className="experience-thumb-img"
+              loading="lazy"
+            />
+            <div className="experience-thumb-gradient" />
+            <div className="experience-thumb-footer">
+              <span>Weddings</span>
+              <ArrowRight size={11} className="experience-thumb-arrow" />
+            </div>
+          </Link>
+
+          {/* Card 2: Corporate */}
+          <Link to="/disciplines" className="experience-thumb-card" title="Corporate Dining">
+            <img
+              src={IMAGES.gala}
+              alt="Corporate Dining"
+              className="experience-thumb-img"
+              loading="lazy"
+            />
+            <div className="experience-thumb-gradient" />
+            <div className="experience-thumb-footer">
+              <span>Corporate</span>
+              <ArrowRight size={11} className="experience-thumb-arrow" />
+            </div>
+          </Link>
+
+          {/* Card 3: Private Dining */}
+          <Link to="/courses" className="experience-thumb-card" title="Private Dining Tastings">
+            <img
+              src={HERO_SLIDES[1]?.image || IMAGES.platter}
+              alt="Private Dining Tastings"
+              className="experience-thumb-img"
+              loading="lazy"
+            />
+            <div className="experience-thumb-gradient" />
+            <div className="experience-thumb-footer">
+              <span>Private Dining</span>
+              <ArrowRight size={11} className="experience-thumb-arrow" />
+            </div>
+          </Link>
         </div>
       </section>
 
@@ -209,8 +235,12 @@ export default function HomePage({
           {/* Card 1: Weddings */}
           <article className="sig-service-card">
             <div className="sig-card-media">
-              <img src={IMAGES.wedding} alt="Weddings & Receptions" loading="lazy" />
-              <span className="sig-badge plum">WEDDINGS</span>
+              <ImageWithFallback
+                src={IMAGES.wedding}
+                alt="Weddings & Receptions"
+                aspect="16:10"
+                badge="WEDDINGS"
+              />
             </div>
             <div className="sig-card-body">
               <div className="sig-card-title-row">
@@ -231,8 +261,12 @@ export default function HomePage({
           {/* Card 2: Film & Media */}
           <article className="sig-service-card">
             <div className="sig-card-media">
-              <img src={IMAGES.filmCraft} alt="Movie & Film Catering" loading="lazy" />
-              <span className="sig-badge gold">FAST TURNAROUND</span>
+              <ImageWithFallback
+                src={IMAGES.filmCraft}
+                alt="Movie & Film Catering"
+                aspect="16:10"
+                badge="FAST TURNAROUND"
+              />
             </div>
             <div className="sig-card-body">
               <div className="sig-card-title-row">
@@ -253,8 +287,12 @@ export default function HomePage({
           {/* Card 3: Celebrations & BBQs */}
           <article className="sig-service-card">
             <div className="sig-card-media">
-              <img src={IMAGES.platter} alt="Celebrations & BBQs" loading="lazy" />
-              <span className="sig-badge blue">OUTDOOR</span>
+              <ImageWithFallback
+                src={IMAGES.platter}
+                alt="Celebrations & BBQs"
+                aspect="16:10"
+                badge="OUTDOOR"
+              />
             </div>
             <div className="sig-card-body">
               <div className="sig-card-title-row">
@@ -275,8 +313,12 @@ export default function HomePage({
           {/* Card 4: Corporate & Cocktails */}
           <article className="sig-service-card">
             <div className="sig-card-media">
-              <img src={IMAGES.gala} alt="Corporate & Cocktails" loading="lazy" />
-              <span className="sig-badge navy">CORPORATE</span>
+              <ImageWithFallback
+                src={IMAGES.gala}
+                alt="Corporate & Cocktails"
+                aspect="16:10"
+                badge="CORPORATE"
+              />
             </div>
             <div className="sig-card-body">
               <div className="sig-card-title-row">
@@ -297,7 +339,7 @@ export default function HomePage({
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* 4. FEATURED CHEF PROFILE CARD (DEEP PLUM BACKGROUND)               */}
+      {/* 5. FEATURED CHEF PROFILE CARD (DEEP PLUM BACKGROUND - LAST CARD)   */}
       {/* ------------------------------------------------------------------ */}
       <section className="app-section chef-plum-section">
         <div className="chef-plum-card">
@@ -339,239 +381,6 @@ export default function HomePage({
               <ChevronRight size={14} />
             </button>
           </div>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* 5. FEATURED EVENT PLATTERS (COMPACT DISH CARDS + ADD)             */}
-      {/* ------------------------------------------------------------------ */}
-      <section className="app-section event-platters-section">
-        <div className="app-section-header">
-          <div>
-            <span className="app-kicker">READY-TO-SERVE</span>
-            <h2 className="app-heading-serif">Featured Event Platters</h2>
-          </div>
-          <Link to="/courses" className="app-header-link">
-            <span>View All</span>
-            <ArrowRight size={14} />
-          </Link>
-        </div>
-
-        <div className="platters-compact-list">
-          {FEATURED_PLATTERS.map((platter) => {
-            const isAdded = selectedDishes.some((d) => d.id === platter.id);
-            const sourceDish = MENU_COURSES.find((c) => c.id === platter.id) || platter;
-
-            return (
-              <div key={platter.id} className="compact-platter-card">
-                <div className="platter-thumbnail-box">
-                  <img src={platter.image} alt={platter.title} loading="lazy" />
-                </div>
-
-                <div className="platter-info-box">
-                  <div className="platter-title-price-row">
-                    <h3 className="platter-title">{platter.title}</h3>
-                    <span className="platter-rate">{platter.rate}</span>
-                  </div>
-
-                  <p className="platter-desc">{platter.description}</p>
-
-                  <div className="platter-action-row">
-                    <span className="platter-dietary-pill">{platter.dietaryTag}</span>
-
-                    <button
-                      type="button"
-                      className={`btn-add-platter ${isAdded ? 'is-added' : ''}`}
-                      onClick={() => onToggleDishInMenu(sourceDish)}
-                      aria-label={isAdded ? `Remove ${platter.title}` : `Add ${platter.title}`}
-                    >
-                      {isAdded ? (
-                        <>
-                          <Check size={12} strokeWidth={3} />
-                          <span>Added</span>
-                        </>
-                      ) : (
-                        <>
-                          <Plus size={12} strokeWidth={2.5} />
-                          <span>Add Platter</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* 6. PLAN YOUR CELEBRATION (COMPACT INTERACTIVE PLANNER CARD)        */}
-      {/* ------------------------------------------------------------------ */}
-      <section className="app-section celebration-planner-section">
-        <div className="celebration-planner-card">
-          <div className="planner-card-header">
-            <Calendar size={18} className="gold-icon" />
-            <h3 className="planner-card-title">Plan Your Celebration</h3>
-          </div>
-
-          <p className="planner-recommendation-note">
-            We're recommending <strong>{plannerGuestCount} guests</strong> and a celebration setup for a
-            tailored experience.
-          </p>
-
-          {/* Slider Control */}
-          <div className="planner-slider-block">
-            <div className="slider-label-row">
-              <span className="slider-field-title">Estimated Guest Count:</span>
-              <span className="slider-active-val">{plannerGuestCount} Guests</span>
-            </div>
-            <input
-              type="range"
-              min="20"
-              max="350"
-              step="5"
-              value={plannerGuestCount}
-              onChange={(e) => setPlannerGuestCount(Number(e.target.value))}
-              className="planner-range-input"
-            />
-            <div className="slider-markers-row">
-              <span>20 Min</span>
-              <span>50 Typical</span>
-              <span>150+ Gala</span>
-            </div>
-          </div>
-
-          {/* Occasion / Style Pills */}
-          <div className="planner-occasions-block">
-            <span className="occasions-block-label">Occasion Style:</span>
-            <div className="occasions-pills-grid">
-              {[
-                'Wedding Reception',
-                'Film Production',
-                'Outdoor Summer BBQ',
-                'Corporate Cocktail'
-              ].map((style) => (
-                <button
-                  key={style}
-                  type="button"
-                  className={`occasion-choice-pill ${plannerOccasion === style ? 'is-selected' : ''}`}
-                  onClick={() => setPlannerOccasion(style)}
-                >
-                  {style}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom Coordination & Inquire Button */}
-          <div className="planner-card-bottom-bar">
-            <div className="planner-direct-coord">
-              <span className="coord-label">DIRECT COORDINATION</span>
-              <span className="coord-val">Chef Michael | 604-722-4857</span>
-            </div>
-
-            <button
-              type="button"
-              className="btn-planner-inquire"
-              onClick={handlePlannerInquire}
-            >
-              <span>Inquire Date</span>
-              <ArrowRight size={14} />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* 7. APP PLANNING TOOLS SUITE STRIP                                  */}
-      {/* ------------------------------------------------------------------ */}
-      <section className="app-section tools-shortcut-section">
-        <div className="app-section-header">
-          <div>
-            <span className="app-kicker">CATERING TOOLS</span>
-            <h2 className="app-heading-serif">Planning Suite</h2>
-          </div>
-        </div>
-
-        <div className="app-tools-pills-row">
-          <button
-            type="button"
-            className="app-tool-chip-btn"
-            onClick={() => onOpenQuotationModal && onOpenQuotationModal()}
-          >
-            <Calculator size={13} />
-            <span>Quotation Slip</span>
-          </button>
-          <button
-            type="button"
-            className="app-tool-chip-btn"
-            onClick={() => onOpenCustomizationModal && onOpenCustomizationModal()}
-          >
-            <Sliders size={13} />
-            <span>Custom Setup</span>
-          </button>
-          <button
-            type="button"
-            className="app-tool-chip-btn"
-            onClick={onOpenServingGuide}
-          >
-            <Scale size={13} />
-            <span>Serving Guide</span>
-          </button>
-          <button
-            type="button"
-            className="app-tool-chip-btn"
-            onClick={onOpenGallery}
-          >
-            <Camera size={13} />
-            <span>Photo Gallery</span>
-          </button>
-          <button
-            type="button"
-            className="app-tool-chip-btn"
-            onClick={onOpenChecklistModal}
-          >
-            <CheckSquare size={13} />
-            <span>Checklist</span>
-          </button>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* 8. STRONG CONTACT / PHONE ACTION CARD (DEEP PLUM BACKGROUND)       */}
-      {/* ------------------------------------------------------------------ */}
-      <section className="app-section contact-plum-section">
-        <div className="contact-plum-card">
-          <div className="contact-plum-icon-circle">
-            <Phone size={22} />
-          </div>
-
-          <h2 className="contact-plum-title">Have Questions About Your Menu?</h2>
-          <p className="contact-plum-sub">
-            Contact Executive Chef Michael Thomas directly for custom culinary creations, dietary
-            modifications, and instant date holds.
-          </p>
-
-          <div className="contact-plum-actions">
-            <a href="tel:6047224857" className="btn-contact-gold-phone">
-              <Phone size={15} />
-              <span>604-722-4857</span>
-            </a>
-
-            <button
-              type="button"
-              className="btn-contact-text-dispatch"
-              onClick={() => onOpenSupportModal && onOpenSupportModal()}
-            >
-              <MessageSquare size={15} />
-              <span>Concierge Support Desk</span>
-            </button>
-          </div>
-
-          <p className="contact-plum-footnote">
-            Serving Vancouver, Surrey, Whistler, Richmond &amp; the Lower Mainland
-          </p>
         </div>
       </section>
     </div>

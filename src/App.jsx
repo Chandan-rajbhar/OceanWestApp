@@ -38,6 +38,7 @@ import CoursesPage from './pages/CoursesPage';
 import PackagesPage from './pages/PackagesPage';
 import FilmCateringPage from './pages/FilmCateringPage';
 import InquiryPage from './pages/InquiryPage';
+import ProfilePage from './pages/ProfilePage';
 import { MENU_COURSES } from './data/cateringData';
 
 const STORAGE_KEY_FORM = 'oceanwest_inquiry_draft_v1';
@@ -228,16 +229,7 @@ export default function App() {
 
   const handleApplyMenuToInquiry = () => {
     if (selectedDishes.length === 0) return;
-    const dishListFormatted = selectedDishes
-      .map((d) => `• ${d.title} (${d.serviceStyle || d.category})`)
-      .join('\n');
-    setFormData((prev) => ({
-      ...prev,
-      notes:
-        (prev.notes ? prev.notes + '\n\n' : '') +
-        `[Selected Tasting Menu Courses:\n${dishListFormatted}]`
-    }));
-    showToast(`${selectedDishes.length} menu items attached to your inquiry notes!`);
+    showToast(`${selectedDishes.length} curated menu items attached to your inquiry!`);
   };
 
   // 6. Favorites handlers
@@ -416,7 +408,19 @@ export default function App() {
                 />
               }
             />
-            <Route path="/disciplines" element={<DisciplinesPage />} />
+            <Route
+              path="/disciplines"
+              element={
+                <DisciplinesPage
+                  onOpenQuotationModal={() => setIsQuotationModalOpen(true)}
+                  onOpenCustomizationModal={() => setIsCustomizationModalOpen(true)}
+                  onOpenServingGuide={() => setIsServingGuideOpen(true)}
+                  onOpenGallery={() => setIsGalleryOpen(true)}
+                  onOpenChecklistModal={() => setIsChecklistModalOpen(true)}
+                  onOpenSupportModal={() => setIsSupportModalOpen(true)}
+                />
+              }
+            />
             <Route
               path="/courses"
               element={
@@ -472,6 +476,29 @@ export default function App() {
                   onOpenChecklistModal={() => setIsChecklistModalOpen(true)}
                   onOpenCustomizationModal={() => setIsCustomizationModalOpen(true)}
                   onOpenQuotationModal={() => setIsQuotationModalOpen(true)}
+                  onToggleDishInMenu={handleToggleDishInMenu}
+                  showToast={showToast}
+                />
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProfilePage
+                  formData={formData}
+                  setFormData={setFormData}
+                  selectedDishes={selectedDishes}
+                  favoriteDishes={favoriteDishes}
+                  onOpenStatusModal={() => setIsStatusModalOpen(true)}
+                  onOpenMyMenu={() => setIsMyMenuOpen(true)}
+                  onOpenSupportModal={() => setIsSupportModalOpen(true)}
+                  onOpenConsultModal={() => setIsConsultModalOpen(true)}
+                  onOpenChecklistModal={() => setIsChecklistModalOpen(true)}
+                  onOpenQuotationModal={() => setIsQuotationModalOpen(true)}
+                  onOpenCustomizationModal={() => setIsCustomizationModalOpen(true)}
+                  onOpenServingGuideModal={() => setIsServingGuideOpen(true)}
+                  onOpenPdfModal={() => setIsPdfModalOpen(true)}
+                  onOpenResetConfirm={() => setIsResetConfirmOpen(true)}
                   showToast={showToast}
                 />
               }

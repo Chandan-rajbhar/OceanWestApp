@@ -2,29 +2,58 @@
   --font-serif: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   
-  /* Color Palette - Pacific Northwest Artisanal Catering */
+  /* Color Palette - Pacific Northwest Artisanal Mobile App System */
   --color-bg-base: #FAF8F5;
+  --color-cream: #FAF8F5;
   --color-bg-card: #FFFFFF;
+  --color-card-bg: #FFFFFF;
   --color-bg-card-subtle: #F6F3EC;
   --color-bg-warm: #F4EFE6;
-  --color-border: #E8E2D7;
+  --color-border: #EADFCE;
   --color-border-light: #F0EBE1;
   --color-border-dark: #37463D;
   
-  --color-text-main: #242A26;
-  --color-text-muted: #6B726C;
-  --color-text-light: #9DA39E;
+  --color-plum: #280829;
+  --color-plum-hover: #3D0D3F;
+  --color-gold: #BA8D5B;
+  --color-gold-hover: #A97C4B;
+  --color-gold-light: #FAF2E6;
+  
+  --color-text: #192720;
+  --color-text-main: #192720;
+  --color-text-muted: #636D66;
+  --color-muted: #636D66;
+  --color-text-light: #8E9992;
   
   --color-primary-dark: #192720;
   --color-primary-darker: #131E19;
   --color-primary-card: #1D2C24;
   --color-primary-light: #2A3B31;
   
-  --color-accent-gold: #B98E5C;
-  --color-accent-gold-hover: #A57D4C;
-  --color-accent-gold-light: #F7EFE4;
-  --color-accent-gold-border: #E4D5C1;
+  --color-accent-gold: #BA8D5B;
+  --color-accent-gold-hover: #A97C4B;
+  --color-accent-gold-light: #FAF2E6;
+  --color-accent-gold-border: #EADFCE;
   
+  /* Spacing Scale */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+
+  /* Radius Scale */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(25, 39, 32, 0.05);
+  --shadow-md: 0 4px 14px rgba(25, 39, 32, 0.08);
+  --shadow-lg: 0 10px 24px rgba(25, 39, 32, 0.12);
+
   --color-badge-green-bg: #EAF0EC;
   --color-badge-green-text: #244933;
 
@@ -35,8 +64,17 @@
 
 *, *::before, *::after {
   box-sizing: border-box;
+  max-width: 100%;
+}
+
+html, body {
+  overflow-x: hidden !important;
+  width: 100%;
+  max-width: 100%;
   margin: 0;
   padding: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 img, video, canvas, svg {

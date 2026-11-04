@@ -39,6 +39,7 @@ export default function MobileFrame({
               <Signal size={12} strokeWidth={2.4} />
               <Wifi size={13} strokeWidth={2.4} />
               <Battery size={14} strokeWidth={2.4} />
+              <span className="status-battery-pct">82%</span>
             </div>
           </div>
 

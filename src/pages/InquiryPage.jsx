@@ -8,12 +8,9 @@ import {
   Check,
   ArrowRight,
   Mail,
-  Sparkles,
   ShoppingBag,
-  RotateCcw,
   CheckCircle2,
   FileCheck2,
-  Edit3,
   Clapperboard,
   Calendar,
   AlertTriangle,
@@ -21,12 +18,13 @@ import {
   CheckSquare,
   Sliders,
   Calculator,
-  Image as ImageIcon
+  Image as ImageIcon,
+  X
 } from 'lucide-react';
-import { DIETARY_OPTIONS, CONTACT_INFO, OCCASIONS } from '../data/cateringData';
+import { DIETARY_OPTIONS, CONTACT_INFO } from '../data/cateringData';
 
 export default function InquiryPage({
-  formData,
+  formData = {},
   setFormData,
   formSubmitted,
   setFormSubmitted,
@@ -39,13 +37,18 @@ export default function InquiryPage({
   onOpenChecklistModal,
   onOpenCustomizationModal,
   onOpenQuotationModal,
+  onToggleDishInMenu,
   showToast
 }) {
   const [searchParams] = useSearchParams();
 
   // Check if routed specifically for film catering
   useEffect(() => {
-    if (searchParams.get('type') === 'film' || formData.category === 'Movie & Film Production' || formData.category === 'film') {
+    if (
+      searchParams.get('type') === 'film' ||
+      formData.category === 'Movie & Film Production' ||
+      formData.category === 'film'
+    ) {
       setFormData((prev) => ({
         ...prev,
         isFilmRequest: true,
@@ -87,6 +90,30 @@ export default function InquiryPage({
     customizations.staffingTier ||
     (customizations.uploadedImages && customizations.uploadedImages.length > 0);
 
+  // Clean user notes (hide raw debug string from textarea)
+  const cleanUserNotes = (formData.notes || '')
+    .replace(/\[Selected Tasting Menu Courses:[\s\S]*?\]/g, '')
+    .replace(/\[Planned Celebration:[\s\S]*?\]/g, '')
+    .trim();
+
+  // Custom form submission that appends structured menu in background payload without polluting notes
+  const onFormSubmitWithCleanNotes = (e) => {
+    e.preventDefault();
+    if (selectedDishes.length > 0) {
+      const dishListFormatted = selectedDishes
+        .map((d) => `• ${d.title} (${d.serviceStyle || d.category || 'Course'})`)
+        .join('\n');
+      const backgroundAppend = `[Selected Tasting Menu Courses:\n${dishListFormatted}]`;
+      const combined = cleanUserNotes ? `${cleanUserNotes}\n\n${backgroundAppend}` : backgroundAppend;
+      setFormData((prev) => ({
+        ...prev,
+        notes: combined,
+        attachedCourses: selectedDishes.map((d) => d.title)
+      }));
+    }
+    handleFormSubmit(e);
+  };
+
   return (
     <div className="inquiry-page">
       {/* ------------------------------------------------------------------ */}
@@ -112,14 +139,111 @@ export default function InquiryPage({
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* FORM SECTION                                                       */}
+      {/* FORM & CONCIERGE SECTION                                           */}
       {/* ------------------------------------------------------------------ */}
       <section className="ow-section inquiry-form-section">
         <div className="ow-container">
+          {/* Plan Your Celebration Interactive Estimator Widget */}
+          <div className="celebration-planner-card" style={{ marginBottom: '20px' }}>
+            <div className="planner-card-header">
+              <Calendar size={18} className="gold-icon" />
+              <h3 className="planner-card-title">Plan Your Celebration</h3>
+            </div>
+
+            <p className="planner-recommendation-note">
+              Adjust guest count and occasion style to immediately prefill your catering proposal.
+            </p>
+
+            {/* Slider Control with +/- Steppers */}
+            <div className="planner-slider-block">
+              <div className="slider-label-row">
+                <span className="slider-field-title">Estimated Guest Count:</span>
+                <span className="slider-active-val">{formData.guestCount || '75'} Guests</span>
+              </div>
+              <div className="slider-stepper-control-row">
+                <button
+                  type="button"
+                  className="btn-stepper"
+                  onClick={() => {
+                    const cur = Number(formData.guestCount) || 75;
+                    const next = Math.max(20, cur - 5);
+                    setFormData((prev) => ({ ...prev, guestCount: String(next) }));
+                  }}
+                  aria-label="Decrease guest count by 5"
+                >
+                  −
+                </button>
+                <input
+                  type="range"
+                  min="20"
+                  max="350"
+                  step="5"
+                  value={Number(formData.guestCount) || 75}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, guestCount: e.target.value }))}
+                  className="planner-range-input"
+                  style={{
+                    '--slider-pct': `${((Number(formData.guestCount || 75) - 20) / 330) * 100}%`
+                  }}
+                  aria-label="Estimated Guest Count Slider"
+                />
+                <button
+                  type="button"
+                  className="btn-stepper"
+                  onClick={() => {
+                    const cur = Number(formData.guestCount) || 75;
+                    const next = Math.min(350, cur + 5);
+                    setFormData((prev) => ({ ...prev, guestCount: String(next) }));
+                  }}
+                  aria-label="Increase guest count by 5"
+                >
+                  +
+                </button>
+              </div>
+              <div className="slider-markers-row">
+                <span>20 Min</span>
+                <span>50 Typical</span>
+                <span>150+ Gala</span>
+              </div>
+            </div>
+
+            {/* Occasion / Style Pills */}
+            <div className="planner-occasions-block">
+              <span className="occasions-block-label">Occasion Style:</span>
+              <div className="occasions-pills-grid">
+                {[
+                  'Wedding Reception',
+                  'Film Production',
+                  'Outdoor Summer BBQ',
+                  'Corporate Cocktail'
+                ].map((style) => (
+                  <button
+                    key={style}
+                    type="button"
+                    className={`occasion-choice-pill ${formData.category === style ? 'is-selected' : ''}`}
+                    onClick={() => setFormData((prev) => ({ ...prev, category: style }))}
+                  >
+                    {style}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Bottom Coordination Hotline */}
+            <div className="planner-card-bottom-bar" style={{ marginTop: '12px', paddingTop: '10px' }}>
+              <div className="planner-direct-coord">
+                <span className="coord-label">DIRECT COORDINATION</span>
+                <span className="coord-val">Chef Michael | 604-722-4857</span>
+              </div>
+            </div>
+          </div>
+
           <div className="inquiry-layout-grid">
-            {/* Left Column: Direct Contacts & Transparency */}
+            {/* -------------------------------------------------------------- */}
+            {/* Left Column: Polished Executive Chef Concierge Card (CRITICAL) */}
+            {/* -------------------------------------------------------------- */}
             <div className="inquiry-sidebar-col">
               <div className="sidebar-info-card">
+                {/* Header Row: Shield Icon + Title Inline */}
                 <div className="sidebar-card-header">
                   <ShieldCheck size={20} className="gold-icon" />
                   <h4>Executive Chef Concierge</h4>
@@ -129,21 +253,31 @@ export default function InquiryPage({
                   or urgent date holds, call our commissary directly.
                 </p>
 
+                {/* Contact Rows: Icon + Text on Same Line */}
                 <div className="sidebar-contact-list">
-                  <a href={`tel:${CONTACT_INFO.directPhone.replace(/-/g, '')}`} className="sidebar-contact-item">
-                    <Phone size={15} />
-                    <span>{CONTACT_INFO.directPhone}</span>
+                  <a
+                    href={`tel:${CONTACT_INFO.directPhone.replace(/-/g, '')}`}
+                    className="sidebar-contact-item"
+                    title="Direct Commissary Hotline"
+                  >
+                    <Phone size={18} className="contact-item-icon" />
+                    <span className="contact-item-text">{CONTACT_INFO.directPhone}</span>
                   </a>
-                  <a href={`mailto:${CONTACT_INFO.email}`} className="sidebar-contact-item">
-                    <Mail size={15} />
-                    <span>{CONTACT_INFO.email}</span>
+                  <a
+                    href={`mailto:${CONTACT_INFO.email}`}
+                    className="sidebar-contact-item"
+                    title="Direct Commissary Email"
+                  >
+                    <Mail size={18} className="contact-item-icon" />
+                    <span className="contact-item-text">{CONTACT_INFO.email}</span>
                   </a>
                   <div className="sidebar-contact-item non-link">
-                    <MapPin size={15} />
-                    <span>{CONTACT_INFO.address}</span>
+                    <MapPin size={18} className="contact-item-icon" />
+                    <span className="contact-item-text">{CONTACT_INFO.address}</span>
                   </div>
                 </div>
 
+                {/* Planning Shortcuts: 3 Equal Pill Buttons */}
                 <div className="sidebar-planning-tools">
                   <span className="tools-sub-title">Planning Shortcuts:</span>
                   <div className="tools-mini-grid">
@@ -151,49 +285,56 @@ export default function InquiryPage({
                       type="button"
                       className="mini-tool-btn"
                       onClick={onOpenQuotationModal}
+                      title="Generate custom catering quote"
                     >
-                      <Calculator size={13} />
+                      <Calculator size={14} />
                       <span>Estimate Slip</span>
                     </button>
                     <button
                       type="button"
                       className="mini-tool-btn"
                       onClick={onOpenCustomizationModal}
+                      title="Configure staffing & setup"
                     >
-                      <Sliders size={13} />
+                      <Sliders size={14} />
                       <span>Custom Setup</span>
                     </button>
                     <button
                       type="button"
                       className="mini-tool-btn"
                       onClick={onOpenChecklistModal}
+                      title="View timeline checklist"
                     >
-                      <CheckSquare size={13} />
+                      <CheckSquare size={14} />
                       <span>Checklist</span>
                     </button>
                   </div>
                 </div>
-              </div>
 
-              {/* Status Tracking Reminder */}
-              <div className="sidebar-status-card">
-                <Clock size={18} className="gold-icon" />
-                <div>
-                  <h5>Existing Client?</h5>
-                  <p>Track your event intake status, assigned team, or submit feedback.</p>
+                {/* Existing Client Block */}
+                <div className="sidebar-status-card">
+                  <div className="status-card-header-row">
+                    <Clock size={18} className="gold-icon" />
+                    <h5>Existing Client?</h5>
+                  </div>
+                  <p className="status-card-text">
+                    Track your event intake status, assigned team, or submit feedback.
+                  </p>
                   <button
                     type="button"
                     className="btn-status-portal-link"
                     onClick={onOpenStatusModal}
                   >
                     <span>Open Status Portal</span>
-                    <ArrowRight size={13} />
+                    <ArrowRight size={14} />
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Right Column: Inquiry Form / Success Card */}
+            {/* -------------------------------------------------------------- */}
+            {/* Right Column: Inquiry Form / Success Card                      */}
+            {/* -------------------------------------------------------------- */}
             <div className="inquiry-main-form-card">
               {formSubmitted ? (
                 <div className="inquiry-success-receipt">
@@ -279,11 +420,13 @@ export default function InquiryPage({
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleFormSubmit}>
-                  {/* Category & Flow Mode Switcher */}
-                  <div className="form-mode-tabs-row">
+                <form onSubmit={onFormSubmitWithCleanNotes}>
+                  {/* Segmented Toggle: Standard Event Inquiry | Film & TV Production RFP */}
+                  <div className="form-mode-tabs-row" role="tablist" aria-label="Inquiry Mode">
                     <button
                       type="button"
+                      role="tab"
+                      aria-selected={!isFilm}
                       className={`form-mode-tab ${!isFilm ? 'active' : ''}`}
                       onClick={() => {
                         setFormData((prev) => ({
@@ -300,6 +443,8 @@ export default function InquiryPage({
                     </button>
                     <button
                       type="button"
+                      role="tab"
+                      aria-selected={isFilm}
                       className={`form-mode-tab ${isFilm ? 'active' : ''}`}
                       onClick={() => {
                         setFormData((prev) => ({
@@ -309,8 +454,8 @@ export default function InquiryPage({
                         }));
                       }}
                     >
-                      <Clapperboard size={13} style={{ marginRight: '5px' }} />
-                      Film &amp; TV Production RFP
+                      <Clapperboard size={14} style={{ marginRight: '6px' }} />
+                      <span>Film &amp; TV Production RFP</span>
                     </button>
                   </div>
 
@@ -326,7 +471,7 @@ export default function InquiryPage({
                         name="fullName"
                         className="form-control"
                         placeholder="e.g. Lauren Miller"
-                        value={formData.fullName}
+                        value={formData.fullName || ''}
                         onChange={handleFormChange}
                         required
                       />
@@ -341,7 +486,7 @@ export default function InquiryPage({
                         name="email"
                         className="form-control"
                         placeholder="lauren@example.com"
-                        value={formData.email}
+                        value={formData.email || ''}
                         onChange={handleFormChange}
                         required
                       />
@@ -359,7 +504,7 @@ export default function InquiryPage({
                         name="phone"
                         className="form-control"
                         placeholder="604-000-0000"
-                        value={formData.phone}
+                        value={formData.phone || ''}
                         onChange={handleFormChange}
                         required
                       />
@@ -372,7 +517,7 @@ export default function InquiryPage({
                         id="category"
                         name="category"
                         className="form-control"
-                        value={formData.category}
+                        value={formData.category || 'Weddings & Receptions'}
                         onChange={handleFormChange}
                       >
                         <option value="Weddings & Receptions">Weddings &amp; Receptions</option>
@@ -387,50 +532,16 @@ export default function InquiryPage({
                         <option value="Movie & Film Production">
                           Movie &amp; Film Production Craft
                         </option>
-                        <option value="Custom Waterfront & Outdoor Banquets">
-                          Custom Waterfront &amp; Outdoor Banquets
-                        </option>
                       </select>
                     </div>
                   </div>
 
-                  {/* Standard Event Fields */}
-                  {!isFilm ? (
-                    <div className="form-grid-row">
-                      <div className="form-group">
-                        <label className="form-label" htmlFor="eventDate">
-                          Target Event Date
-                        </label>
-                        <input
-                          type="date"
-                          id="eventDate"
-                          name="eventDate"
-                          className="form-control"
-                          value={formData.eventDate}
-                          onChange={handleFormChange}
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label" htmlFor="guestCount">
-                          Expected Guest Count
-                        </label>
-                        <input
-                          type="number"
-                          id="guestCount"
-                          name="guestCount"
-                          className="form-control"
-                          placeholder="e.g. 100"
-                          value={formData.guestCount}
-                          onChange={handleFormChange}
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    /* Film Specific Fields */
-                    <div className="film-fields-container">
-                      <div className="film-section-badge">
-                        <Clapperboard size={14} />
-                        <span>Production &amp; Crew Call Parameters</span>
+                  {/* Film specific fields */}
+                  {isFilm && (
+                    <div className="film-specific-fields-box">
+                      <div className="film-box-title">
+                        <Clapperboard size={15} style={{ color: '#BA8D5B' }} />
+                        <span>Production Logistics Specifications</span>
                       </div>
 
                       <div className="form-grid-row">
@@ -564,7 +675,7 @@ export default function InquiryPage({
                         name="location"
                         className="form-control"
                         placeholder="e.g. Vancouver waterfront, Richmond, Whistler, or Private Estate"
-                        value={formData.location}
+                        value={formData.location || ''}
                         onChange={handleFormChange}
                         required
                       />
@@ -590,7 +701,7 @@ export default function InquiryPage({
                     </div>
                   </div>
 
-                  {/* Event Customization Trigger Card - Module 5 */}
+                  {/* Event Customization Trigger Card */}
                   <div className="customization-inquiry-callout">
                     <div className="custom-callout-text">
                       <div className="callout-badge-line">
@@ -682,7 +793,7 @@ export default function InquiryPage({
                     </div>
                   </div>
 
-                  {/* Attached dishes preview if any selected */}
+                  {/* Attached dishes preview if any selected (With Clean Remove Chips) */}
                   {selectedDishes.length > 0 && (
                     <div className="attached-dishes-inquiry-box">
                       <div className="attached-dishes-header">
@@ -700,15 +811,24 @@ export default function InquiryPage({
                       </div>
                       <div className="attached-dishes-tags">
                         {selectedDishes.map((dish) => (
-                          <span key={dish.id} className="attached-dish-tag">
-                            {dish.title}
+                          <span key={dish.id} className="attached-dish-chip">
+                            <span>{dish.title}</span>
+                            <button
+                              type="button"
+                              className="chip-remove-btn"
+                              onClick={() => onToggleDishInMenu && onToggleDishInMenu(dish)}
+                              title={`Remove ${dish.title}`}
+                              aria-label={`Remove ${dish.title}`}
+                            >
+                              <X size={12} />
+                            </button>
                           </span>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {/* Free text notes */}
+                  {/* Clean User Notes Textarea (No Debug Text Ever Visible) */}
                   <div className="form-group">
                     <label className="form-label" htmlFor="notes">
                       Event Vision &amp; Logistics Notes
@@ -716,27 +836,27 @@ export default function InquiryPage({
                     <textarea
                       id="notes"
                       name="notes"
-                      className="form-control"
+                      className="form-control notes-textarea"
                       rows={3}
                       placeholder="Describe your event schedule, venue parameters, sommelier pairing requests, or additional notes..."
-                      value={formData.notes}
-                      onChange={handleFormChange}
+                      value={cleanUserNotes}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
                     />
                   </div>
 
-                  {/* Inquiry Pre-submission Summary Card */}
+                  {/* Inquiry Pre-submission Summary Card: Clean 2-Column Grid */}
                   <div className="inquiry-summary-card">
                     <div className="summary-card-header">
-                      <FileCheck2 size={15} style={{ color: '#BA8D5B' }} />
+                      <FileCheck2 size={16} style={{ color: '#BA8D5B' }} />
                       <span className="summary-card-title">Inquiry Overview &amp; Verification</span>
                     </div>
                     <div className="summary-fields-grid">
                       <div className="summary-item">
-                        <span className="summary-item-label">Occasion / Program:</span>
+                        <span className="summary-item-label">Occasion / Program</span>
                         <span className="summary-item-val">{formData.category || 'Not specified'}</span>
                       </div>
                       <div className="summary-item">
-                        <span className="summary-item-label">Guest Scale:</span>
+                        <span className="summary-item-label">Guest Scale</span>
                         <span className="summary-item-val">
                           {formData.crewSize || formData.guestCount
                             ? `${formData.crewSize || formData.guestCount} Guests`
@@ -744,32 +864,32 @@ export default function InquiryPage({
                         </span>
                       </div>
                       <div className="summary-item">
-                        <span className="summary-item-label">Target Date:</span>
+                        <span className="summary-item-label">Target Date</span>
                         <span className="summary-item-val">
                           {formData.shootStartDate || formData.eventDate || 'Flexible / TBD'}
                         </span>
                       </div>
                       <div className="summary-item">
-                        <span className="summary-item-label">Location:</span>
+                        <span className="summary-item-label">Location</span>
                         <span className="summary-item-val">
                           {formData.locationMoves || formData.location || 'Metro Vancouver'}
                         </span>
                       </div>
                       {activeDietaryChips.length > 0 && (
                         <div className="summary-item full-width">
-                          <span className="summary-item-label">Dietary Accommodations:</span>
+                          <span className="summary-item-label">Dietary Accommodations</span>
                           <span className="summary-item-val">{activeDietaryChips.join(' • ')}</span>
                         </div>
                       )}
                       {formData.severeAllergies && (
                         <div className="summary-item full-width">
-                          <span className="summary-item-label">Allergy Instructions:</span>
+                          <span className="summary-item-label">Allergy Instructions</span>
                           <span className="summary-item-val">{formData.severeAllergies}</span>
                         </div>
                       )}
                       {selectedDishes.length > 0 && (
                         <div className="summary-item full-width">
-                          <span className="summary-item-label">Attached Menu Courses:</span>
+                          <span className="summary-item-label">Attached Menu Courses</span>
                           <span className="summary-item-val">
                             {selectedDishes.map((d) => d.title).join(', ')}
                           </span>
@@ -779,17 +899,20 @@ export default function InquiryPage({
                   </div>
 
                   <div className="inquiry-disclaimer-note">
-                    <Info size={13} />
+                    <Info size={13} style={{ flexShrink: 0, marginTop: '2px' }} />
                     <span>
                       Submitting this form initiates a formal catering consultation and menu draft.
                       Dates and menus are confirmed upon contract execution with Chef Michael Thomas.
                     </span>
                   </div>
 
-                  <button type="submit" className="btn-submit-inquiry">
-                    <span>Submit Inquiry to Executive Chef Michael Thomas</span>
-                    <ArrowRight size={16} />
-                  </button>
+                  {/* Sticky Bottom CTA Bar Above Bottom Nav */}
+                  <div className="sticky-submit-bar">
+                    <button type="submit" className="btn-sticky-submit">
+                      <span>Submit Inquiry to Executive Chef</span>
+                      <ArrowRight size={16} />
+                    </button>
+                  </div>
                 </form>
               )}
             </div>

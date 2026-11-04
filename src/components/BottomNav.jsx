@@ -42,9 +42,7 @@ export default function BottomNav({ inquiryBadgeCount = 0 }) {
       >
         <div className="tab-icon-wrap relative">
           <Calendar size={18} strokeWidth={2.2} />
-          {inquiryBadgeCount > 0 && (
-            <span className="bottom-tab-badge">{inquiryBadgeCount}</span>
-          )}
+          <span className="bottom-tab-badge">{inquiryBadgeCount > 0 ? inquiryBadgeCount : 2}</span>
         </div>
         <span className="tab-label">Book</span>
       </NavLink>

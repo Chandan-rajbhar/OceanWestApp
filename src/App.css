@@ -8580,21 +8580,60 @@
   text-decoration: none;
 }
 
-/* 7. Book Page: Executive Chef Concierge Card Rebuilt */
+/* 7. Book Page: Executive Chef Concierge Card Rebuilt & Polished */
+.inquiry-layout-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inquiry-sidebar-col {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inquiry-main-form-card {
+  background-color: #FFFFFF;
+  border-radius: var(--radius-lg, 16px);
+  padding: 16px;
+  border: 1px solid var(--color-border, #EADFCE);
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(40, 8, 41, 0.04));
+  margin-bottom: 24px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
 .sidebar-info-card {
   background-color: #FFFFFF;
   border-radius: var(--radius-lg, 16px);
   padding: 16px;
   border: 1px solid var(--color-border, #EADFCE);
   box-shadow: var(--shadow-sm, 0 2px 8px rgba(40, 8, 41, 0.04));
-  margin-bottom: 16px;
+  margin-bottom: 4px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .sidebar-card-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.sidebar-header-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #F7F1E8;
+  border: 1px solid #E4D8C7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gold, #BA8D5B);
+  flex-shrink: 0;
 }
 
 .sidebar-card-icon {
@@ -8604,16 +8643,27 @@
 
 .sidebar-card-title {
   font-family: var(--font-serif);
-  font-size: 18px;
+  font-size: 16.5px;
   font-weight: 700;
   color: var(--color-text, #192720);
   margin: 0;
   line-height: 1.25;
 }
 
+.sidebar-card-badge-pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-evergreen, #2F6141);
+  background-color: #EDF7F1;
+  border-radius: 10px;
+  padding: 1px 7px;
+  margin-top: 2px;
+}
+
 .sidebar-card-body-text {
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 12.5px;
+  line-height: 1.45;
   color: var(--color-muted, #636C65);
   margin: 0 0 14px;
 }
@@ -8621,37 +8671,90 @@
 .sidebar-contact-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 14px;
 }
 
 .sidebar-contact-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-height: 44px;
-  font-size: 13.5px;
+  gap: 10px;
+  min-height: 48px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background-color: #FAF8F5;
+  border: 1px solid #ECE4D8;
   color: var(--color-text, #192720);
   text-decoration: none;
-  padding: 4px 0;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .sidebar-contact-item:hover {
-  color: var(--color-gold, #BA8D5B);
+  background-color: #F4EFE6;
+  border-color: var(--color-gold, #BA8D5B);
 }
 
-.contact-row-icon {
-  color: var(--color-gold, #BA8D5B);
+.contact-item-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #280829;
+  color: #FAF8F5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
-.sidebar-planning-tools {
+.contact-item-text-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.contact-item-sub {
+  font-size: 9.5px;
+  color: #76837A;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.contact-item-main {
+  font-size: 13px;
+  font-weight: 700;
+  color: #192720;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.sidebar-shortcuts-section {
+  margin-bottom: 14px;
+  border-top: 1px solid #ECE4D8;
+  padding-top: 12px;
+}
+
+.tools-sub-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #76837A;
+  margin-bottom: 8px;
+}
+
+.tools-mini-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
-  margin-bottom: 16px;
+  width: 100%;
 }
 
 .mini-tool-btn {
@@ -8659,17 +8762,18 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  min-height: 44px;
+  min-height: 42px;
   padding: 6px 4px;
-  border-radius: var(--radius-md, 12px);
-  background-color: #F7F3EE;
-  border: 1px solid var(--color-border, #EADFCE);
+  border-radius: 12px;
+  background-color: #FAF8F5;
+  border: 1px solid #EADFCE;
   font-size: 11px;
   font-weight: 600;
-  color: var(--color-text, #192720);
+  color: #192720;
   cursor: pointer;
   text-align: center;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .mini-tool-btn:hover {
@@ -8682,12 +8786,24 @@
   padding-top: 12px;
 }
 
-.status-label {
-  display: block;
+.status-card-header-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.status-card-title {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--color-muted, #76837A);
-  margin-bottom: 8px;
+  font-weight: 700;
+  color: #192720;
+}
+
+.status-card-text {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #636C65;
+  margin: 0 0 10px;
 }
 
 .btn-status-portal-link {
@@ -8710,6 +8826,38 @@
 
 .btn-status-portal-link:hover {
   background-color: #3D103E;
+}
+
+/* Menu & Services Highlights Strips */
+.menu-trust-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.menu-trust-metric-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 6px;
+  background-color: #FFFFFF;
+  border: 1px solid #EADFCE;
+  border-radius: 12px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #192720;
+  box-shadow: 0 1px 3px rgba(40, 8, 41, 0.03);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.services-quick-tools-strip .services-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: 100%;
 }
 
 /* 8. Form Mode Toggle (Full-Width, 2 Equal Segments) */
@@ -8746,7 +8894,8 @@
   line-height: 1.25;
 }
 
-.form-mode-tab.is-active {
+.form-mode-tab.is-active,
+.form-mode-tab.active {
   background-color: #FFFFFF;
   color: var(--color-plum, #280829);
   box-shadow: 0 2px 6px rgba(40, 8, 41, 0.08);

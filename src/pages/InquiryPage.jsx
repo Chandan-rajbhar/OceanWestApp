@@ -19,9 +19,10 @@ import {
   Sliders,
   Calculator,
   Image as ImageIcon,
-  X
+  X,
+  Sparkles
 } from 'lucide-react';
-import { DIETARY_OPTIONS, CONTACT_INFO } from '../data/cateringData';
+import { DIETARY_OPTIONS, CONTACT_INFO, IMAGES, HERO_SLIDES } from '../data/cateringData';
 
 export default function InquiryPage({
   formData = {},
@@ -117,24 +118,52 @@ export default function InquiryPage({
   return (
     <div className="inquiry-page">
       {/* ------------------------------------------------------------------ */}
-      {/* PAGE BANNER                                                        */}
+      {/* 1. COMPACT ROUNDED HERO CARD WITH GLOW & SHINE (HOME PAGE LAYOUT)  */}
       {/* ------------------------------------------------------------------ */}
-      <section className="page-header-banner">
-        <div className="ow-container">
-          <div className="page-breadcrumb">
-            <Link to="/">Home</Link>
-            <span>/</span>
-            <span>Direct Inquiries</span>
+      <section className="app-hero-card-wrap" style={{ padding: '12px 14px 4px' }}>
+        <div className="app-hero-card">
+          <div className="app-hero-shine" aria-hidden="true" />
+          <img
+            src={isFilm ? (IMAGES.filmCraft || IMAGES.filmCrew) : (IMAGES.wedding || HERO_SLIDES[2]?.image || IMAGES.platter)}
+            alt={isFilm ? "Film Catering Production" : "Ocean West Event Inquiry"}
+            className="app-hero-bg-img"
+            loading="eager"
+          />
+          <div className="app-hero-gradient-overlay" />
+
+          <div className="app-hero-card-content">
+            <div className="hero-location-chip">
+              <Sparkles size={9} className="chip-pin-icon" />
+              <span>{isFilm ? 'FILM & TV RFP • METRO VANCOUVER' : 'DIRECT CONCIERGE INTAKE • 24H RESPONSE'}</span>
+            </div>
+
+            <h1 className="hero-app-headline">
+              {isFilm ? 'Film & TV Production RFP' : 'Plan & Reserve Your Event'}
+            </h1>
+            <p className="hero-app-subtext">
+              Direct consultations with Executive Chef Michael Thomas. Custom proposal in 24h.
+            </p>
+
+            <div className="hero-app-actions-row">
+              <a
+                href={`tel:${CONTACT_INFO.directPhone.replace(/-/g, '')}`}
+                className="btn-hero-explore"
+                title="Call commissary hotline"
+              >
+                <Phone size={11} />
+                <span>Call {CONTACT_INFO.directPhone}</span>
+              </a>
+              <button
+                type="button"
+                className="btn-hero-quote"
+                onClick={onOpenStatusModal}
+                title="Track active inquiry or booking"
+              >
+                <Clock size={11} />
+                <span>Status Portal</span>
+              </button>
+            </div>
           </div>
-          <span className="section-label">Inquire &amp; Reserve</span>
-          <h1 className="page-banner-title">
-            {isFilm ? 'Film & Television Production RFP' : 'Plan Your Next Culinary Experience'}
-          </h1>
-          <p className="page-banner-intro">
-            Executive Chef Michael Thomas provides direct consultations for all private, wedding, and
-            production clients. Submit your specifications below to receive a bespoke catering
-            proposal within 24 hours.
-          </p>
         </div>
       </section>
 
@@ -245,41 +274,63 @@ export default function InquiryPage({
               <div className="sidebar-info-card">
                 {/* Header Row: Shield Icon + Title Inline */}
                 <div className="sidebar-card-header">
-                  <ShieldCheck size={20} className="gold-icon" />
-                  <h4>Executive Chef Concierge</h4>
+                  <div className="sidebar-header-badge">
+                    <ShieldCheck size={18} className="sidebar-card-icon" />
+                  </div>
+                  <div>
+                    <h4 className="sidebar-card-title">Executive Chef Concierge</h4>
+                    <span className="sidebar-card-badge-pill">Direct Response Within 24h</span>
+                  </div>
                 </div>
-                <p className="sidebar-card-text">
-                  We answer every catering inquiry within 24 hours. For short-notice film call sheets
-                  or urgent date holds, call our commissary directly.
+
+                <p className="sidebar-card-body-text">
+                  Direct culinary oversight for every event. For short-notice film call sheets or urgent date holds, call our Richmond commissary directly.
                 </p>
 
-                {/* Contact Rows: Icon + Text on Same Line */}
+                {/* Contact Rows: Clean Tappable Inset Cards */}
                 <div className="sidebar-contact-list">
                   <a
                     href={`tel:${CONTACT_INFO.directPhone.replace(/-/g, '')}`}
                     className="sidebar-contact-item"
                     title="Direct Commissary Hotline"
                   >
-                    <Phone size={18} className="contact-item-icon" />
-                    <span className="contact-item-text">{CONTACT_INFO.directPhone}</span>
+                    <div className="contact-item-icon-box">
+                      <Phone size={15} />
+                    </div>
+                    <div className="contact-item-text-group">
+                      <span className="contact-item-sub">Direct Commissary Hotline</span>
+                      <span className="contact-item-main">{CONTACT_INFO.directPhone}</span>
+                    </div>
                   </a>
+
                   <a
                     href={`mailto:${CONTACT_INFO.email}`}
                     className="sidebar-contact-item"
                     title="Direct Commissary Email"
                   >
-                    <Mail size={18} className="contact-item-icon" />
-                    <span className="contact-item-text">{CONTACT_INFO.email}</span>
+                    <div className="contact-item-icon-box">
+                      <Mail size={15} />
+                    </div>
+                    <div className="contact-item-text-group">
+                      <span className="contact-item-sub">Direct Commissary Email</span>
+                      <span className="contact-item-main">{CONTACT_INFO.email}</span>
+                    </div>
                   </a>
+
                   <div className="sidebar-contact-item non-link">
-                    <MapPin size={18} className="contact-item-icon" />
-                    <span className="contact-item-text">{CONTACT_INFO.address}</span>
+                    <div className="contact-item-icon-box">
+                      <MapPin size={15} />
+                    </div>
+                    <div className="contact-item-text-group">
+                      <span className="contact-item-sub">Kitchen &amp; Studio</span>
+                      <span className="contact-item-main">{CONTACT_INFO.address}</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Planning Shortcuts: 3 Equal Pill Buttons */}
-                <div className="sidebar-planning-tools">
-                  <span className="tools-sub-title">Planning Shortcuts:</span>
+                <div className="sidebar-shortcuts-section">
+                  <span className="tools-sub-title">Quick Event Planning Shortcuts:</span>
                   <div className="tools-mini-grid">
                     <button
                       type="button"
@@ -287,7 +338,7 @@ export default function InquiryPage({
                       onClick={onOpenQuotationModal}
                       title="Generate custom catering quote"
                     >
-                      <Calculator size={14} />
+                      <Calculator size={13} />
                       <span>Estimate Slip</span>
                     </button>
                     <button
@@ -296,7 +347,7 @@ export default function InquiryPage({
                       onClick={onOpenCustomizationModal}
                       title="Configure staffing & setup"
                     >
-                      <Sliders size={14} />
+                      <Sliders size={13} />
                       <span>Custom Setup</span>
                     </button>
                     <button
@@ -305,7 +356,7 @@ export default function InquiryPage({
                       onClick={onOpenChecklistModal}
                       title="View timeline checklist"
                     >
-                      <CheckSquare size={14} />
+                      <CheckSquare size={13} />
                       <span>Checklist</span>
                     </button>
                   </div>
@@ -314,11 +365,11 @@ export default function InquiryPage({
                 {/* Existing Client Block */}
                 <div className="sidebar-status-card">
                   <div className="status-card-header-row">
-                    <Clock size={18} className="gold-icon" />
-                    <h5>Existing Client?</h5>
+                    <Clock size={16} className="gold-icon" />
+                    <span className="status-card-title">Existing Client?</span>
                   </div>
                   <p className="status-card-text">
-                    Track your event intake status, assigned team, or submit feedback.
+                    Track your event intake status, assigned team, or submit feedback in real time.
                   </p>
                   <button
                     type="button"
@@ -427,7 +478,7 @@ export default function InquiryPage({
                       type="button"
                       role="tab"
                       aria-selected={!isFilm}
-                      className={`form-mode-tab ${!isFilm ? 'active' : ''}`}
+                      className={`form-mode-tab ${!isFilm ? 'is-active active' : ''}`}
                       onClick={() => {
                         setFormData((prev) => ({
                           ...prev,
@@ -445,7 +496,7 @@ export default function InquiryPage({
                       type="button"
                       role="tab"
                       aria-selected={isFilm}
-                      className={`form-mode-tab ${isFilm ? 'active' : ''}`}
+                      className={`form-mode-tab ${isFilm ? 'is-active active' : ''}`}
                       onClick={() => {
                         setFormData((prev) => ({
                           ...prev,

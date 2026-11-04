@@ -18,7 +18,7 @@ import {
   Phone,
   MessageSquare
 } from 'lucide-react';
-import { DISCIPLINES } from '../data/cateringData';
+import { DISCIPLINES, IMAGES, HERO_SLIDES } from '../data/cateringData';
 import ImageWithFallback from '../components/ImageWithFallback';
 
 export default function DisciplinesPage({
@@ -32,78 +32,106 @@ export default function DisciplinesPage({
   return (
     <div className="disciplines-page">
       {/* ------------------------------------------------------------------ */}
-      {/* PAGE BANNER                                                        */}
+      {/* 1. COMPACT ROUNDED HERO CARD WITH GLOW & SHINE (HOME PAGE LAYOUT)  */}
       {/* ------------------------------------------------------------------ */}
-      <section className="page-header-banner">
-        <div className="ow-container">
-          <div className="page-breadcrumb">
-            <Link to="/">Home</Link>
-            <span>/</span>
-            <span>Disciplines</span>
-          </div>
-          <span className="section-label">Catering Programs</span>
-          <h1 className="page-banner-title">Tailored Service Disciplines</h1>
-          <p className="page-banner-intro">
-            From 800-guest waterfront galas to 14-hour high-velocity film locations across British Columbia,
-            Ocean West crafts customized dining programs engineered with passion, precision, and Michelin-trained rigor.
-          </p>
+      <section className="app-hero-card-wrap" style={{ padding: '12px 14px 4px' }}>
+        <div className="app-hero-card">
+          <div className="app-hero-shine" aria-hidden="true" />
+          <img
+            src={IMAGES.gala || HERO_SLIDES[0]?.image || IMAGES.wedding}
+            alt="Ocean West Tailored Service Disciplines"
+            className="app-hero-bg-img"
+            loading="eager"
+          />
+          <div className="app-hero-gradient-overlay" />
 
-          {/* Quick Helper Tools Grid (Uniform 40px Height, Clean Layout) */}
-          <div className="services-tools-grid" style={{ marginTop: '16px' }}>
-            <button
-              type="button"
-              className="services-tool-chip"
-              onClick={onOpenQuotationModal}
-              title="Generate a custom quotation estimate"
-            >
-              <Calculator size={14} style={{ color: '#BA8D5B' }} />
-              <span>Quotation Slip</span>
-            </button>
-            <button
-              type="button"
-              className="services-tool-chip"
-              onClick={onOpenCustomizationModal}
-              title="Configure service style and staffing tier"
-            >
-              <Sliders size={14} style={{ color: '#BA8D5B' }} />
-              <span>Custom Setup</span>
-            </button>
-            <button
-              type="button"
-              className="services-tool-chip"
-              onClick={onOpenServingGuide}
-              title="Portion calculator for banquets and courses"
-            >
-              <Scale size={14} style={{ color: '#BA8D5B' }} />
-              <span>Serving Guide</span>
-            </button>
-            <button
-              type="button"
-              className="services-tool-chip"
-              onClick={onOpenGallery}
-              title="Explore event service gallery"
-            >
-              <Camera size={14} style={{ color: '#BA8D5B' }} />
-              <span>Photo Gallery</span>
-            </button>
-            <button
-              type="button"
-              className="services-tool-chip"
-              onClick={onOpenChecklistModal}
-              title="Event planning timeline & checklist"
-            >
-              <CheckSquare size={14} style={{ color: '#BA8D5B' }} />
-              <span>Checklist</span>
-            </button>
+          <div className="app-hero-card-content">
+            <div className="hero-location-chip">
+              <Sparkles size={9} className="chip-pin-icon" />
+              <span>CATERING DISCIPLINES • BRITISH COLUMBIA</span>
+            </div>
+
+            <h1 className="hero-app-headline">
+              Tailored Service Disciplines
+            </h1>
+            <p className="hero-app-subtext">
+              Waterfront galas, film set craft services &amp; bespoke private dining across BC.
+            </p>
+
+            <div className="hero-app-actions-row">
+              <button
+                type="button"
+                className="btn-hero-explore"
+                onClick={onOpenQuotationModal}
+                title="Generate custom quotation estimate"
+              >
+                <Calculator size={11} />
+                <span>Quotation Slip</span>
+              </button>
+              <button
+                type="button"
+                className="btn-hero-quote"
+                onClick={onOpenCustomizationModal}
+                title="Configure service style and staffing tier"
+              >
+                <Sliders size={11} />
+                <span>Custom Setup</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* ALL 4 DETAILED SERVICE DISCIPLINES                                 */}
+      {/* 2. APP PLANNING TOOLS QUICK STRIP                                  */}
       {/* ------------------------------------------------------------------ */}
-      <section className="ow-section">
+      <section className="services-quick-tools-strip" style={{ padding: '10px 14px 4px' }}>
+        <div className="services-tools-grid">
+          <button
+            type="button"
+            className="services-tool-chip"
+            onClick={onOpenServingGuide}
+            title="Portion calculator for banquets and courses"
+          >
+            <Scale size={13} style={{ color: '#BA8D5B' }} />
+            <span>Serving Guide</span>
+          </button>
+          <button
+            type="button"
+            className="services-tool-chip"
+            onClick={onOpenGallery}
+            title="Explore event service gallery"
+          >
+            <Camera size={13} style={{ color: '#BA8D5B' }} />
+            <span>Photo Gallery</span>
+          </button>
+          <button
+            type="button"
+            className="services-tool-chip"
+            onClick={onOpenChecklistModal}
+            title="Event planning timeline & checklist"
+          >
+            <CheckSquare size={13} style={{ color: '#BA8D5B' }} />
+            <span>Checklist</span>
+          </button>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* 3. ALL 4 DETAILED SERVICE DISCIPLINES                              */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="ow-section" style={{ padding: '14px 14px 10px' }}>
         <div className="ow-container">
+          <div className="app-section-header" style={{ marginBottom: '12px' }}>
+            <div>
+              <span className="app-kicker">FULL-SERVICE CATERING</span>
+              <h2 className="app-heading-serif">Signature Disciplines</h2>
+            </div>
+            <span style={{ fontSize: '10.5px', color: '#7A857E', fontWeight: 600 }}>
+              4 Tailored Programs
+            </span>
+          </div>
+
           <div className="disciplines-grid">
             {DISCIPLINES.map((discipline) => (
               <div key={discipline.id} className="discipline-card">
@@ -150,23 +178,21 @@ export default function DisciplinesPage({
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* SERVICE STANDARDS & PRODUCTION CALLOUT                             */}
+      {/* 4. SERVICE STANDARDS & PRODUCTION CALLOUT                         */}
       {/* ------------------------------------------------------------------ */}
-      <section className="ow-section" style={{ backgroundColor: '#F6F3EC', borderTop: '1px solid #EAE4D9' }}>
+      <section className="app-section standard-callout-section" style={{ padding: '16px 14px 20px', backgroundColor: '#F8F5EE', borderTop: '1px solid #EAE4D9' }}>
         <div className="ow-container">
-          <div className="courses-header-centered" style={{ marginBottom: '32px' }}>
-            <span className="section-label">The Ocean West Standard</span>
-            <h2 className="section-heading-serif">Uncompromising Culinary Discipline</h2>
-            <p className="courses-intro">
-              Every discipline is backed by strict food-safety protocols, Vancouver Coastal Health 100% kitchen audit scores,
-              and sustainable local sourcing directly from British Columbia farmers and fisheries.
-            </p>
+          <div className="app-section-header" style={{ marginBottom: '12px' }}>
+            <div>
+              <span className="app-kicker">THE OCEAN WEST STANDARD</span>
+              <h2 className="app-heading-serif">Michelin-Trained Rigor</h2>
+            </div>
           </div>
 
           <div className="hero-stats-row">
             <div className="hero-stat-card">
               <span className="stat-metric">100% Audit Score</span>
-              <span className="stat-desc">Vancouver Coastal Health Certified Commissary</span>
+              <span className="stat-desc">Vancouver Coastal Health Certified</span>
             </div>
             <div className="hero-stat-card">
               <span className="stat-metric">Dedicated Captain</span>
@@ -182,8 +208,8 @@ export default function DisciplinesPage({
             </div>
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: '36px' }}>
-            <Link to="/inquiry" className="btn-primary-gold" style={{ display: 'inline-flex' }}>
+          <div style={{ textAlign: 'center', marginTop: '16px' }}>
+            <Link to="/inquiry" className="btn-primary-gold" style={{ display: 'inline-flex', width: '100%', justifyContent: 'center', height: '46px' }}>
               <span>Plan Your Event in This Discipline</span>
               <ArrowRight size={15} />
             </Link>

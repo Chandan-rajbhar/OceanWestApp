@@ -134,62 +134,80 @@ export default function CoursesPage({
   return (
     <div className="courses-page">
       {/* ------------------------------------------------------------------ */}
-      {/* PAGE BANNER                                                        */}
+      {/* 1. COMPACT ROUNDED HERO CARD WITH GLOW & SHINE (HOME PAGE LAYOUT)  */}
       {/* ------------------------------------------------------------------ */}
-      <section className="page-header-banner">
-        <div className="ow-container">
-          <div className="page-breadcrumb">
-            <Link to="/">Home</Link>
-            <span>/</span>
-            <span>Courses &amp; Delicacies</span>
-          </div>
-          <span className="section-label">Culinary Repertoire</span>
-          <h1 className="page-banner-title">Signature Courses &amp; Delicacies</h1>
-          <p className="page-banner-intro">
-            Executive Chef Michael Thomas harvests directly from Haida Gwaii halibut fishers, Langley
-            heritage duck farms, and Cowichan Valley organic orchards to produce unforgettable fine
-            Pacific Northwest courses.
-          </p>
+      <section className="app-hero-card-wrap" style={{ padding: '12px 14px 4px' }}>
+        <div className="app-hero-card">
+          <div className="app-hero-shine" aria-hidden="true" />
+          <img
+            src={HERO_SLIDES[1]?.image || IMAGES.halibut || IMAGES.platter}
+            alt="Ocean West Signature Courses"
+            className="app-hero-bg-img"
+            loading="eager"
+          />
+          <div className="app-hero-gradient-overlay" />
 
-          {/* Quick Helper Tools Bar */}
-          <div className="courses-tools-strip">
-            <button
-              type="button"
-              className="course-tool-chip"
-              onClick={onOpenServingGuide}
-              title="Calculate recommended portions for courses and platters"
-            >
-              <Scale size={13} style={{ color: '#BA8D5B' }} />
-              <span>Serving-Size Guide</span>
-            </button>
-            <button
-              type="button"
-              className="course-tool-chip"
-              onClick={onOpenGallery}
-              title="Browse plated course photography"
-            >
-              <Camera size={13} style={{ color: '#BA8D5B' }} />
-              <span>Photo Gallery</span>
-            </button>
-            {favoriteDishes.length > 0 && (
+          <div className="app-hero-card-content">
+            <div className="hero-location-chip">
+              <Sparkles size={9} className="chip-pin-icon" />
+              <span>CULINARY REPERTOIRE • PACIFIC NORTHWEST</span>
+            </div>
+
+            <h1 className="hero-app-headline">
+              Signature Courses &amp; Delicacies
+            </h1>
+            <p className="hero-app-subtext">
+              Haida Gwaii halibut, Cowichan Valley organic orchards &amp; artisan display platters.
+            </p>
+
+            <div className="hero-app-actions-row">
               <button
                 type="button"
-                className="course-tool-chip"
-                onClick={() => setActiveCategory('favorites')}
-                title="View your saved dishes"
+                className="btn-hero-explore"
+                onClick={onOpenServingGuide}
+                title="Portion calculator for banquets and courses"
               >
-                <Heart size={13} fill="#BA8D5B" color="#BA8D5B" />
-                <span>{favoriteDishes.length} Saved Favorites</span>
+                <Scale size={11} />
+                <span>Serving Guide</span>
               </button>
-            )}
+              <button
+                type="button"
+                className="btn-hero-quote"
+                onClick={onOpenGallery}
+                title="Browse plated course photography"
+              >
+                <Camera size={11} />
+                <span>Photo Gallery</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* FEATURED READY-TO-SERVE EVENT PLATTERS                             */}
+      {/* 2. CATERING HIGHLIGHTS STRIP (MATCHING HOME PAGE)                  */}
       {/* ------------------------------------------------------------------ */}
-      <section className="app-section event-platters-section" style={{ padding: '20px 16px 8px' }}>
+      <section className="menu-highlights-strip" style={{ padding: '8px 14px 4px' }}>
+        <div className="menu-trust-metrics-row">
+          <div className="menu-trust-metric-chip">
+            <Sparkles size={12} style={{ color: '#BA8D5B' }} />
+            <span>100% Ocean Wise®</span>
+          </div>
+          <div className="menu-trust-metric-chip">
+            <ChefHat size={12} style={{ color: '#BA8D5B' }} />
+            <span>Chef Prepared</span>
+          </div>
+          <div className="menu-trust-metric-chip">
+            <CheckCircle2 size={12} style={{ color: '#BA8D5B' }} />
+            <span>Dietary Protocols</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* 3. FEATURED READY-TO-SERVE EVENT PLATTERS                          */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="app-section event-platters-section" style={{ padding: '14px 14px 8px' }}>
         <div className="app-section-header">
           <div>
             <span className="app-kicker">READY-TO-SERVE</span>

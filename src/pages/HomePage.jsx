@@ -15,7 +15,12 @@ import {
   Play,
   Pause,
   Plus,
-  Check
+  Check,
+  Heart,
+  Calculator,
+  Camera,
+  CheckSquare,
+  Scale
 } from 'lucide-react';
 import { HERO_SLIDES, IMAGES, MENU_COURSES, TESTIMONIALS } from '../data/cateringData';
 
@@ -23,7 +28,14 @@ export default function HomePage({
   setIsAvailabilityModalOpen,
   setIsConsultModalOpen,
   setIsPlannerModalOpen,
-  selectedDishes,
+  onOpenBudgetEstimator,
+  onOpenPackageComparison,
+  onOpenServingGuide,
+  onOpenGallery,
+  onOpenChecklistModal,
+  favoriteDishes = [],
+  onToggleFavorite,
+  selectedDishes = [],
   onToggleDishInMenu,
   showToast
 }) {
@@ -303,14 +315,30 @@ export default function HomePage({
           <div className="courses-grid">
             {MENU_COURSES.slice(0, 3).map((course) => {
               const isSelected = selectedDishes.some(d => d.id === course.id);
+              const isFavorite = favoriteDishes.includes(course.id);
               return (
                 <div key={course.id} className="course-card">
-                  <div className="course-badges-row">
-                    {course.badges.map((b, idx) => (
-                      <span key={idx} className={`course-badge ${b.type}`}>
-                        {b.text}
-                      </span>
-                    ))}
+                  <div className="course-card-top-row">
+                    <div className="course-badges-row">
+                      {course.badges.map((b, idx) => (
+                        <span key={idx} className={`course-badge ${b.type}`}>
+                          {b.text}
+                        </span>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      className={`course-fav-btn ${isFavorite ? 'favorited' : ''}`}
+                      onClick={() => onToggleFavorite && onToggleFavorite(course)}
+                      title={isFavorite ? "Remove from saved favorites" : "Save to favorites"}
+                      aria-label={`Favorite ${course.title}`}
+                    >
+                      <Heart
+                        size={15}
+                        fill={isFavorite ? '#BA8D5B' : 'none'}
+                        color={isFavorite ? '#BA8D5B' : '#76837A'}
+                      />
+                    </button>
                   </div>
                   <h3 className="course-title">{course.title}</h3>
                   <p className="course-desc">{course.description}</p>
@@ -348,6 +376,79 @@ export default function HomePage({
               <span>View Full Menu Collections &amp; Download Guide</span>
               <ArrowRight size={15} />
             </Link>
+          </div>
+
+          {/* Interactive Catering Tools Showcase */}
+          <div className="home-interactive-tools-card" style={{ marginTop: '36px' }}>
+            <div className="tools-card-header">
+              <span className="section-label">Planning Essentials</span>
+              <h3 className="tools-card-heading">Interactive Event Planning Suite</h3>
+              <p className="tools-card-sub">
+                Designed to give hosts, planners, and unit managers instant transparency into pricing, portion counts, and milestone deadlines.
+              </p>
+            </div>
+
+            <div className="home-tools-grid">
+              <button
+                type="button"
+                className="home-tool-item-btn"
+                onClick={() => onOpenBudgetEstimator && onOpenBudgetEstimator('wedding')}
+              >
+                <div className="tool-item-icon">
+                  <Calculator size={18} />
+                </div>
+                <div className="tool-item-text">
+                  <div className="tool-item-title">Budget Estimator</div>
+                  <span className="tool-item-desc">Calculate baseline investments by guest count</span>
+                </div>
+                <ChevronRight size={16} className="tool-arrow" />
+              </button>
+
+              <button
+                type="button"
+                className="home-tool-item-btn"
+                onClick={onOpenServingGuide}
+              >
+                <div className="tool-item-icon">
+                  <Scale size={18} />
+                </div>
+                <div className="tool-item-text">
+                  <div className="tool-item-title">Serving-Size Guide</div>
+                  <span className="tool-item-desc">Recommended canapé and entrée counts</span>
+                </div>
+                <ChevronRight size={16} className="tool-arrow" />
+              </button>
+
+              <button
+                type="button"
+                className="home-tool-item-btn"
+                onClick={onOpenGallery}
+              >
+                <div className="tool-item-icon">
+                  <Camera size={18} />
+                </div>
+                <div className="tool-item-text">
+                  <div className="tool-item-title">Photo Gallery</div>
+                  <span className="tool-item-desc">Browse plated dishes, weddings &amp; film galleys</span>
+                </div>
+                <ChevronRight size={16} className="tool-arrow" />
+              </button>
+
+              <button
+                type="button"
+                className="home-tool-item-btn"
+                onClick={onOpenChecklistModal}
+              >
+                <div className="tool-item-icon">
+                  <CheckSquare size={18} />
+                </div>
+                <div className="tool-item-text">
+                  <div className="tool-item-title">Milestone Checklist</div>
+                  <span className="tool-item-desc">Track tasks from consultation to event day</span>
+                </div>
+                <ChevronRight size={16} className="tool-arrow" />
+              </button>
+            </div>
           </div>
         </div>
       </section>

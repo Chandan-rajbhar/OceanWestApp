@@ -277,3 +277,224 @@ export const CONTACT_INFO = {
   mapsQuery: "https://www.google.com/maps/search/?api=1&query=482+Panorama+Richmond+BC+V6X+0E7"
 };
 
+// Curated Gallery Collection using local photography & verified event imagery
+export const GALLERY_PHOTOS = [
+  {
+    id: 'dish-pear',
+    category: 'dishes',
+    title: 'Roasted Bosc Pear with Gorgonzola',
+    courseType: 'Signature First Course',
+    image: heroPearAi,
+    alt: 'Roasted Bosc Pear with Gorgonzola, Candied Walnuts, and Thyme-Infused Honey',
+    caption: 'Haida Gwaii wildflower honey and Okanagan red wine reduction with whipped gorgonzola cream.'
+  },
+  {
+    id: 'dish-salmon',
+    category: 'dishes',
+    title: 'Wild Pacific Salmon with Citrus Herb Glaze',
+    courseType: 'Artisanal Main Course',
+    image: heroSalmonAi,
+    alt: 'Pan-Seared Wild Pacific Salmon with Citrus Glaze and Braised Asparagus',
+    caption: 'Haida Gwaii line-caught wild salmon with blood orange reduction over parsnip purée.'
+  },
+  {
+    id: 'dish-beef',
+    category: 'dishes',
+    title: 'Prime Angus Beef Medallions & Truffle Demi',
+    courseType: 'Artisanal Main Course',
+    image: heroBeefAi,
+    alt: 'Prime Angus Beef Tenderloin Medallion with Black Garlic and Truffle Demi-Glace',
+    caption: 'Slow-roasted Alberta AAA tenderloin, morel mushroom sauce, and pomme purée.'
+  },
+  {
+    id: 'dish-tacos',
+    category: 'dishes',
+    title: 'Pacific Coast Spot Prawn Tacos',
+    courseType: 'Passed Cocktail Canapé',
+    image: heroTacosAi,
+    alt: 'Artisan Spot Prawn Tacos with Mango Salsa and Lime Crema',
+    caption: 'Locally caught spot prawns with kaffir lime, cilantro reduction, and sweet mango salsa.'
+  },
+  {
+    id: 'dish-halibut',
+    category: 'dishes',
+    title: 'Pan-Seared Pacific Halibut & Golden Glaze',
+    courseType: "Chef's Feature Entrée",
+    image: heroHalibutAi,
+    alt: 'Pan-Seared Pacific Halibut with Saffron Citrus Glaze and Summer Vegetables',
+    caption: 'Fresh BC halibut with saffron citrus glaze and tender summer garden vegetables.'
+  },
+  {
+    id: 'event-wedding',
+    category: 'weddings',
+    title: 'Bespoke Waterfront Wedding Banquet',
+    courseType: 'The Grand Wedding Banquet',
+    image: IMAGES.wedding,
+    alt: 'Outdoor Waterfront Wedding Dining Table Setting with Florals and Candlelight',
+    caption: 'Full multi-course artisanal dinner, cocktail hour passed canapés, and sommelier wine service.'
+  },
+  {
+    id: 'event-film',
+    category: 'film',
+    title: 'Mobile Galley Truck On-Set Production',
+    courseType: 'Movie & Film Production Craft Services',
+    image: IMAGES.filmCraft,
+    alt: 'Film and Television On-Location Craft Catering Mobile Kitchen and Hot Table',
+    caption: 'Continuous 14-hour hot meals, rolling craft tables, and Italian espresso bar for film crews.'
+  },
+  {
+    id: 'event-gala',
+    category: 'corporate',
+    title: 'Executive Summit Plated Dinner',
+    courseType: 'Galas & Executive Summits',
+    image: IMAGES.gala,
+    alt: 'Corporate Gala Ballroom Plated Dinner Table Setup in Richmond',
+    caption: 'Synchronized simultaneous plated service for high-stakes conferences and corporate award dinners.'
+  },
+  {
+    id: 'event-platter',
+    category: 'platters',
+    title: 'Artisanal Charcuterie & Grazing Table',
+    courseType: 'Party Platters & Casual BBQ',
+    image: IMAGES.platter,
+    alt: 'Pacific Coast Artisanal Cheese and Charcuterie Grazing Table Presentation',
+    caption: 'Salt Spring Island goat cheese, cured meats, honeycomb, and house-pickled samphire.'
+  }
+];
+
+// Serving-Size & Quantity Planning Guidelines
+export const SERVING_GUIDELINES = {
+  canapes: {
+    title: 'Passed Cocktail Canapés',
+    preDinner: '4 to 6 bites per guest (1–1.5 hour cocktail hour before seated meal)',
+    cocktailParty: '10 to 14 bites per guest (for stand-up evening reception replacing dinner)',
+    notes: 'Includes selection of warm seafood skewers, cold canapés, and vegetarian tartlets.'
+  },
+  platedDinner: {
+    title: 'Artisanal Plated Dinner',
+    portion: '3 to 4 courses: Starter (4 oz), Main Protein (6–8 oz), Starch & Seasonal Greens (5 oz), Dessert (3 oz)',
+    notes: 'Individually plated with custom dietary substitutions prepared simultaneously.'
+  },
+  grazingBoard: {
+    title: 'Artisanal Grazing Tables & Platters',
+    portion: '3 to 4.5 oz of cheeses, smoked seafood, and cured meats per person + artisan bread & crisps',
+    notes: 'Stylized on reclaimed wood boards or luxury ceramic with seasonal edible florals.'
+  },
+  lateNight: {
+    title: 'Late-Night Celebration Station',
+    portion: '1.25 to 1.5 portions per guest (calculated for approximately 75% of remaining guests)',
+    notes: 'Popular choices include artisan slider bars and BC spot prawn street tacos.'
+  },
+  filmCraft: {
+    title: 'Film & Media Production Days',
+    portion: '2 complete hot meal calls (breakfast & lunch/dinner) + continuous craft truck service per 12–14 hr shoot day',
+    notes: 'All items individually portioned and labeled for rapid union meal windows.'
+  }
+};
+
+// Event Planning Checklist Milestones
+export const CHECKLIST_MILESTONES = [
+  {
+    id: 'milestone-1',
+    title: 'Submit Initial Event Inquiry',
+    timeline: '6–12 months prior',
+    description: 'Submit your target date, estimated guest count, and event category to secure preliminary hold.',
+    category: 'booking'
+  },
+  {
+    id: 'milestone-2',
+    title: 'Consultation with Chef Michael Thomas',
+    timeline: '5–8 months prior',
+    description: 'Discuss culinary vision, seasonal ingredient availability, service format, and venue parameters.',
+    category: 'planning'
+  },
+  {
+    id: 'milestone-3',
+    title: 'Chef Tasting & Menu Curation',
+    timeline: '3–6 months prior',
+    description: 'Sample candidate first courses, wild catch entrées, and wine pairings at our Richmond commissary.',
+    category: 'tasting'
+  },
+  {
+    id: 'milestone-4',
+    title: 'Collect Dietary & Allergy Restrictions',
+    timeline: '4–6 weeks prior',
+    description: 'Gather specific guest requirements: celiac/gluten-free, vegan, halal, and severe anaphylactic allergies.',
+    category: 'dietary'
+  },
+  {
+    id: 'milestone-5',
+    title: 'Submit Final Guaranteed Guest Count',
+    timeline: '14 days prior',
+    description: 'Confirm the exact guest count for kitchen ingredient procurement and service staff scheduling.',
+    category: 'logistics'
+  },
+  {
+    id: 'milestone-6',
+    title: 'Coordinate Venue Kitchen & Power Access',
+    timeline: '7 days prior',
+    description: 'Verify kitchen prep tables, electrical hookups, loading dock clearance, or generator truck access.',
+    category: 'venue'
+  },
+  {
+    id: 'milestone-7',
+    title: 'Event-Day Execution & Service Sign-off',
+    timeline: 'Day of Event',
+    description: 'On-site executive chef arrival, rolling hot galley prep, attentive table service, and complete clean-down.',
+    category: 'event'
+  }
+];
+
+// Package Comparison Data
+export const PACKAGE_COMPARISON = [
+  {
+    id: 'intimate',
+    name: 'The Intimate Gathering',
+    baseRate: '$85 / Guest',
+    rateNumeric: 85,
+    pricingType: 'published',
+    guestRange: '12–35 Guests',
+    minGuests: 12,
+    maxGuests: 35,
+    serviceFormat: '3-Course Plated or 5 Passed Canapés',
+    staffingIncluded: '1 Executive Chef + 1 Dedicated Captain',
+    tableSettings: 'Dinnerware, flatware & glassware coordination included',
+    dietaryAdaptation: 'Custom 100% dietary substitutions included',
+    lateNightStation: 'Optional add-on',
+    bestFor: 'Private estates, executive retreats & micro-weddings'
+  },
+  {
+    id: 'wedding',
+    name: 'The Grand Wedding Banquet',
+    baseRate: '$140 / Guest',
+    rateNumeric: 140,
+    pricingType: 'published',
+    guestRange: '40–350 Guests',
+    minGuests: 40,
+    maxGuests: 350,
+    serviceFormat: '4-Course Artisanal Plated or Luxury Family-Style',
+    staffingIncluded: 'Full culinary team + minimum 4 professional waitstaff',
+    tableSettings: 'Full table settings, linens, and bar glassware management',
+    dietaryAdaptation: 'Full bespoke dietary packaging & allergen protocols',
+    lateNightStation: 'Included (Late-night slider or taco station)',
+    bestFor: 'Full-scale wedding receptions, galas & milestone celebrations'
+  },
+  {
+    id: 'film',
+    name: 'Movie & Film Production',
+    baseRate: 'Daily Call Sheet Rates',
+    rateNumeric: null,
+    pricingType: 'quote_required',
+    guestRange: '25–400+ Crew Daily',
+    minGuests: 25,
+    maxGuests: 450,
+    serviceFormat: 'Continuous 14-Hour Hot Galley & Rolling Meal Calls',
+    staffingIncluded: 'Mobile galley chefs, craft truck driver & barista',
+    tableSettings: 'Self-contained commercial mobile kitchen trucks',
+    dietaryAdaptation: 'Individually labeled union-compliant dietary packaging',
+    lateNightStation: 'Second meal wraps & late night turnaround included',
+    bestFor: 'Feature film, television series & commercial locations across BC'
+  }
+];
+
+

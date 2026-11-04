@@ -39,6 +39,17 @@
   padding: 0;
 }
 
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+input, button, textarea, select {
+  font: inherit;
+  max-width: 100%;
+}
+
 html {
   font-family: var(--font-sans);
   background-color: #EDE8DF; /* Warm neutral desktop backdrop */

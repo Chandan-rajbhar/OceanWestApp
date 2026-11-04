@@ -8,7 +8,10 @@ import {
   Clock,
   Sparkles,
   Users,
-  Compass
+  Compass,
+  Calculator,
+  Layers,
+  Scale
 } from 'lucide-react';
 import { PACKAGES } from '../data/cateringData';
 
@@ -16,6 +19,9 @@ export default function PackagesPage({
   setFormData,
   setIsAvailabilityModalOpen,
   setIsPlannerModalOpen,
+  onOpenBudgetEstimator,
+  onOpenPackageComparison,
+  onOpenServingGuide,
   showToast
 }) {
   const navigate = useNavigate();
@@ -48,6 +54,37 @@ export default function PackagesPage({
             Ocean West Catering provides comprehensive setup, Michelin-caliber culinary craft, professional service staff,
             china, bar coordination, aesthetic styling, and complete dietary adaptation across British Columbia.
           </p>
+
+          {/* Quick Helper Tools Strip */}
+          <div className="courses-tools-strip">
+            <button
+              type="button"
+              className="course-tool-chip"
+              onClick={onOpenPackageComparison}
+              title="Compare all 3 packages side-by-side"
+            >
+              <Layers size={13} style={{ color: '#BA8D5B' }} />
+              <span>Compare All Packages</span>
+            </button>
+            <button
+              type="button"
+              className="course-tool-chip"
+              onClick={() => onOpenBudgetEstimator && onOpenBudgetEstimator('wedding')}
+              title="Calculate indicative catering budget by guest count"
+            >
+              <Calculator size={13} style={{ color: '#BA8D5B' }} />
+              <span>Budget Estimator</span>
+            </button>
+            <button
+              type="button"
+              className="course-tool-chip"
+              onClick={() => setIsPlannerModalOpen(true)}
+              title="Open the guided event planner"
+            >
+              <Compass size={13} style={{ color: '#BA8D5B' }} />
+              <span>Guided Planner</span>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -56,23 +93,23 @@ export default function PackagesPage({
       {/* ------------------------------------------------------------------ */}
       <section className="ow-section packages-section">
         <div className="ow-container">
-          {/* Quick Event Planner Banner */}
+          {/* Quick Event Planner & Budget Banner */}
           <div className="planner-quick-card" style={{ marginBottom: '28px' }}>
             <div className="planner-quick-left">
               <div className="planner-quick-icon">
-                <Compass size={18} />
+                <Calculator size={18} />
               </div>
               <div>
-                <div className="planner-quick-title">Custom Guest &amp; Staffing Planner</div>
-                <div className="planner-quick-sub">Calculate staffing ratios and prep logistics for your guest count</div>
+                <div className="planner-quick-title">Instant Budget &amp; Logistics Estimator</div>
+                <div className="planner-quick-sub">Explore indicative food and service baseline investments by guest count</div>
               </div>
             </div>
             <button
               type="button"
               className="planner-quick-btn"
-              onClick={() => setIsPlannerModalOpen(true)}
+              onClick={() => onOpenBudgetEstimator && onOpenBudgetEstimator('wedding')}
             >
-              <span>Launch Planner</span>
+              <span>Calculate Budget</span>
               <ArrowRight size={14} />
             </button>
           </div>
@@ -102,20 +139,56 @@ export default function PackagesPage({
                 </ul>
                 <div className="package-footer-block">
                   <div className="package-capacity-pill">{pkg.minGuests}</div>
-                  <button
-                    type="button"
-                    className="btn-package-action"
-                    onClick={() => handleSelectPackage(pkg.categoryName, pkg.defaultGuestCount)}
-                  >
-                    Select {pkg.categoryName}
-                  </button>
+                  <div className="package-action-btns-group">
+                    <button
+                      type="button"
+                      className="btn-package-action"
+                      onClick={() => handleSelectPackage(pkg.categoryName, pkg.defaultGuestCount)}
+                    >
+                      Select &amp; Inquire
+                    </button>
+                    {pkg.id !== 'film' && (
+                      <button
+                        type="button"
+                        className="btn-pkg-calc"
+                        onClick={() => onOpenBudgetEstimator && onOpenBudgetEstimator(pkg.id)}
+                        title="Estimate budget for this package"
+                      >
+                        <Calculator size={13} />
+                        <span>Estimate</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
+          {/* Side-by-Side Comparison Feature Card - Feature 6 */}
+          <div className="package-compare-cta-box" style={{ marginTop: '36px' }}>
+            <div className="compare-cta-left">
+              <div className="compare-cta-icon">
+                <Layers size={20} />
+              </div>
+              <div>
+                <h4 className="compare-cta-title">Need Help Choosing the Right Program?</h4>
+                <p className="compare-cta-desc">
+                  Compare Intimate Gatherings, Grand Weddings, and Film Craft services side by side by guest range, service style, and staffing.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="btn-primary-gold"
+              onClick={onOpenPackageComparison}
+            >
+              <span>View Side-by-Side Comparison</span>
+              <ArrowRight size={14} />
+            </button>
+          </div>
+
           {/* Guarantee banner */}
-          <div className="guarantee-notice-bar" style={{ marginTop: '36px' }}>
+          <div className="guarantee-notice-bar" style={{ marginTop: '28px' }}>
             <div className="guarantee-icon">
               <ShieldCheck size={16} />
             </div>
@@ -126,7 +199,7 @@ export default function PackagesPage({
           </div>
 
           {/* Check Availability Callout */}
-          <div className="menu-guide-banner" style={{ marginTop: '30px' }}>
+          <div className="menu-guide-banner" style={{ marginTop: '28px' }}>
             <div className="banner-left">
               <div className="banner-icon-box">
                 <Calendar size={22} />
@@ -152,4 +225,3 @@ export default function PackagesPage({
     </div>
   );
 }
-

@@ -6,15 +6,26 @@ import {
   X,
   Phone,
   User,
-  ShoppingBag
+  ShoppingBag,
+  Compass,
+  Calculator,
+  Camera,
+  CheckSquare,
+  Scale
 } from 'lucide-react';
 
 export default function Header({
   isScrolled,
-  selectedDishesCount,
+  selectedDishesCount = 0,
   onOpenMyMenu,
   onOpenContactModal,
   onOpenConsultModal,
+  onOpenStatusModal,
+  onOpenPlannerModal,
+  onOpenBudgetModal,
+  onOpenGalleryModal,
+  onOpenChecklistModal,
+  onOpenServingGuideModal,
   drawerOpen,
   onToggleDrawer,
   onCloseDrawer,
@@ -46,7 +57,9 @@ export default function Header({
             </div>
             <div className="app-brand-text">
               <span className="app-brand-title">Ocean West</span>
-              <span className="app-brand-sub">Fine Catering &amp; Services</span>
+              <span className="app-brand-sub">
+                Fine Catering<span className="brand-sub-extra"> &amp; Services</span>
+              </span>
             </div>
           </Link>
 
@@ -109,6 +122,7 @@ export default function Header({
         {/* Dropdown Mobile Navigation Drawer - Matches Reference Design Exactly */}
         {drawerOpen && (
           <div className="mobile-nav-drawer">
+            {/* Primary Navigation Links */}
             <NavLink
               to="/"
               end
@@ -153,6 +167,68 @@ export default function Header({
               Direct Inquiries
             </NavLink>
 
+            {/* Quick Interactive Catering Tools */}
+            <div className="drawer-tools-section">
+              <span className="drawer-tools-label">Catering Planning Tools</span>
+              <div className="drawer-tools-grid">
+                <button
+                  type="button"
+                  className="drawer-tool-pill"
+                  onClick={() => {
+                    onCloseDrawer();
+                    if (onOpenPlannerModal) onOpenPlannerModal();
+                  }}
+                >
+                  <Compass size={13} />
+                  <span>Event Planner</span>
+                </button>
+                <button
+                  type="button"
+                  className="drawer-tool-pill"
+                  onClick={() => {
+                    onCloseDrawer();
+                    if (onOpenBudgetModal) onOpenBudgetModal('wedding');
+                  }}
+                >
+                  <Calculator size={13} />
+                  <span>Budget Estimator</span>
+                </button>
+                <button
+                  type="button"
+                  className="drawer-tool-pill"
+                  onClick={() => {
+                    onCloseDrawer();
+                    if (onOpenGalleryModal) onOpenGalleryModal();
+                  }}
+                >
+                  <Camera size={13} />
+                  <span>Photo Gallery</span>
+                </button>
+                <button
+                  type="button"
+                  className="drawer-tool-pill"
+                  onClick={() => {
+                    onCloseDrawer();
+                    if (onOpenChecklistModal) onOpenChecklistModal();
+                  }}
+                >
+                  <CheckSquare size={13} />
+                  <span>Milestone Checklist</span>
+                </button>
+                <button
+                  type="button"
+                  className="drawer-tool-pill"
+                  onClick={() => {
+                    onCloseDrawer();
+                    if (onOpenServingGuideModal) onOpenServingGuideModal();
+                  }}
+                >
+                  <Scale size={13} />
+                  <span>Serving Guide</span>
+                </button>
+              </div>
+            </div>
+
             {/* Action Buttons */}
             <div className="mobile-drawer-actions">
               <button
@@ -171,13 +247,11 @@ export default function Header({
                 className="btn-outline-subtle mobile-drawer-btn"
                 onClick={() => {
                   onCloseDrawer();
-                  if (showToast) {
-                    showToast('Ocean West Client Portal login is active for contracted events.');
-                  }
+                  if (onOpenStatusModal) onOpenStatusModal();
                 }}
               >
                 <User size={15} />
-                <span>Client Portal Access</span>
+                <span>Client Portal &amp; Inquiry Status</span>
               </button>
             </div>
           </div>

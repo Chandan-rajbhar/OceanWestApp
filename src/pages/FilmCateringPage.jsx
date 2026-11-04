@@ -19,12 +19,15 @@ export default function FilmCateringPage({ setFormData, showToast }) {
   const handleBookFilm = () => {
     setFormData(prev => ({
       ...prev,
+      isFilmRequest: true,
       category: 'Movie & Film Production',
+      crewSize: '120',
       guestCount: '120',
-      location: 'Metro Vancouver / Film Location'
+      location: 'Metro Vancouver / Film Location',
+      craftNeeds: 'Hot Galley Truck & Continuous Espresso'
     }));
-    showToast('Film & TV production details applied to inquiry form.');
-    navigate('/inquiry');
+    showToast('Film & TV production specifications loaded into inquiry form.');
+    navigate('/inquiry?type=film');
   };
 
   return (

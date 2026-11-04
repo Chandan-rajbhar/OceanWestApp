@@ -1,8 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Sparkles, Utensils, Calendar, Mail } from 'lucide-react';
+import { Utensils, BookOpen, Sparkles, Calendar, Mail } from 'lucide-react';
 
-export default function BottomNav({ inquiryBadgeCount }) {
+export default function BottomNav({ inquiryBadgeCount = 0 }) {
   return (
     <nav className="app-bottom-nav" aria-label="Mobile Navigation Bar">
       <NavLink
@@ -11,19 +11,9 @@ export default function BottomNav({ inquiryBadgeCount }) {
         className={({ isActive }) => `bottom-tab-link ${isActive ? 'active' : ''}`}
       >
         <div className="tab-icon-wrap">
-          <Home size={19} />
+          <Utensils size={18} strokeWidth={2.2} />
         </div>
         <span className="tab-label">Home</span>
-      </NavLink>
-
-      <NavLink
-        to="/disciplines"
-        className={({ isActive }) => `bottom-tab-link ${isActive ? 'active' : ''}`}
-      >
-        <div className="tab-icon-wrap">
-          <Sparkles size={19} />
-        </div>
-        <span className="tab-label">Disciplines</span>
       </NavLink>
 
       <NavLink
@@ -31,19 +21,19 @@ export default function BottomNav({ inquiryBadgeCount }) {
         className={({ isActive }) => `bottom-tab-link ${isActive ? 'active' : ''}`}
       >
         <div className="tab-icon-wrap">
-          <Utensils size={19} />
+          <BookOpen size={18} strokeWidth={2.2} />
         </div>
-        <span className="tab-label">Courses</span>
+        <span className="tab-label">Menus</span>
       </NavLink>
 
       <NavLink
-        to="/packages"
+        to="/disciplines"
         className={({ isActive }) => `bottom-tab-link ${isActive ? 'active' : ''}`}
       >
         <div className="tab-icon-wrap">
-          <Calendar size={19} />
+          <Sparkles size={18} strokeWidth={2.2} />
         </div>
-        <span className="tab-label">Packages</span>
+        <span className="tab-label">Services</span>
       </NavLink>
 
       <NavLink
@@ -51,14 +41,13 @@ export default function BottomNav({ inquiryBadgeCount }) {
         className={({ isActive }) => `bottom-tab-link ${isActive ? 'active' : ''}`}
       >
         <div className="tab-icon-wrap relative">
-          <Mail size={19} />
+          <Calendar size={18} strokeWidth={2.2} />
           {inquiryBadgeCount > 0 && (
             <span className="bottom-tab-badge">{inquiryBadgeCount}</span>
           )}
         </div>
-        <span className="tab-label">Inquire</span>
+        <span className="tab-label">Book</span>
       </NavLink>
     </nav>
   );
 }
-

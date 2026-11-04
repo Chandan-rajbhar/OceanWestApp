@@ -18,9 +18,12 @@ import {
   Calendar,
   AlertTriangle,
   Info,
-  CheckSquare
+  CheckSquare,
+  Sliders,
+  Calculator,
+  Image as ImageIcon
 } from 'lucide-react';
-import { DIETARY_OPTIONS, CONTACT_INFO } from '../data/cateringData';
+import { DIETARY_OPTIONS, CONTACT_INFO, OCCASIONS } from '../data/cateringData';
 
 export default function InquiryPage({
   formData,
@@ -29,19 +32,21 @@ export default function InquiryPage({
   setFormSubmitted,
   handleFormChange,
   handleFormSubmit,
-  selectedDishes,
+  selectedDishes = [],
   onOpenMyMenu,
   onOpenResetConfirm,
   onOpenStatusModal,
   onOpenChecklistModal,
+  onOpenCustomizationModal,
+  onOpenQuotationModal,
   showToast
 }) {
   const [searchParams] = useSearchParams();
 
   // Check if routed specifically for film catering
   useEffect(() => {
-    if (searchParams.get('type') === 'film' || formData.category === 'Movie & Film Production') {
-      setFormData(prev => ({
+    if (searchParams.get('type') === 'film' || formData.category === 'Movie & Film Production' || formData.category === 'film') {
+      setFormData((prev) => ({
         ...prev,
         isFilmRequest: true,
         category: 'Movie & Film Production'
@@ -54,11 +59,11 @@ export default function InquiryPage({
   const toggleDietaryChip = (chipLabel) => {
     let updated;
     if (activeDietaryChips.includes(chipLabel)) {
-      updated = activeDietaryChips.filter(c => c !== chipLabel);
+      updated = activeDietaryChips.filter((c) => c !== chipLabel);
     } else {
       updated = [...activeDietaryChips, chipLabel];
     }
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       dietaryChips: updated
     }));
@@ -69,10 +74,18 @@ export default function InquiryPage({
   const toggleMealCall = (meal) => {
     const current = formData.mealCalls || ['Breakfast', 'Lunch'];
     const updated = current.includes(meal)
-      ? current.filter(m => m !== meal)
+      ? current.filter((m) => m !== meal)
       : [...current, meal];
-    setFormData(prev => ({ ...prev, mealCalls: updated }));
+    setFormData((prev) => ({ ...prev, mealCalls: updated }));
   };
+
+  // Customization preview
+  const customizations = formData.customizations || {};
+  const hasCustomizations =
+    customizations.serviceStyle ||
+    customizations.tableSetup ||
+    customizations.staffingTier ||
+    (customizations.uploadedImages && customizations.uploadedImages.length > 0);
 
   return (
     <div className="inquiry-page">
@@ -91,172 +104,119 @@ export default function InquiryPage({
             {isFilm ? 'Film & Television Production RFP' : 'Plan Your Next Culinary Experience'}
           </h1>
           <p className="page-banner-intro">
-            Executive Chef Michael Thomas provides direct consultations for all private, wedding, and production clients.
-            Submit your specifications below to receive a bespoke catering proposal within 24 hours.
+            Executive Chef Michael Thomas provides direct consultations for all private, wedding, and
+            production clients. Submit your specifications below to receive a bespoke catering
+            proposal within 24 hours.
           </p>
         </div>
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* FORM & COMMISSARY CONTACT GRID                                     */}
+      {/* FORM SECTION                                                       */}
       {/* ------------------------------------------------------------------ */}
-      <section className="ow-section inquiry-section">
+      <section className="ow-section inquiry-form-section">
         <div className="ow-container">
-          {/* Quick Draft Actions Bar */}
-          <div className="draft-tools-bar">
-            <div className="draft-tools-left">
-              <span className="draft-status-pill">
-                <CheckCircle2 size={12} style={{ color: '#2F6141' }} />
-                <span>Draft Auto-Saved</span>
-              </span>
-              {selectedDishes.length > 0 && (
-                <button
-                  type="button"
-                  className="draft-menu-pill"
-                  onClick={onOpenMyMenu}
-                  title="View Selected Dishes in My Menu"
-                >
-                  <ShoppingBag size={12} />
-                  <span>{selectedDishes.length} Dishes Attached</span>
-                </button>
-              )}
-            </div>
-            <div className="draft-tools-right">
-              <button
-                type="button"
-                className="draft-reset-btn"
-                onClick={onOpenResetConfirm}
-                title="Reset form fields and attached dishes"
-              >
-                <RotateCcw size={12} />
-                <span>Reset Draft</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="inquiry-grid">
-            {/* Left Contact & Info Column */}
-            <div className="inquiry-left-info">
-              <span className="section-label">Commissary Headquarters</span>
-              <h2 className="inquiry-title">Direct Culinary Access</h2>
-              <p className="inquiry-lead">
-                Whether you are finalizing wedding dates, booking 14-hour location shoots, or coordinating corporate banquets,
-                our executive team is available directly.
-              </p>
-
-              <div className="contact-cards-stack">
-                {/* Direct Line */}
-                <div className="contact-card-item">
-                  <div className="contact-card-icon">
-                    <Phone size={15} />
-                  </div>
-                  <div>
-                    <div className="contact-card-label">Direct Chef Line</div>
-                    <a href={`tel:${CONTACT_INFO.directPhone.replace(/-/g, '')}`} className="contact-card-value">
-                      {CONTACT_INFO.directPhone}
-                    </a>
-                    <div className="contact-card-sub">Available for urgent date holds &amp; call sheets</div>
-                  </div>
+          <div className="inquiry-layout-grid">
+            {/* Left Column: Direct Contacts & Transparency */}
+            <div className="inquiry-sidebar-col">
+              <div className="sidebar-info-card">
+                <div className="sidebar-card-header">
+                  <ShieldCheck size={20} className="gold-icon" />
+                  <h4>Executive Chef Concierge</h4>
                 </div>
-
-                {/* Office Line */}
-                <div className="contact-card-item">
-                  <div className="contact-card-icon">
-                    <Clock size={15} />
-                  </div>
-                  <div>
-                    <div className="contact-card-label">Commissary Kitchen Office</div>
-                    <a href={`tel:${CONTACT_INFO.officePhone.replace(/-/g, '')}`} className="contact-card-value">
-                      {CONTACT_INFO.officePhone}
-                    </a>
-                    <div className="contact-card-sub">{CONTACT_INFO.hours}</div>
-                  </div>
-                </div>
-
-                {/* Email */}
-                <div className="contact-card-item">
-                  <div className="contact-card-icon">
-                    <Mail size={15} />
-                  </div>
-                  <div>
-                    <div className="contact-card-label">Official Email</div>
-                    <a href={`mailto:${CONTACT_INFO.email}`} className="contact-card-value">
-                      {CONTACT_INFO.email}
-                    </a>
-                    <div className="contact-card-sub">24-hour turnaround on formal proposals</div>
-                  </div>
-                </div>
-
-                {/* Location */}
-                <div className="contact-card-item">
-                  <div className="contact-card-icon">
-                    <MapPin size={15} />
-                  </div>
-                  <div>
-                    <div className="contact-card-label">Commissary Facility</div>
-                    <a
-                      href={CONTACT_INFO.mapsQuery}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="contact-card-value"
-                      style={{ fontSize: '13.5px' }}
-                    >
-                      {CONTACT_INFO.commissaryAddress}
-                    </a>
-                    <div className="contact-card-sub">Tastings and consultations by appointment</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Health permit certification */}
-              <div className="health-permit-badge">
-                <ShieldCheck size={16} className="health-permit-icon" />
-                <span><strong>BC Health Certified &amp; Fully Insured:</strong> Commercial Kitchen Permit &amp; Comprehensive Event Liability Coverage</span>
-              </div>
-
-              {/* Event Checklist Shortcut */}
-              <div className="inquiry-sidebar-checklist-card">
-                <div className="sidebar-card-title">
-                  <CheckSquare size={16} style={{ color: '#BA8D5B' }} />
-                  <span>Planning an Event?</span>
-                </div>
-                <p className="sidebar-card-desc">
-                  Keep track of all milestone deadlines from tasting to event day with our checklist.
+                <p className="sidebar-card-text">
+                  We answer every catering inquiry within 24 hours. For short-notice film call sheets
+                  or urgent date holds, call our commissary directly.
                 </p>
-                <button
-                  type="button"
-                  className="btn-outline-subtle"
-                  onClick={onOpenChecklistModal}
-                  style={{ width: '100%', justifyContent: 'center' }}
-                >
-                  <span>Open Milestone Checklist</span>
-                </button>
+
+                <div className="sidebar-contact-list">
+                  <a href={`tel:${CONTACT_INFO.directPhone.replace(/-/g, '')}`} className="sidebar-contact-item">
+                    <Phone size={15} />
+                    <span>{CONTACT_INFO.directPhone}</span>
+                  </a>
+                  <a href={`mailto:${CONTACT_INFO.email}`} className="sidebar-contact-item">
+                    <Mail size={15} />
+                    <span>{CONTACT_INFO.email}</span>
+                  </a>
+                  <div className="sidebar-contact-item non-link">
+                    <MapPin size={15} />
+                    <span>{CONTACT_INFO.address}</span>
+                  </div>
+                </div>
+
+                <div className="sidebar-planning-tools">
+                  <span className="tools-sub-title">Planning Shortcuts:</span>
+                  <div className="tools-mini-grid">
+                    <button
+                      type="button"
+                      className="mini-tool-btn"
+                      onClick={onOpenQuotationModal}
+                    >
+                      <Calculator size={13} />
+                      <span>Estimate Slip</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="mini-tool-btn"
+                      onClick={onOpenCustomizationModal}
+                    >
+                      <Sliders size={13} />
+                      <span>Custom Setup</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="mini-tool-btn"
+                      onClick={onOpenChecklistModal}
+                    >
+                      <CheckSquare size={13} />
+                      <span>Checklist</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status Tracking Reminder */}
+              <div className="sidebar-status-card">
+                <Clock size={18} className="gold-icon" />
+                <div>
+                  <h5>Existing Client?</h5>
+                  <p>Track your event intake status, assigned team, or submit feedback.</p>
+                  <button
+                    type="button"
+                    className="btn-status-portal-link"
+                    onClick={onOpenStatusModal}
+                  >
+                    <span>Open Status Portal</span>
+                    <ArrowRight size={13} />
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Right Form Card */}
-            <div className="inquiry-form-card">
+            {/* Right Column: Inquiry Form / Success Card */}
+            <div className="inquiry-main-form-card">
               {formSubmitted ? (
-                <div className="inquiry-success-state">
-                  <div className="success-icon-bubble">
-                    <Check size={32} strokeWidth={2.5} />
+                <div className="inquiry-success-receipt">
+                  <div className="receipt-top-icon">
+                    <CheckCircle2 size={44} style={{ color: '#BA8D5B' }} />
                   </div>
-                  <h3 className="success-heading">Inquiry Received</h3>
-                  <p className="success-message">
-                    Thank you, <strong>{formData.fullName}</strong>. Executive Chef Michael Thomas has received your event details for <strong>{formData.category}</strong>. You will receive a bespoke catering proposal at <strong>{formData.email}</strong> within 24 hours.
+                  <h3 className="receipt-heading">Inquiry Registered</h3>
+                  <p className="receipt-text">
+                    Thank you, <strong>{formData.fullName}</strong>. Executive Chef Michael Thomas
+                    has received your event details for <strong>{formData.category}</strong>. You will
+                    receive a bespoke catering proposal at <strong>{formData.email}</strong> within
+                    24 hours.
                   </p>
-                  
-                  {/* Generated demo reference */}
-                  <div className="demo-ref-card">
-                    <span className="demo-ref-label">Inquiry Reference Code:</span>
-                    <span className="demo-ref-val">OW-2026-7841</span>
-                    <span className="demo-ref-hint">Keep this code to reference your consultation request.</span>
-                  </div>
 
-                  {/* Summary of what was sent */}
-                  <div className="submission-receipt-card">
+                  <div className="receipt-summary-box">
                     <div className="receipt-row">
-                      <span className="receipt-label">Event Program:</span>
+                      <span className="receipt-label">Inquiry Code:</span>
+                      <span className="receipt-val">
+                        <code>{formData.inquiryReference || 'OW-2026-7841'}</code>
+                      </span>
+                    </div>
+                    <div className="receipt-row">
+                      <span className="receipt-label">Event Category:</span>
                       <span className="receipt-val">{formData.category}</span>
                     </div>
                     {formData.eventDate && (
@@ -267,8 +227,14 @@ export default function InquiryPage({
                     )}
                     {formData.guestCount && (
                       <div className="receipt-row">
-                        <span className="receipt-label">Guest Count:</span>
+                        <span className="receipt-label">Guest Scale:</span>
                         <span className="receipt-val">{formData.guestCount} Guests</span>
+                      </div>
+                    )}
+                    {formData.location && (
+                      <div className="receipt-row">
+                        <span className="receipt-label">Location:</span>
+                        <span className="receipt-val">{formData.location}</span>
                       </div>
                     )}
                     {selectedDishes.length > 0 && (
@@ -299,7 +265,7 @@ export default function InquiryPage({
                       onClick={onOpenStatusModal}
                     >
                       <Clock size={15} />
-                      <span>Track Inquiry Status (Client Portal Demo)</span>
+                      <span>Track Inquiry Status (Client Portal)</span>
                     </button>
 
                     <button
@@ -320,10 +286,13 @@ export default function InquiryPage({
                       type="button"
                       className={`form-mode-tab ${!isFilm ? 'active' : ''}`}
                       onClick={() => {
-                        setFormData(prev => ({
+                        setFormData((prev) => ({
                           ...prev,
                           isFilmRequest: false,
-                          category: prev.category === 'Movie & Film Production' ? 'The Grand Wedding Banquet' : prev.category
+                          category:
+                            prev.category === 'Movie & Film Production'
+                              ? 'Weddings & Receptions'
+                              : prev.category
                         }));
                       }}
                     >
@@ -333,7 +302,7 @@ export default function InquiryPage({
                       type="button"
                       className={`form-mode-tab ${isFilm ? 'active' : ''}`}
                       onClick={() => {
-                        setFormData(prev => ({
+                        setFormData((prev) => ({
                           ...prev,
                           isFilmRequest: true,
                           category: 'Movie & Film Production'
@@ -348,7 +317,9 @@ export default function InquiryPage({
                   {/* Contact Fields */}
                   <div className="form-grid-row">
                     <div className="form-group">
-                      <label className="form-label" htmlFor="fullName">Full Name / Primary Contact *</label>
+                      <label className="form-label" htmlFor="fullName">
+                        Full Name / Primary Contact *
+                      </label>
                       <input
                         type="text"
                         id="fullName"
@@ -361,7 +332,9 @@ export default function InquiryPage({
                       />
                     </div>
                     <div className="form-group">
-                      <label className="form-label" htmlFor="email">Email Address *</label>
+                      <label className="form-label" htmlFor="email">
+                        Email Address *
+                      </label>
                       <input
                         type="email"
                         id="email"
@@ -377,7 +350,9 @@ export default function InquiryPage({
 
                   <div className="form-grid-row">
                     <div className="form-group">
-                      <label className="form-label" htmlFor="phone">Phone / Mobile *</label>
+                      <label className="form-label" htmlFor="phone">
+                        Phone / Mobile *
+                      </label>
                       <input
                         type="tel"
                         id="phone"
@@ -390,7 +365,9 @@ export default function InquiryPage({
                       />
                     </div>
                     <div className="form-group">
-                      <label className="form-label" htmlFor="category">Select Event Program</label>
+                      <label className="form-label" htmlFor="category">
+                        Select Event Occasion / Program
+                      </label>
                       <select
                         id="category"
                         name="category"
@@ -398,11 +375,21 @@ export default function InquiryPage({
                         value={formData.category}
                         onChange={handleFormChange}
                       >
-                        <option value="The Grand Wedding Banquet">The Grand Wedding Banquet</option>
-                        <option value="The Intimate Gathering">The Intimate Gathering</option>
-                        <option value="Movie & Film Production">Movie &amp; Film Production Craft</option>
-                        <option value="Galas & Executive Summits">Galas &amp; Executive Summits</option>
-                        <option value="Party Platters & Casual BBQ">Party Platters &amp; Casual BBQ</option>
+                        <option value="Weddings & Receptions">Weddings &amp; Receptions</option>
+                        <option value="Corporate & Galas">Corporate &amp; Executive Galas</option>
+                        <option value="Birthday Parties & Milestones">
+                          Birthday Parties &amp; Milestones
+                        </option>
+                        <option value="Private Dining & Estates">Private Dining &amp; Estate Feasts</option>
+                        <option value="Family Gatherings & Reunions">
+                          Family Gatherings &amp; Reunions
+                        </option>
+                        <option value="Movie & Film Production">
+                          Movie &amp; Film Production Craft
+                        </option>
+                        <option value="Custom Waterfront & Outdoor Banquets">
+                          Custom Waterfront &amp; Outdoor Banquets
+                        </option>
                       </select>
                     </div>
                   </div>
@@ -411,7 +398,9 @@ export default function InquiryPage({
                   {!isFilm ? (
                     <div className="form-grid-row">
                       <div className="form-group">
-                        <label className="form-label" htmlFor="eventDate">Target Event Date</label>
+                        <label className="form-label" htmlFor="eventDate">
+                          Target Event Date
+                        </label>
                         <input
                           type="date"
                           id="eventDate"
@@ -422,7 +411,9 @@ export default function InquiryPage({
                         />
                       </div>
                       <div className="form-group">
-                        <label className="form-label" htmlFor="guestCount">Expected Guest Count</label>
+                        <label className="form-label" htmlFor="guestCount">
+                          Expected Guest Count
+                        </label>
                         <input
                           type="number"
                           id="guestCount"
@@ -435,7 +426,7 @@ export default function InquiryPage({
                       </div>
                     </div>
                   ) : (
-                    /* Film Specific Fields - Feature 13 */
+                    /* Film Specific Fields */
                     <div className="film-fields-container">
                       <div className="film-section-badge">
                         <Clapperboard size={14} />
@@ -444,7 +435,9 @@ export default function InquiryPage({
 
                       <div className="form-grid-row">
                         <div className="form-group">
-                          <label className="form-label" htmlFor="productionName">Production / Project Title *</label>
+                          <label className="form-label" htmlFor="productionName">
+                            Production / Project Title *
+                          </label>
                           <input
                             type="text"
                             id="productionName"
@@ -456,7 +449,9 @@ export default function InquiryPage({
                           />
                         </div>
                         <div className="form-group">
-                          <label className="form-label" htmlFor="crewSize">Daily Crew Size *</label>
+                          <label className="form-label" htmlFor="crewSize">
+                            Daily Crew Size *
+                          </label>
                           <input
                             type="number"
                             id="crewSize"
@@ -471,7 +466,9 @@ export default function InquiryPage({
 
                       <div className="form-grid-row">
                         <div className="form-group">
-                          <label className="form-label" htmlFor="shootStartDate">Shoot Start Date</label>
+                          <label className="form-label" htmlFor="shootStartDate">
+                            Shoot Start Date
+                          </label>
                           <input
                             type="date"
                             id="shootStartDate"
@@ -482,7 +479,9 @@ export default function InquiryPage({
                           />
                         </div>
                         <div className="form-group">
-                          <label className="form-label" htmlFor="shootEndDate">Wrap / End Date</label>
+                          <label className="form-label" htmlFor="shootEndDate">
+                            Wrap / End Date
+                          </label>
                           <input
                             type="date"
                             id="shootEndDate"
@@ -497,8 +496,15 @@ export default function InquiryPage({
                       <div className="form-group">
                         <label className="form-label">Required Daily Meal Calls</label>
                         <div className="meal-calls-chips-row">
-                          {['Hot Breakfast Call', 'Seated Hot Lunch', 'Walking Dinner', 'Late Night Wrap'].map(call => {
-                            const isSelected = (formData.mealCalls || ['Hot Breakfast Call', 'Seated Hot Lunch']).includes(call);
+                          {[
+                            'Hot Breakfast Call',
+                            'Seated Hot Lunch',
+                            'Walking Dinner',
+                            'Late Night Wrap'
+                          ].map((call) => {
+                            const isSelected = (
+                              formData.mealCalls || ['Hot Breakfast Call', 'Seated Hot Lunch']
+                            ).includes(call);
                             return (
                               <button
                                 type="button"
@@ -515,7 +521,9 @@ export default function InquiryPage({
                       </div>
 
                       <div className="form-group">
-                        <label className="form-label" htmlFor="locationMoves">Location &amp; Moves Breakdown</label>
+                        <label className="form-label" htmlFor="locationMoves">
+                          Location &amp; Moves Breakdown
+                        </label>
                         <input
                           type="text"
                           id="locationMoves"
@@ -528,7 +536,9 @@ export default function InquiryPage({
                       </div>
 
                       <div className="form-group">
-                        <label className="form-label" htmlFor="craftNeeds">Craft Services Setup</label>
+                        <label className="form-label" htmlFor="craftNeeds">
+                          Craft Services Setup
+                        </label>
                         <input
                           type="text"
                           id="craftNeeds"
@@ -542,20 +552,87 @@ export default function InquiryPage({
                     </div>
                   )}
 
-                  <div className="form-group">
-                    <label className="form-label" htmlFor="location">Primary Event Location / Stage</label>
-                    <input
-                      type="text"
-                      id="location"
-                      name="location"
-                      className="form-control"
-                      placeholder="e.g. Richmond, North Vancouver, Squamish, Tsawwassen"
-                      value={formData.location}
-                      onChange={handleFormChange}
-                    />
+                  {/* Location & Service Style */}
+                  <div className="form-grid-row">
+                    <div className="form-group">
+                      <label className="form-label" htmlFor="location">
+                        Venue / Event Location *
+                      </label>
+                      <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        className="form-control"
+                        placeholder="e.g. Vancouver waterfront, Richmond, Whistler, or Private Estate"
+                        value={formData.location}
+                        onChange={handleFormChange}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label" htmlFor="serviceStyle">
+                        Preferred Service Style
+                      </label>
+                      <select
+                        id="serviceStyle"
+                        name="serviceStyle"
+                        className="form-control"
+                        value={formData.serviceStyle || 'plated'}
+                        onChange={handleFormChange}
+                      >
+                        <option value="plated">Plated Multi-Course</option>
+                        <option value="family_style">Luxury Family-Style Sharing</option>
+                        <option value="buffet">Artisan Buffet Stations</option>
+                        <option value="cocktail">Passed Canapés &amp; Cocktail Reception</option>
+                        <option value="grazing">Artisan Grazing Table</option>
+                        <option value="craft">Continuous Mobile Craft Galley</option>
+                      </select>
+                    </div>
                   </div>
 
-                  {/* Dietary Preference Chips - Feature 4 */}
+                  {/* Event Customization Trigger Card - Module 5 */}
+                  <div className="customization-inquiry-callout">
+                    <div className="custom-callout-text">
+                      <div className="callout-badge-line">
+                        <Sliders size={13} />
+                        <span>Module 5: Event Customization &amp; Table Design</span>
+                      </div>
+                      <p>
+                        Specify table setups, white-glove staffing tiers, sommelier pairings, and upload
+                        inspiration moodboards.
+                      </p>
+                      {hasCustomizations && (
+                        <div className="active-custom-tags">
+                          {customizations.serviceStyle && (
+                            <span className="custom-tag">Style: {customizations.serviceStyle}</span>
+                          )}
+                          {customizations.tableSetup && (
+                            <span className="custom-tag">Setup: {customizations.tableSetup}</span>
+                          )}
+                          {customizations.staffingTier && (
+                            <span className="custom-tag">Staff: {customizations.staffingTier}</span>
+                          )}
+                          {customizations.uploadedImages &&
+                            customizations.uploadedImages.length > 0 && (
+                              <span className="custom-tag">
+                                <ImageIcon size={11} />
+                                {customizations.uploadedImages.length} Photos Attached
+                              </span>
+                            )}
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      className="btn-open-custom-modal"
+                      onClick={onOpenCustomizationModal}
+                    >
+                      <Sliders size={13} />
+                      <span>{hasCustomizations ? 'Edit Customizations' : 'Customize Event'}</span>
+                    </button>
+                  </div>
+
+                  {/* Dietary Preference Chips */}
                   <div className="form-group">
                     <label className="form-label">
                       Dietary Preferences &amp; Accommodations
@@ -579,7 +656,7 @@ export default function InquiryPage({
                     </div>
                   </div>
 
-                  {/* Severe Allergy Details Free Text & Advisory - Feature 4 */}
+                  {/* Severe Allergy Details Free Text & Advisory */}
                   <div className="form-group">
                     <label className="form-label" htmlFor="severeAllergies">
                       Specific Severe Allergies &amp; Cross-Contamination Notes
@@ -597,7 +674,10 @@ export default function InquiryPage({
                     <div className="allergen-warning-banner">
                       <AlertTriangle size={14} style={{ color: '#BA8D5B', flexShrink: 0 }} />
                       <span>
-                        <strong>Allergen Notice:</strong> Never infer that a dish is safe for an allergy unless confirmed during chef consultation. Ocean West commissary prepares seasonal Pacific seafood, nuts, and dairy with rigorous cross-contamination protocols.
+                        <strong>Allergen Notice:</strong> Never infer that a dish is safe for an allergy
+                        unless confirmed during chef consultation. Ocean West commissary prepares
+                        seasonal Pacific seafood, nuts, and dairy with rigorous cross-contamination
+                        protocols.
                       </span>
                     </div>
                   </div>
@@ -630,7 +710,9 @@ export default function InquiryPage({
 
                   {/* Free text notes */}
                   <div className="form-group">
-                    <label className="form-label" htmlFor="notes">Event Vision &amp; Logistics Notes</label>
+                    <label className="form-label" htmlFor="notes">
+                      Event Vision &amp; Logistics Notes
+                    </label>
                     <textarea
                       id="notes"
                       name="notes"
@@ -642,7 +724,7 @@ export default function InquiryPage({
                     />
                   </div>
 
-                  {/* Inquiry Pre-submission Summary Card - Feature 4 */}
+                  {/* Inquiry Pre-submission Summary Card */}
                   <div className="inquiry-summary-card">
                     <div className="summary-card-header">
                       <FileCheck2 size={15} style={{ color: '#BA8D5B' }} />
@@ -650,20 +732,28 @@ export default function InquiryPage({
                     </div>
                     <div className="summary-fields-grid">
                       <div className="summary-item">
-                        <span className="summary-item-label">Program:</span>
+                        <span className="summary-item-label">Occasion / Program:</span>
                         <span className="summary-item-val">{formData.category || 'Not specified'}</span>
                       </div>
                       <div className="summary-item">
                         <span className="summary-item-label">Guest Scale:</span>
-                        <span className="summary-item-val">{formData.crewSize || formData.guestCount ? `${formData.crewSize || formData.guestCount} Guests` : 'To be determined'}</span>
+                        <span className="summary-item-val">
+                          {formData.crewSize || formData.guestCount
+                            ? `${formData.crewSize || formData.guestCount} Guests`
+                            : 'To be determined'}
+                        </span>
                       </div>
                       <div className="summary-item">
                         <span className="summary-item-label">Target Date:</span>
-                        <span className="summary-item-val">{formData.shootStartDate || formData.eventDate || 'Flexible / TBD'}</span>
+                        <span className="summary-item-val">
+                          {formData.shootStartDate || formData.eventDate || 'Flexible / TBD'}
+                        </span>
                       </div>
                       <div className="summary-item">
                         <span className="summary-item-label">Location:</span>
-                        <span className="summary-item-val">{formData.locationMoves || formData.location || 'Metro Vancouver'}</span>
+                        <span className="summary-item-val">
+                          {formData.locationMoves || formData.location || 'Metro Vancouver'}
+                        </span>
                       </div>
                       {activeDietaryChips.length > 0 && (
                         <div className="summary-item full-width">
@@ -680,10 +770,20 @@ export default function InquiryPage({
                       {selectedDishes.length > 0 && (
                         <div className="summary-item full-width">
                           <span className="summary-item-label">Attached Menu Courses:</span>
-                          <span className="summary-item-val">{selectedDishes.map(d => d.title).join(', ')}</span>
+                          <span className="summary-item-val">
+                            {selectedDishes.map((d) => d.title).join(', ')}
+                          </span>
                         </div>
                       )}
                     </div>
+                  </div>
+
+                  <div className="inquiry-disclaimer-note">
+                    <Info size={13} />
+                    <span>
+                      Submitting this form initiates a formal catering consultation and menu draft.
+                      Dates and menus are confirmed upon contract execution with Chef Michael Thomas.
+                    </span>
                   </div>
 
                   <button type="submit" className="btn-submit-inquiry">

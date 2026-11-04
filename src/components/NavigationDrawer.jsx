@@ -14,7 +14,11 @@ import {
   Phone,
   ChevronRight,
   ShieldCheck,
-  MapPin
+  MapPin,
+  ChefHat,
+  Calculator,
+  Sliders,
+  PhoneCall
 } from 'lucide-react';
 import { CONTACT_INFO } from '../data/cateringData';
 
@@ -25,13 +29,23 @@ export default function NavigationDrawer({
   onOpenMyMenu,
   onOpenConsultModal,
   onOpenPlannerModal,
+  onOpenExperiencesModal,
+  onOpenQuotationModal,
+  onOpenCustomizationModal,
+  onOpenSupportModal,
   showToast
 }) {
   if (!isOpen) return null;
 
   return (
-    <div className="app-nav-drawer-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="Navigation Menu">
-      <div className="app-nav-drawer" onClick={e => e.stopPropagation()}>
+    <div
+      className="app-nav-drawer-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Navigation Menu"
+    >
+      <div className="app-nav-drawer" onClick={(e) => e.stopPropagation()}>
         {/* Drawer Header */}
         <div className="drawer-header-row">
           <div className="drawer-chef-intro">
@@ -91,7 +105,7 @@ export default function NavigationDrawer({
             </div>
             <div className="drawer-nav-item-text">
               <div className="drawer-item-title">Courses &amp; Delicacies</div>
-              <span className="drawer-item-desc">Starters, Wild Salmon, Prime Beef &amp; Grazing</span>
+              <span className="drawer-item-desc">Breakfast, Lunch, Dinner, Canapés &amp; Grazing</span>
             </div>
             <ChevronRight size={16} className="drawer-item-arrow" />
           </NavLink>
@@ -144,6 +158,48 @@ export default function NavigationDrawer({
 
         {/* Drawer Planning & Action Tools */}
         <div className="drawer-action-block">
+          {onOpenExperiencesModal && (
+            <button
+              type="button"
+              className="drawer-action-btn gold"
+              onClick={() => {
+                onClose();
+                onOpenExperiencesModal();
+              }}
+            >
+              <ChefHat size={17} />
+              <span>Culinary Experiences &amp; Chef Portfolio</span>
+            </button>
+          )}
+
+          {onOpenQuotationModal && (
+            <button
+              type="button"
+              className="drawer-action-btn subtle"
+              onClick={() => {
+                onClose();
+                onOpenQuotationModal();
+              }}
+            >
+              <Calculator size={17} />
+              <span>Quotation &amp; Invoicing Estimator</span>
+            </button>
+          )}
+
+          {onOpenCustomizationModal && (
+            <button
+              type="button"
+              className="drawer-action-btn subtle"
+              onClick={() => {
+                onClose();
+                onOpenCustomizationModal();
+              }}
+            >
+              <Sliders size={17} />
+              <span>Event Customization &amp; Moodboard</span>
+            </button>
+          )}
+
           <button
             type="button"
             className="drawer-action-btn primary"
@@ -158,18 +214,6 @@ export default function NavigationDrawer({
 
           <button
             type="button"
-            className="drawer-action-btn gold"
-            onClick={() => {
-              onClose();
-              onOpenConsultModal();
-            }}
-          >
-            <Sparkles size={17} />
-            <span>Book Private Chef Consultation</span>
-          </button>
-
-          <button
-            type="button"
             className="drawer-action-btn subtle"
             onClick={() => {
               onClose();
@@ -180,17 +224,19 @@ export default function NavigationDrawer({
             <span>Open "My Menu" Builder ({selectedDishesCount})</span>
           </button>
 
-          <button
-            type="button"
-            className="drawer-action-btn subtle"
-            onClick={() => {
-              onClose();
-              showToast('Ocean West Client Portal login is active for contracted events.');
-            }}
-          >
-            <User size={17} />
-            <span>Contracted Client Portal Access</span>
-          </button>
+          {onOpenSupportModal && (
+            <button
+              type="button"
+              className="drawer-action-btn subtle"
+              onClick={() => {
+                onClose();
+                onOpenSupportModal();
+              }}
+            >
+              <PhoneCall size={17} />
+              <span>Customer Support &amp; Concierge</span>
+            </button>
+          )}
         </div>
 
         {/* Drawer Direct Contact Footer */}
@@ -220,4 +266,3 @@ export default function NavigationDrawer({
     </div>
   );
 }
-

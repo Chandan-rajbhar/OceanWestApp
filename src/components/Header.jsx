@@ -11,7 +11,10 @@ import {
   Calculator,
   Camera,
   CheckSquare,
-  Scale
+  Scale,
+  ChefHat,
+  Sliders,
+  PhoneCall
 } from 'lucide-react';
 
 export default function Header({
@@ -26,6 +29,10 @@ export default function Header({
   onOpenGalleryModal,
   onOpenChecklistModal,
   onOpenServingGuideModal,
+  onOpenExperiencesModal,
+  onOpenQuotationModal,
+  onOpenCustomizationModal,
+  onOpenSupportModal,
   drawerOpen,
   onToggleDrawer,
   onCloseDrawer,
@@ -33,143 +40,132 @@ export default function Header({
 }) {
   return (
     <>
-      {/* Top Notice Bar - Hidden when drawer is open to match reference design */}
-      {!drawerOpen && (
-        <aside className="app-top-notice-bar" aria-label="Announcement & Contact Bar">
-          <div className="notice-pill-row">
-            <span className="notice-geo">BC Pacific Northwest Catering</span>
-            <span className="notice-separator">•</span>
-            <a href="tel:6047224857" className="notice-phone-link">
-              <Phone size={10} />
-              <span>Direct: 604-722-4857</span>
-            </a>
-          </div>
-        </aside>
-      )}
-
-      {/* Main Sticky Header with Dropdown Navigation Drawer */}
+      {/* Sleek Native Mobile App Header matching Reference screen.png */}
       <header className={`app-main-header ${isScrolled ? 'is-scrolled' : ''}`}>
         <div className="app-header-inner">
-          {/* Brand Logo */}
+          {/* Brand Logo with circular plum badge and refined typography */}
           <Link to="/" className="app-brand-link" onClick={onCloseDrawer}>
-            <div className="app-brand-icon">
-              <Utensils size={16} strokeWidth={2.4} />
+            <div className="app-brand-icon-circle">
+              <Utensils size={14} strokeWidth={2.4} />
             </div>
             <div className="app-brand-text">
-              <span className="app-brand-title">Ocean West</span>
-              <span className="app-brand-sub">
-                Fine Catering<span className="brand-sub-extra"> &amp; Services</span>
-              </span>
+              <span className="app-brand-title">OCEAN WEST</span>
+              <span className="app-brand-sub">Richmond • Fine Catering</span>
             </div>
           </Link>
 
-          {/* Action Icons Group */}
+          {/* Action Icons Group: 2 Deep Plum Round Buttons */}
           <div className="app-header-actions">
-            {!drawerOpen ? (
-              <>
-                {/* My Menu Builder Shortcut Pill */}
-                <button
-                  type="button"
-                  className="app-header-menu-pill"
-                  onClick={onOpenMyMenu}
-                  title="View Selected Dishes in My Menu"
-                  aria-label={`My Menu with ${selectedDishesCount} selected dishes`}
-                >
-                  <ShoppingBag size={14} />
-                  <span className="menu-pill-label">My Menu</span>
-                  {selectedDishesCount > 0 && (
-                    <span className="menu-pill-count">{selectedDishesCount}</span>
-                  )}
-                </button>
+            {/* Quick Call Button (Direct Commissary Hotline / Contact Modal) */}
+            <a
+              href="tel:6047224857"
+              className="app-header-circle-btn"
+              title="Call Chef Michael Direct (604-722-4857)"
+              aria-label="Direct Phone Call"
+            >
+              <Phone size={14} />
+            </a>
 
-                {/* Quick Contact Shortcut */}
-                <button
-                  type="button"
-                  className="app-header-action-icon"
-                  onClick={onOpenContactModal}
-                  title="Call, Email or Find Us"
-                  aria-label="Contact Shortcuts"
-                >
-                  <Phone size={15} />
-                </button>
-
-                {/* 3 Horizontal Lines Hamburger Drawer Toggle */}
-                <button
-                  type="button"
-                  className="app-hamburger-toggle"
-                  onClick={onToggleDrawer}
-                  aria-label="Open navigation menu"
-                  aria-expanded="false"
-                >
-                  <MenuIcon size={22} />
-                </button>
-              </>
-            ) : (
-              /* Close Button when Drawer is Open */
-              <button
-                type="button"
-                className="app-hamburger-toggle close-state"
-                onClick={onToggleDrawer}
-                aria-label="Close navigation menu"
-                aria-expanded="true"
-              >
-                <X size={24} />
-              </button>
-            )}
+            {/* Profile / Menu Drawer Toggle with Badge */}
+            <button
+              type="button"
+              className={`app-header-circle-btn ${drawerOpen ? 'is-open' : ''}`}
+              onClick={onToggleDrawer}
+              title="Open Navigation Menu"
+              aria-label="Toggle App Navigation Menu"
+              aria-expanded={drawerOpen}
+            >
+              {drawerOpen ? <X size={15} /> : <User size={15} />}
+              {selectedDishesCount > 0 && !drawerOpen && (
+                <span className="header-badge-count">{selectedDishesCount}</span>
+              )}
+            </button>
           </div>
         </div>
 
-        {/* Dropdown Mobile Navigation Drawer - Matches Reference Design Exactly */}
+        {/* ------------------------------------------------------------------ */}
+        {/* Sleek App Drawer Overlay                                           */}
+        {/* ------------------------------------------------------------------ */}
         {drawerOpen && (
-          <div className="mobile-nav-drawer">
+          <div
+            className="mobile-header-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="App Navigation Menu"
+          >
             {/* Primary Navigation Links */}
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) => `mobile-nav-link ${isActive ? 'active' : ''}`}
-              onClick={onCloseDrawer}
-            >
-              Home
-            </NavLink>
-            <NavLink
-              to="/disciplines"
-              className={({ isActive }) => `mobile-nav-link ${isActive ? 'active' : ''}`}
-              onClick={onCloseDrawer}
-            >
-              Disciplines
-            </NavLink>
-            <NavLink
-              to="/courses"
-              className={({ isActive }) => `mobile-nav-link ${isActive ? 'active' : ''}`}
-              onClick={onCloseDrawer}
-            >
-              Courses &amp; Delicacies
-            </NavLink>
-            <NavLink
-              to="/packages"
-              className={({ isActive }) => `mobile-nav-link ${isActive ? 'active' : ''}`}
-              onClick={onCloseDrawer}
-            >
-              Event Packages
-            </NavLink>
-            <NavLink
-              to="/film-catering"
-              className={({ isActive }) => `mobile-nav-link ${isActive ? 'active' : ''}`}
-              onClick={onCloseDrawer}
-            >
-              Film &amp; Media Catering
-            </NavLink>
-            <NavLink
-              to="/inquiry"
-              className={({ isActive }) => `mobile-nav-link ${isActive ? 'active' : ''}`}
-              onClick={onCloseDrawer}
-            >
-              Direct Inquiries
-            </NavLink>
+            <nav className="mobile-drawer-nav-list" aria-label="Drawer Links">
+              <NavLink
+                to="/"
+                end
+                className={({ isActive }) => `mobile-drawer-nav-item ${isActive ? 'active' : ''}`}
+                onClick={onCloseDrawer}
+              >
+                <span>Home</span>
+              </NavLink>
 
-            {/* Quick Interactive Catering Tools */}
+              <NavLink
+                to="/courses"
+                className={({ isActive }) => `mobile-drawer-nav-item ${isActive ? 'active' : ''}`}
+                onClick={onCloseDrawer}
+              >
+                <span>Menu &amp; Platters</span>
+              </NavLink>
+
+              <NavLink
+                to="/disciplines"
+                className={({ isActive }) => `mobile-drawer-nav-item ${isActive ? 'active' : ''}`}
+                onClick={onCloseDrawer}
+              >
+                <span>Signature Services</span>
+              </NavLink>
+
+              <NavLink
+                to="/packages"
+                className={({ isActive }) => `mobile-drawer-nav-item ${isActive ? 'active' : ''}`}
+                onClick={onCloseDrawer}
+              >
+                <span>Event Packages</span>
+              </NavLink>
+
+              <NavLink
+                to="/film-catering"
+                className={({ isActive }) => `mobile-drawer-nav-item ${isActive ? 'active' : ''}`}
+                onClick={onCloseDrawer}
+              >
+                <span>Film &amp; TV Craft</span>
+              </NavLink>
+
+              <NavLink
+                to="/inquiry"
+                className={({ isActive }) => `mobile-drawer-nav-item ${isActive ? 'active' : ''}`}
+                onClick={onCloseDrawer}
+              >
+                <span>Book &amp; Inquire</span>
+              </NavLink>
+            </nav>
+
+            {/* My Menu Shortcut in Drawer */}
+            <div className="drawer-menu-builder-shortcut">
+              <button
+                type="button"
+                className="btn-drawer-my-menu"
+                onClick={() => {
+                  onCloseDrawer();
+                  if (onOpenMyMenu) onOpenMyMenu();
+                }}
+              >
+                <ShoppingBag size={15} />
+                <span>My Menu &amp; Platter Builder</span>
+                {selectedDishesCount > 0 && (
+                  <span className="drawer-menu-count">{selectedDishesCount}</span>
+                )}
+              </button>
+            </div>
+
+            {/* Interactive Planning Tools Section */}
             <div className="drawer-tools-section">
-              <span className="drawer-tools-label">Catering Planning Tools</span>
+              <span className="drawer-tools-label">App Planning Suite:</span>
               <div className="drawer-tools-grid">
                 <button
                   type="button"
@@ -182,17 +178,49 @@ export default function Header({
                   <Compass size={13} />
                   <span>Event Planner</span>
                 </button>
-                <button
-                  type="button"
-                  className="drawer-tool-pill"
-                  onClick={() => {
-                    onCloseDrawer();
-                    if (onOpenBudgetModal) onOpenBudgetModal('wedding');
-                  }}
-                >
-                  <Calculator size={13} />
-                  <span>Budget Estimator</span>
-                </button>
+
+                {onOpenExperiencesModal && (
+                  <button
+                    type="button"
+                    className="drawer-tool-pill"
+                    onClick={() => {
+                      onCloseDrawer();
+                      onOpenExperiencesModal();
+                    }}
+                  >
+                    <ChefHat size={13} />
+                    <span>Culinary Experiences</span>
+                  </button>
+                )}
+
+                {onOpenQuotationModal && (
+                  <button
+                    type="button"
+                    className="drawer-tool-pill"
+                    onClick={() => {
+                      onCloseDrawer();
+                      onOpenQuotationModal();
+                    }}
+                  >
+                    <Calculator size={13} />
+                    <span>Quotation Slip</span>
+                  </button>
+                )}
+
+                {onOpenCustomizationModal && (
+                  <button
+                    type="button"
+                    className="drawer-tool-pill"
+                    onClick={() => {
+                      onCloseDrawer();
+                      onOpenCustomizationModal();
+                    }}
+                  >
+                    <Sliders size={13} />
+                    <span>Custom Setup</span>
+                  </button>
+                )}
+
                 <button
                   type="button"
                   className="drawer-tool-pill"
@@ -204,6 +232,7 @@ export default function Header({
                   <Camera size={13} />
                   <span>Photo Gallery</span>
                 </button>
+
                 <button
                   type="button"
                   className="drawer-tool-pill"
@@ -215,6 +244,7 @@ export default function Header({
                   <CheckSquare size={13} />
                   <span>Milestone Checklist</span>
                 </button>
+
                 <button
                   type="button"
                   className="drawer-tool-pill"
@@ -226,6 +256,20 @@ export default function Header({
                   <Scale size={13} />
                   <span>Serving Guide</span>
                 </button>
+
+                {onOpenSupportModal && (
+                  <button
+                    type="button"
+                    className="drawer-tool-pill"
+                    onClick={() => {
+                      onCloseDrawer();
+                      onOpenSupportModal();
+                    }}
+                  >
+                    <PhoneCall size={13} />
+                    <span>Concierge Support</span>
+                  </button>
+                )}
               </div>
             </div>
 

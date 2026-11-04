@@ -1,28 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
-  Sparkles,
-  ArrowRight,
-  ChevronRight,
-  Users,
-  Award,
+  MapPin,
   Clock,
+  Users,
   ShieldCheck,
-  Star,
-  Utensils,
-  Calendar,
-  Compass,
-  Play,
-  Pause,
-  Plus,
+  ChevronRight,
+  ArrowRight,
+  Wine,
+  Clapperboard,
+  Flame,
+  Briefcase,
   Check,
-  Heart,
+  Plus,
+  Phone,
+  MessageSquare,
+  Calendar,
+  Sparkles,
+  Download,
+  Award,
+  Sliders,
   Calculator,
   Camera,
   CheckSquare,
-  Scale
+  Scale,
+  ChefHat,
+  PhoneCall
 } from 'lucide-react';
-import { HERO_SLIDES, IMAGES, MENU_COURSES, TESTIMONIALS } from '../data/cateringData';
+import {
+  IMAGES,
+  MENU_COURSES,
+  HERO_SLIDES,
+  CHEF_PROFILE,
+  PACKAGES
+} from '../data/cateringData';
 
 export default function HomePage({
   setIsAvailabilityModalOpen,
@@ -33,547 +44,536 @@ export default function HomePage({
   onOpenServingGuide,
   onOpenGallery,
   onOpenChecklistModal,
+  onOpenExperiencesModal,
+  onOpenQuotationModal,
+  onOpenCustomizationModal,
+  onOpenSupportModal,
   favoriteDishes = [],
   onToggleFavorite,
   selectedDishes = [],
   onToggleDishInMenu,
+  formData = {},
+  setFormData,
   showToast
 }) {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (isPaused) return;
-    const interval = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % HERO_SLIDES.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [isPaused]);
+  // Planner card state
+  const [plannerGuestCount, setPlannerGuestCount] = useState(75);
+  const [plannerOccasion, setPlannerOccasion] = useState('Wedding Reception');
+
+  // Featured event platters mapped to existing dish data with authentic pricing
+  const FEATURED_PLATTERS = [
+    {
+      id: 2,
+      title: 'Wild Pacific Sockeye Platter',
+      rate: '$140',
+      dietaryTag: 'GLUTEN-FREE',
+      image: HERO_SLIDES[1]?.image || IMAGES.platter,
+      description: 'Cedar plank wild sockeye salmon, blistered shallots, caper berries, whipped herbed cream.'
+    },
+    {
+      id: 4,
+      title: 'Okanagan Artisanal Charcuterie',
+      rate: '$95',
+      dietaryTag: 'GRAZING BOARD',
+      image: IMAGES.platter,
+      description: 'Cured meats, aged cheeses, raw honeycomb, spiced nuts, fig preserves, artisan sourdough.'
+    },
+    {
+      id: 1,
+      title: 'Farm Harvest Organic Crudité',
+      rate: '$75',
+      dietaryTag: 'VEGAN / GLUTEN-FREE',
+      image: HERO_SLIDES[0]?.image || IMAGES.platter,
+      description: 'Crisp market vegetables, preserved lemon labneh, smoked paprika hummus, seed crisps.'
+    }
+  ];
+
+  const handlePlannerInquire = () => {
+    if (setFormData) {
+      setFormData((prev) => ({
+        ...prev,
+        category: plannerOccasion,
+        guestCount: String(plannerGuestCount),
+        notes: (prev.notes ? prev.notes + '\n\n' : '') + `[Planned Celebration: ${plannerOccasion} for ${plannerGuestCount} guests]`
+      }));
+    }
+    if (showToast) {
+      showToast(`Prefilled ${plannerOccasion} for ${plannerGuestCount} guests.`);
+    }
+    navigate('/inquiry');
+  };
 
   return (
-    <div className="home-page-container">
+    <div className="native-app-home">
       {/* ------------------------------------------------------------------ */}
-      {/* HERO SECTION                                                       */}
+      {/* 1. LARGE ROUNDED HERO IMAGE CARD                                   */}
       {/* ------------------------------------------------------------------ */}
-      <section id="hero" className="hero-section">
-        <div className="ow-container">
-          <div className="hero-content-col">
-            <div className="hero-chef-pill">
-              <Sparkles size={12} style={{ color: '#BA8D5B' }} />
-              <span>Executive Chef Michael Thomas • Pacific Coast Commissary</span>
+      <section className="app-hero-card-wrap">
+        <div className="app-hero-card">
+          <img
+            src={IMAGES.wedding}
+            alt="Ocean West Coastal Catering Banquet"
+            className="app-hero-bg-img"
+            loading="eager"
+          />
+          <div className="app-hero-gradient-overlay" />
+
+          <div className="app-hero-card-content">
+            {/* Top Amber Location Chip */}
+            <div className="hero-location-chip">
+              <MapPin size={11} className="chip-pin-icon" />
+              <span>VANCOUVER • SURREY • WHISTLER</span>
             </div>
 
-            <h1 className="hero-title">
-              Artisanal Catering &amp; <br />
-              <em>Unforgettable</em> Culinary <br />
-              Experiences
+            {/* Display Headline & Subtitle */}
+            <h1 className="hero-app-headline">
+              Bespoke Catering &amp; Coastal Culinary Artistry
             </h1>
-
-            <p className="hero-description">
-              From intimate waterfront gatherings to prime film &amp; TV productions, Ocean West crafts
-              fine Pacific Northwest fare with refined seasonal ingredients. Chef Michael brings twenty
-              years of culinary expertise, delivering bespoke wedding banquets, certified high-velocity
-              film &amp; media craft, corporate galled events, and curated party platters.
+            <p className="hero-app-subtext">
+              Elevating wedding receptions, film productions, and exclusive galas across the scenic
+              British Columbia coastline.
             </p>
 
-            <div className="hero-cta-group">
-              <button
-                type="button"
-                className="btn-primary-gold"
-                onClick={() => setIsAvailabilityModalOpen(true)}
-              >
-                <span>Check Date Availability</span>
-                <ArrowRight size={15} />
-              </button>
-
-              <Link to="/courses" className="btn-outline-subtle">
-                <span>Explore Menu Collections</span>
-                <ChevronRight size={15} />
+            {/* Prominent Action Buttons */}
+            <div className="hero-app-actions-row">
+              <Link to="/courses" className="btn-hero-explore">
+                <span>Explore Menus</span>
+                <ArrowRight size={14} />
               </Link>
-            </div>
-
-            {/* Quick Interactive Event Planner Prompt */}
-            <div className="planner-quick-card">
-              <div className="planner-quick-left">
-                <div className="planner-quick-icon">
-                  <Compass size={18} />
-                </div>
-                <div>
-                  <div className="planner-quick-title">Interactive Event Planner</div>
-                  <div className="planner-quick-sub">Estimate staffing, recommended menu tier &amp; prep logistics</div>
-                </div>
-              </div>
               <button
                 type="button"
-                className="planner-quick-btn"
-                onClick={() => setIsPlannerModalOpen(true)}
+                className="btn-hero-quote"
+                onClick={() => onOpenQuotationModal && onOpenQuotationModal('wedding')}
               >
-                <span>Launch Planner</span>
-                <ChevronRight size={14} />
+                <Phone size={13} />
+                <span>Get a Quote</span>
               </button>
-            </div>
-
-            {/* 4 Stats Cards */}
-            <div className="hero-stats-row">
-              <div className="hero-stat-card">
-                <span className="stat-metric">20+ Years</span>
-                <span className="stat-desc">Executive Chef Michael Thomas</span>
-              </div>
-              <div className="hero-stat-card">
-                <span className="stat-metric">A-List Film &amp; TV</span>
-                <span className="stat-desc">Minimum 200 Location Shoots</span>
-              </div>
-              <div className="hero-stat-card">
-                <span className="stat-metric">BC Pacific NW</span>
-                <span className="stat-desc">Sustainably Harvested Local Ingredients</span>
-              </div>
-              <div className="hero-stat-card">
-                <span className="stat-metric">Custom Menus</span>
-                <span className="stat-desc">Allergies, Dietary, &amp; Halal/Kosher</span>
-              </div>
-            </div>
-
-            {/* Culinary Auto-Showcase Carousel */}
-            <div className="hero-visual-wrap" style={{ marginTop: '24px' }}>
-              <div className="hero-img-container carousel-container">
-                {HERO_SLIDES.map((slide, index) => (
-                  <div
-                    key={slide.id}
-                    className={`carousel-slide ${index === currentSlide ? 'active' : ''}`}
-                    aria-hidden={index !== currentSlide}
-                  >
-                    <img
-                      src={slide.image}
-                      alt={slide.alt}
-                      className="carousel-dish-img"
-                      loading={index === 0 ? "eager" : "lazy"}
-                    />
-                    <div className="hero-dish-overlay">
-                      <div className="hero-dish-title">{slide.title}</div>
-                      <div className="hero-dish-course">{slide.course}</div>
-                    </div>
-                  </div>
-                ))}
-
-                {/* Subtle Luxury Animated Progress Line */}
-                <div className="carousel-progress-track">
-                  <div
-                    key={currentSlide}
-                    className={`carousel-progress-bar ${isPaused ? 'paused' : ''}`}
-                  />
-                </div>
-
-                {/* Pause/Play accessible toggle */}
-                <button
-                  type="button"
-                  className="carousel-pause-btn"
-                  onClick={() => setIsPaused(!isPaused)}
-                  aria-label={isPaused ? "Play automated dish showcase" : "Pause automated dish showcase"}
-                  title={isPaused ? "Resume automated showcase" : "Pause showcase"}
-                >
-                  {isPaused ? <Play size={12} fill="#FAF8F5" /> : <Pause size={12} fill="#FAF8F5" />}
-                  <span>{isPaused ? 'Paused' : 'Auto'}</span>
-                </button>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* DISCIPLINES PREVIEW                                                */}
+      {/* 2. THREE STACKED TRUST & EXPERIENCE HIGHLIGHTS                     */}
       {/* ------------------------------------------------------------------ */}
-      <section className="ow-section disciplines-section">
-        <div className="ow-container">
-          <div className="section-header-split">
-            <div>
-              <span className="section-label">Catering Programs</span>
-              <h2 className="section-heading-serif">Tailored Service Disciplines</h2>
+      <section className="app-trust-highlights-section">
+        <div className="app-trust-card">
+          <div className="trust-icon-badge lavender">
+            <Clock size={16} />
+          </div>
+          <div className="trust-text-block">
+            <div className="trust-primary-line">20+ Years Experience</div>
+            <div className="trust-secondary-line">Executive Chef Michael Thomas</div>
+          </div>
+        </div>
+
+        <div className="app-trust-card">
+          <div className="trust-icon-badge amber">
+            <Users size={16} />
+          </div>
+          <div className="trust-text-block">
+            <div className="trust-primary-line">25 – 500 to Up to 1,200+</div>
+            <div className="trust-secondary-line">From intimate dinners to large galas</div>
+          </div>
+        </div>
+
+        <div className="app-trust-card">
+          <div className="trust-icon-badge sage">
+            <ShieldCheck size={16} />
+          </div>
+          <div className="trust-text-block">
+            <div className="trust-primary-line">100% Local &amp; Organic</div>
+            <div className="trust-secondary-line">Pacific Coast farm-sourced &amp; ocean-wise</div>
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* 3. SIGNATURE SERVICES (VERTICALLY STACKED PHOTO CARDS)             */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="app-section signature-services-section">
+        <div className="app-section-header">
+          <div>
+            <span className="app-kicker">BESPOKE CATERING</span>
+            <h2 className="app-heading-serif">Signature Services</h2>
+          </div>
+          <Link to="/disciplines" className="app-header-link">
+            <span>All Services</span>
+            <ChevronRight size={14} />
+          </Link>
+        </div>
+
+        <div className="signature-cards-stack">
+          {/* Card 1: Weddings */}
+          <article className="sig-service-card">
+            <div className="sig-card-media">
+              <img src={IMAGES.wedding} alt="Weddings & Receptions" loading="lazy" />
+              <span className="sig-badge plum">WEDDINGS</span>
             </div>
-            <div>
-              <p className="section-header-narrative" style={{ marginBottom: '12px' }}>
-                Whether servicing 800-guest galas or filming 14-hour days on location in Vancouver,
-                Ocean West crafts customized dishes with passion &amp; precision.
+            <div className="sig-card-body">
+              <div className="sig-card-title-row">
+                <h3 className="sig-card-title">Weddings &amp; Receptions</h3>
+                <Wine size={16} className="sig-title-icon" />
+              </div>
+              <p className="sig-card-desc">
+                Custom multi-course plated dinners, family-style banquets, late champagne service &amp;
+                comprehensive staffing for unforgettable memories.
               </p>
-              <Link to="/disciplines" className="inline-text-link">
-                <span>View All Service Disciplines In-Depth</span>
-                <ChevronRight size={15} />
+              <Link to="/packages" className="sig-card-link">
+                <span>Custom Tasting Menus</span>
+                <ChevronRight size={13} />
               </Link>
             </div>
+          </article>
+
+          {/* Card 2: Film & Media */}
+          <article className="sig-service-card">
+            <div className="sig-card-media">
+              <img src={IMAGES.filmCraft} alt="Movie & Film Catering" loading="lazy" />
+              <span className="sig-badge gold">FAST TURNAROUND</span>
+            </div>
+            <div className="sig-card-body">
+              <div className="sig-card-title-row">
+                <h3 className="sig-card-title">Movie &amp; Film Catering</h3>
+                <Clapperboard size={16} className="sig-title-icon" />
+              </div>
+              <p className="sig-card-desc">
+                Rapid hot meal callouts &amp; continuous hot galley craft trucks, central operations
+                across BC, union compliant dietary standards.
+              </p>
+              <Link to="/film-catering" className="sig-card-link">
+                <span>24-Hour Daily Logistics</span>
+                <ChevronRight size={13} />
+              </Link>
+            </div>
+          </article>
+
+          {/* Card 3: Celebrations & BBQs */}
+          <article className="sig-service-card">
+            <div className="sig-card-media">
+              <img src={IMAGES.platter} alt="Celebrations & BBQs" loading="lazy" />
+              <span className="sig-badge blue">OUTDOOR</span>
+            </div>
+            <div className="sig-card-body">
+              <div className="sig-card-title-row">
+                <h3 className="sig-card-title">Celebrations &amp; BBQs</h3>
+                <Flame size={16} className="sig-title-icon" />
+              </div>
+              <p className="sig-card-desc">
+                Casual assigned feasts with live spit roasts, wood smoke, garden harvest platters, home
+                style grazing tables, and refreshing ciders.
+              </p>
+              <Link to="/disciplines" className="sig-card-link">
+                <span>View BBQ Packages</span>
+                <ChevronRight size={13} />
+              </Link>
+            </div>
+          </article>
+
+          {/* Card 4: Corporate & Cocktails */}
+          <article className="sig-service-card">
+            <div className="sig-card-media">
+              <img src={IMAGES.gala} alt="Corporate & Cocktails" loading="lazy" />
+              <span className="sig-badge navy">CORPORATE</span>
+            </div>
+            <div className="sig-card-body">
+              <div className="sig-card-title-row">
+                <h3 className="sig-card-title">Corporate &amp; Cocktails</h3>
+                <Briefcase size={16} className="sig-title-icon" />
+              </div>
+              <p className="sig-card-desc">
+                Polished finger food, executive board lunches, and grand presentation banqueting for gala
+                and summits. Premier hospitality.
+              </p>
+              <Link to="/disciplines" className="sig-card-link">
+                <span>Corporate Menus</span>
+                <ChevronRight size={13} />
+              </Link>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* 4. FEATURED CHEF PROFILE CARD (DEEP PLUM BACKGROUND)               */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="app-section chef-plum-section">
+        <div className="chef-plum-card">
+          {/* Centered Circular Chef Portrait with Gold Ring */}
+          <div className="chef-plum-avatar-wrap">
+            <img
+              src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=300&q=80"
+              alt="Executive Chef Michael Thomas"
+              className="chef-plum-avatar-img"
+              loading="lazy"
+            />
           </div>
 
-          <div className="disciplines-grid">
-            {/* Card 1: Weddings */}
-            <div className="discipline-card">
-              <div className="discipline-img-wrap">
-                <img src={IMAGES.wedding} alt="Bespoke Wedding Feasts" loading="lazy" />
-                <span className="discipline-tag-badge">Weddings &amp; Receptions</span>
-              </div>
-              <div className="discipline-body">
-                <h3 className="discipline-title">Bespoke Wedding Feasts</h3>
-                <p className="discipline-desc">
-                  Tailored to dietary requirements and personal preferences, complimented with full bar and service staffing.
-                </p>
-                <div className="discipline-footer">
-                  <span className="discipline-meta-item">
-                    <Users size={12} />
-                    <span>25 to 500+ Guests</span>
-                  </span>
-                  <Link to="/disciplines" className="discipline-meta-link">
-                    <span>Explore Feasts &rarr;</span>
-                  </Link>
-                </div>
-              </div>
-            </div>
+          <span className="chef-plum-kicker">CULINARY DIRECTION</span>
+          <h2 className="chef-plum-name">Executive Chef Michael Thomas</h2>
 
-            {/* Card 2: Film & Media */}
-            <div className="discipline-card">
-              <div className="discipline-img-wrap">
-                <img src={IMAGES.filmCraft} alt="Film & Media Craft Services" loading="lazy" />
-                <span className="discipline-tag-badge">Film &amp; Television Production</span>
-              </div>
-              <div className="discipline-body">
-                <h3 className="discipline-title">Film &amp; Media Craft Services</h3>
-                <p className="discipline-desc">
-                  High-speed hot craft trucks, 24/7 mobile kitchens, and continuous craft services for filming crews anywhere across BC.
-                </p>
-                <div className="discipline-footer">
-                  <span className="discipline-meta-item">
-                    <Clock size={12} />
-                    <span>24/7 Hot Craft Trucks</span>
-                  </span>
-                  <Link to="/film-catering" className="discipline-meta-link">
-                    <span>View Craft Setup &rarr;</span>
-                  </Link>
-                </div>
-              </div>
-            </div>
+          <div className="chef-plum-quote-block">
+            <p>
+              "We blend Ocean Wise® innovation with classical gastronomy. Over 20 years of West Coast
+              hospitality gives us the confidence to turn every gathering into a feast that your guests
+              will reminisce about for years."
+            </p>
+          </div>
 
-            {/* Card 3: Galas & Summits */}
-            <div className="discipline-card">
-              <div className="discipline-img-wrap">
-                <img src={IMAGES.gala} alt="Galas & Executive Summits" loading="lazy" />
-                <span className="discipline-tag-badge">Corporate &amp; Galas</span>
-              </div>
-              <div className="discipline-body">
-                <h3 className="discipline-title">Galas &amp; Executive Summits</h3>
-                <p className="discipline-desc">
-                  Flawless execution for high-stakes corporate functions, client receptions, board luncheons, and celebration dinners.
-                </p>
-                <div className="discipline-footer">
-                  <span className="discipline-meta-item">
-                    <Users size={12} />
-                    <span>Up to 1,200 Guests</span>
-                  </span>
-                  <Link to="/disciplines" className="discipline-meta-link">
-                    <span>Explore Galas &rarr;</span>
-                  </Link>
-                </div>
-              </div>
-            </div>
+          {/* Credential Tags */}
+          <div className="chef-plum-tags-row">
+            <span className="chef-plum-tag">Red Seal Certified</span>
+            <span className="chef-plum-tag">Custom Dietary &amp; Allergen Care</span>
+          </div>
 
-            {/* Card 4: Party Platters & BBQs */}
-            <div className="discipline-card">
-              <div className="discipline-img-wrap">
-                <img src={IMAGES.platter} alt="Party Platters & BBQs" loading="lazy" />
-                <span className="discipline-tag-badge">Casual &amp; Private</span>
-              </div>
-              <div className="discipline-body">
-                <h3 className="discipline-title">Party Platters &amp; BBQs</h3>
-                <p className="discipline-desc">
-                  Curated grazing boards, artisanal platters, and casual barbecues for family events, corporate mixers, and relaxed gatherings.
-                </p>
-                <div className="discipline-footer">
-                  <span className="discipline-meta-item">
-                    <Clock size={12} />
-                    <span>Drop-off &amp; Set Service</span>
-                  </span>
-                  <Link to="/disciplines" className="discipline-meta-link">
-                    <span>View Platters &rarr;</span>
-                  </Link>
-                </div>
-              </div>
-            </div>
+          {/* Action Button */}
+          <div className="chef-plum-actions">
+            <button
+              type="button"
+              className="btn-chef-plum-action"
+              onClick={() => onOpenExperiencesModal && onOpenExperiencesModal()}
+            >
+              <span>Explore Chef Experiences &amp; Tastings</span>
+              <ChevronRight size={14} />
+            </button>
           </div>
         </div>
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* SIGNATURE COURSES PREVIEW                                          */}
+      {/* 5. FEATURED EVENT PLATTERS (COMPACT DISH CARDS + ADD)             */}
       {/* ------------------------------------------------------------------ */}
-      <section className="ow-section courses-section">
-        <div className="ow-container">
-          <div className="courses-header-centered">
-            <span className="section-label">Culinary Repertoire</span>
-            <h2 className="section-heading-serif">Signature Courses &amp; Delicacies</h2>
-            <p className="courses-intro">
-              Chef Michael harvests from traditional Haida Gwaii halibut, Langley farm duck eggs, and Cowichan Bay berries,
-              honouring seasonal bounty from British Columbia's producers.
-            </p>
+      <section className="app-section event-platters-section">
+        <div className="app-section-header">
+          <div>
+            <span className="app-kicker">READY-TO-SERVE</span>
+            <h2 className="app-heading-serif">Featured Event Platters</h2>
           </div>
+          <Link to="/courses" className="app-header-link">
+            <span>View All</span>
+            <ArrowRight size={14} />
+          </Link>
+        </div>
 
-          <div className="courses-grid">
-            {MENU_COURSES.slice(0, 3).map((course) => {
-              const isSelected = selectedDishes.some(d => d.id === course.id);
-              const isFavorite = favoriteDishes.includes(course.id);
-              return (
-                <div key={course.id} className="course-card">
-                  <div className="course-card-top-row">
-                    <div className="course-badges-row">
-                      {course.badges.map((b, idx) => (
-                        <span key={idx} className={`course-badge ${b.type}`}>
-                          {b.text}
-                        </span>
-                      ))}
-                    </div>
-                    <button
-                      type="button"
-                      className={`course-fav-btn ${isFavorite ? 'favorited' : ''}`}
-                      onClick={() => onToggleFavorite && onToggleFavorite(course)}
-                      title={isFavorite ? "Remove from saved favorites" : "Save to favorites"}
-                      aria-label={`Favorite ${course.title}`}
-                    >
-                      <Heart
-                        size={15}
-                        fill={isFavorite ? '#BA8D5B' : 'none'}
-                        color={isFavorite ? '#BA8D5B' : '#76837A'}
-                      />
-                    </button>
+        <div className="platters-compact-list">
+          {FEATURED_PLATTERS.map((platter) => {
+            const isAdded = selectedDishes.some((d) => d.id === platter.id);
+            const sourceDish = MENU_COURSES.find((c) => c.id === platter.id) || platter;
+
+            return (
+              <div key={platter.id} className="compact-platter-card">
+                <div className="platter-thumbnail-box">
+                  <img src={platter.image} alt={platter.title} loading="lazy" />
+                </div>
+
+                <div className="platter-info-box">
+                  <div className="platter-title-price-row">
+                    <h3 className="platter-title">{platter.title}</h3>
+                    <span className="platter-rate">{platter.rate}</span>
                   </div>
-                  <h3 className="course-title">{course.title}</h3>
-                  <p className="course-desc">{course.description}</p>
-                  <div className="course-card-footer">
-                    <span className="course-style-label">
-                      <Utensils size={12} />
-                      <span>{course.serviceStyle}</span>
-                    </span>
+
+                  <p className="platter-desc">{platter.description}</p>
+
+                  <div className="platter-action-row">
+                    <span className="platter-dietary-pill">{platter.dietaryTag}</span>
+
                     <button
                       type="button"
-                      className={`btn-card-dish-add ${isSelected ? 'selected' : ''}`}
-                      onClick={() => onToggleDishInMenu(course)}
-                      title={isSelected ? "Remove from My Menu" : "Add to My Menu"}
+                      className={`btn-add-platter ${isAdded ? 'is-added' : ''}`}
+                      onClick={() => onToggleDishInMenu(sourceDish)}
+                      aria-label={isAdded ? `Remove ${platter.title}` : `Add ${platter.title}`}
                     >
-                      {isSelected ? (
+                      {isAdded ? (
                         <>
                           <Check size={12} strokeWidth={3} />
-                          <span>In Menu</span>
+                          <span>Added</span>
                         </>
                       ) : (
                         <>
                           <Plus size={12} strokeWidth={2.5} />
-                          <span>Add to Menu</span>
+                          <span>Add Platter</span>
                         </>
                       )}
                     </button>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* 6. PLAN YOUR CELEBRATION (COMPACT INTERACTIVE PLANNER CARD)        */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="app-section celebration-planner-section">
+        <div className="celebration-planner-card">
+          <div className="planner-card-header">
+            <Calendar size={18} className="gold-icon" />
+            <h3 className="planner-card-title">Plan Your Celebration</h3>
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: '28px' }}>
-            <Link to="/courses" className="btn-primary-gold" style={{ display: 'inline-flex' }}>
-              <span>View Full Menu Collections &amp; Download Guide</span>
-              <ArrowRight size={15} />
-            </Link>
+          <p className="planner-recommendation-note">
+            We're recommending <strong>{plannerGuestCount} guests</strong> and a celebration setup for a
+            tailored experience.
+          </p>
+
+          {/* Slider Control */}
+          <div className="planner-slider-block">
+            <div className="slider-label-row">
+              <span className="slider-field-title">Estimated Guest Count:</span>
+              <span className="slider-active-val">{plannerGuestCount} Guests</span>
+            </div>
+            <input
+              type="range"
+              min="20"
+              max="350"
+              step="5"
+              value={plannerGuestCount}
+              onChange={(e) => setPlannerGuestCount(Number(e.target.value))}
+              className="planner-range-input"
+            />
+            <div className="slider-markers-row">
+              <span>20 Min</span>
+              <span>50 Typical</span>
+              <span>150+ Gala</span>
+            </div>
           </div>
 
-          {/* Interactive Catering Tools Showcase */}
-          <div className="home-interactive-tools-card" style={{ marginTop: '36px' }}>
-            <div className="tools-card-header">
-              <span className="section-label">Planning Essentials</span>
-              <h3 className="tools-card-heading">Interactive Event Planning Suite</h3>
-              <p className="tools-card-sub">
-                Designed to give hosts, planners, and unit managers instant transparency into pricing, portion counts, and milestone deadlines.
-              </p>
+          {/* Occasion / Style Pills */}
+          <div className="planner-occasions-block">
+            <span className="occasions-block-label">Occasion Style:</span>
+            <div className="occasions-pills-grid">
+              {[
+                'Wedding Reception',
+                'Film Production',
+                'Outdoor Summer BBQ',
+                'Corporate Cocktail'
+              ].map((style) => (
+                <button
+                  key={style}
+                  type="button"
+                  className={`occasion-choice-pill ${plannerOccasion === style ? 'is-selected' : ''}`}
+                  onClick={() => setPlannerOccasion(style)}
+                >
+                  {style}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom Coordination & Inquire Button */}
+          <div className="planner-card-bottom-bar">
+            <div className="planner-direct-coord">
+              <span className="coord-label">DIRECT COORDINATION</span>
+              <span className="coord-val">Chef Michael | 604-722-4857</span>
             </div>
 
-            <div className="home-tools-grid">
-              <button
-                type="button"
-                className="home-tool-item-btn"
-                onClick={() => onOpenBudgetEstimator && onOpenBudgetEstimator('wedding')}
-              >
-                <div className="tool-item-icon">
-                  <Calculator size={18} />
-                </div>
-                <div className="tool-item-text">
-                  <div className="tool-item-title">Budget Estimator</div>
-                  <span className="tool-item-desc">Calculate baseline investments by guest count</span>
-                </div>
-                <ChevronRight size={16} className="tool-arrow" />
-              </button>
-
-              <button
-                type="button"
-                className="home-tool-item-btn"
-                onClick={onOpenServingGuide}
-              >
-                <div className="tool-item-icon">
-                  <Scale size={18} />
-                </div>
-                <div className="tool-item-text">
-                  <div className="tool-item-title">Serving-Size Guide</div>
-                  <span className="tool-item-desc">Recommended canapé and entrée counts</span>
-                </div>
-                <ChevronRight size={16} className="tool-arrow" />
-              </button>
-
-              <button
-                type="button"
-                className="home-tool-item-btn"
-                onClick={onOpenGallery}
-              >
-                <div className="tool-item-icon">
-                  <Camera size={18} />
-                </div>
-                <div className="tool-item-text">
-                  <div className="tool-item-title">Photo Gallery</div>
-                  <span className="tool-item-desc">Browse plated dishes, weddings &amp; film galleys</span>
-                </div>
-                <ChevronRight size={16} className="tool-arrow" />
-              </button>
-
-              <button
-                type="button"
-                className="home-tool-item-btn"
-                onClick={onOpenChecklistModal}
-              >
-                <div className="tool-item-icon">
-                  <CheckSquare size={18} />
-                </div>
-                <div className="tool-item-text">
-                  <div className="tool-item-title">Milestone Checklist</div>
-                  <span className="tool-item-desc">Track tasks from consultation to event day</span>
-                </div>
-                <ChevronRight size={16} className="tool-arrow" />
-              </button>
-            </div>
+            <button
+              type="button"
+              className="btn-planner-inquire"
+              onClick={handlePlannerInquire}
+            >
+              <span>Inquire Date</span>
+              <ArrowRight size={14} />
+            </button>
           </div>
         </div>
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* PACKAGES PREVIEW CALLOUT                                           */}
+      {/* 7. APP PLANNING TOOLS SUITE STRIP                                  */}
       {/* ------------------------------------------------------------------ */}
-      <section className="ow-section packages-section">
-        <div className="ow-container">
-          <div className="courses-header-centered" style={{ marginBottom: '28px' }}>
-            <span className="section-label">Package Selections</span>
-            <h2 className="section-heading-serif">Event Programs Designed Around Your Guests</h2>
-            <p className="courses-intro">
-              Ocean West Catering provides full setup, professional staff, china, bar coordination,
-              aesthetic styling, and complete dietary adaptation.
-            </p>
+      <section className="app-section tools-shortcut-section">
+        <div className="app-section-header">
+          <div>
+            <span className="app-kicker">CATERING TOOLS</span>
+            <h2 className="app-heading-serif">Planning Suite</h2>
           </div>
+        </div>
 
-          <div className="packages-grid">
-            <div className="package-card">
-              <div className="package-meta-header">
-                <span>Casual to Formal</span>
-                <span className="package-rate">From $85/Guest</span>
-              </div>
-              <h3 className="package-title">The Intimate Gathering</h3>
-              <p className="package-desc">
-                Ideal for small celebration dinners, micro-weddings, corporate retreats, and cocktail evenings.
-              </p>
-              <div className="package-footer-block" style={{ marginTop: 'auto', paddingTop: '16px' }}>
-                <Link to="/packages" className="btn-package-action" style={{ textAlign: 'center', display: 'block' }}>
-                  Explore Package Details &rarr;
-                </Link>
-              </div>
-            </div>
-
-            <div className="package-card highlighted">
-              <div className="most-requested-badge">Most Requested</div>
-              <div className="package-meta-header">
-                <span>Wedding &amp; Gala</span>
-                <span className="package-rate">From $140/Guest</span>
-              </div>
-              <h3 className="package-title">The Grand Wedding Banquet</h3>
-              <p className="package-desc">
-                Our signature wedding dining experience. From bridal party arrivals to late-night bites.
-              </p>
-              <div className="package-footer-block" style={{ marginTop: 'auto', paddingTop: '16px' }}>
-                <Link to="/packages" className="btn-package-action" style={{ textAlign: 'center', display: 'block' }}>
-                  Explore Wedding Package &rarr;
-                </Link>
-              </div>
-            </div>
-
-            <div className="package-card">
-              <div className="package-meta-header">
-                <span>Film &amp; Set Production</span>
-                <span className="package-rate">Daily Call Sheet Rates</span>
-              </div>
-              <h3 className="package-title">Movie &amp; Film Production</h3>
-              <p className="package-desc">
-                Reliable, high-energy, nutritious catering tailored for busy cast &amp; crew across British Columbia.
-              </p>
-              <div className="package-footer-block" style={{ marginTop: 'auto', paddingTop: '16px' }}>
-                <Link to="/film-catering" className="btn-package-action" style={{ textAlign: 'center', display: 'block' }}>
-                  Explore Film Craft &rarr;
-                </Link>
-              </div>
-            </div>
-          </div>
+        <div className="app-tools-pills-row">
+          <button
+            type="button"
+            className="app-tool-chip-btn"
+            onClick={() => onOpenQuotationModal && onOpenQuotationModal()}
+          >
+            <Calculator size={13} />
+            <span>Quotation Slip</span>
+          </button>
+          <button
+            type="button"
+            className="app-tool-chip-btn"
+            onClick={() => onOpenCustomizationModal && onOpenCustomizationModal()}
+          >
+            <Sliders size={13} />
+            <span>Custom Setup</span>
+          </button>
+          <button
+            type="button"
+            className="app-tool-chip-btn"
+            onClick={onOpenServingGuide}
+          >
+            <Scale size={13} />
+            <span>Serving Guide</span>
+          </button>
+          <button
+            type="button"
+            className="app-tool-chip-btn"
+            onClick={onOpenGallery}
+          >
+            <Camera size={13} />
+            <span>Photo Gallery</span>
+          </button>
+          <button
+            type="button"
+            className="app-tool-chip-btn"
+            onClick={onOpenChecklistModal}
+          >
+            <CheckSquare size={13} />
+            <span>Checklist</span>
+          </button>
         </div>
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* TESTIMONIALS                                                       */}
+      {/* 8. STRONG CONTACT / PHONE ACTION CARD (DEEP PLUM BACKGROUND)       */}
       {/* ------------------------------------------------------------------ */}
-      <section className="ow-section testimonials-section">
-        <div className="ow-container">
-          <div className="courses-header-centered" style={{ marginBottom: '28px' }}>
-            <span className="section-label">Testimonials &amp; Client Experiences</span>
-            <h2 className="section-heading-serif">Voices from British Columbia</h2>
+      <section className="app-section contact-plum-section">
+        <div className="contact-plum-card">
+          <div className="contact-plum-icon-circle">
+            <Phone size={22} />
           </div>
 
-          <div className="testimonials-grid">
-            {TESTIMONIALS.map((item) => (
-              <div key={item.id} className="testimonial-card">
-                <div className="stars-row">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={14} fill="#C89B6D" stroke="#C89B6D" />
-                  ))}
-                </div>
-                <p className="testimonial-quote">"{item.quote}"</p>
-                <div className="testimonial-author-box">
-                  <div className="author-name">{item.name}</div>
-                  <div className="author-role">{item.role}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+          <h2 className="contact-plum-title">Have Questions About Your Menu?</h2>
+          <p className="contact-plum-sub">
+            Contact Executive Chef Michael Thomas directly for custom culinary creations, dietary
+            modifications, and instant date holds.
+          </p>
 
-      {/* ------------------------------------------------------------------ */}
-      {/* QUICK INQUIRY INVITATION                                           */}
-      {/* ------------------------------------------------------------------ */}
-      <section className="ow-section" style={{ backgroundColor: '#FAF8F5', borderTop: '1px solid #EAE4D9' }}>
-        <div className="ow-container">
-          <div className="menu-guide-banner" style={{ background: '#192720', color: '#FAF8F5' }}>
-            <div className="banner-left">
-              <div className="banner-icon-box" style={{ background: 'rgba(186, 141, 91, 0.2)', color: '#BA8D5B' }}>
-                <ShieldCheck size={22} />
-              </div>
-              <div>
-                <h4 className="banner-title" style={{ color: '#FAF8F5' }}>Ready to Plan Your Next Culinary Experience?</h4>
-                <p className="banner-subtitle" style={{ color: '#BAC4BD' }}>
-                  Connect directly with Executive Chef Michael Thomas for custom proposals and date reservations.
-                </p>
-              </div>
-            </div>
-            <Link to="/inquiry" className="banner-btn" style={{ background: '#BA8D5B', color: '#192720' }}>
-              <span>Start Direct Inquiry</span>
-              <ArrowRight size={15} />
-            </Link>
+          <div className="contact-plum-actions">
+            <a href="tel:6047224857" className="btn-contact-gold-phone">
+              <Phone size={15} />
+              <span>604-722-4857</span>
+            </a>
+
+            <button
+              type="button"
+              className="btn-contact-text-dispatch"
+              onClick={() => onOpenSupportModal && onOpenSupportModal()}
+            >
+              <MessageSquare size={15} />
+              <span>Concierge Support Desk</span>
+            </button>
           </div>
+
+          <p className="contact-plum-footnote">
+            Serving Vancouver, Surrey, Whistler, Richmond &amp; the Lower Mainland
+          </p>
         </div>
       </section>
     </div>
   );
 }
-

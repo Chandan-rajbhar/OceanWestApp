@@ -55,67 +55,218 @@ export const MENU_COURSES = [
     id: 1,
     title: "Roasted Anjou Pear with Gorgonzola",
     category: "starters",
+    isSignature: true,
+    isChefSpecial: false,
     badges: [
       { text: "VEGETARIAN", type: "green" },
-      { text: "HAIDA GWAII ORIGIN", type: "tan" }
+      { text: "HAIDA GWAII ORIGIN", type: "tan" },
+      { text: "SIGNATURE", type: "gold" }
     ],
     description: "Poached pear roasted in local lavender honey and Okanagan red wine reduction, served with whipped gorgonzola cream, candied pecans, and watercress.",
+    ingredients: ["Anjou Pears", "Wildflower Honey", "Okanagan Red Wine", "Gorgonzola Cream", "Candied Pecans", "Watercress"],
+    allergens: ["Dairy (Gorgonzola)", "Tree Nuts (Pecans)"],
+    allergenSafetyNote: "Contains dairy and nuts. Nut-free substitution prepared upon request.",
     serviceStyle: "Plated Dinner & Buffet"
   },
   {
     id: 2,
     title: "Wild Pacific Salmon with Citrus Herb Glaze",
-    category: "mains",
+    category: "dinner",
+    isSignature: true,
+    isChefSpecial: false,
     badges: [
       { text: "PACIFIC OCEAN SEAFOOD", type: "blue" },
-      { text: "GLUTEN-FREE", type: "green" }
+      { text: "GLUTEN-FREE", type: "green" },
+      { text: "SIGNATURE", type: "gold" }
     ],
     description: "Pan-seared wild BC salmon glazed with blood orange and tarragon reduction, over parsnip purée with butter-braised asparagus.",
+    ingredients: ["Line-Caught BC Salmon", "Blood Orange", "Fresh Tarragon", "Parsnip Purée", "Braised Asparagus"],
+    allergens: ["Fish (Salmon)", "Dairy (Butter)"],
+    allergenSafetyNote: "Dairy-free preparation available by substituting olive oil glaze.",
     serviceStyle: "Plated Dinner & Buffet"
   },
   {
     id: 3,
     title: "Prime Angus Beef Medallions & Truffle Demi",
-    category: "mains",
+    category: "dinner",
+    isSignature: false,
+    isChefSpecial: true,
     badges: [
       { text: "ALBERTA AAA BEEF", type: "tan" },
-      { text: "GLUTEN-FREE", type: "green" }
+      { text: "GLUTEN-FREE", type: "green" },
+      { text: "CHEF SPECIAL", type: "gold" }
     ],
     description: "Slow-roasted tenderloin with black garlic crust, served over pomme purée with morel mushroom sauce and roasted heritage carrots.",
+    ingredients: ["Alberta AAA Angus Tenderloin", "Black Garlic", "Morel Mushrooms", "Pomme Purée", "Heritage Carrots", "Truffle Demi-Glace"],
+    allergens: ["Dairy (Pomme Purée)"],
+    allergenSafetyNote: "Naturally gluten-free reduction. Dairy-free starch substitution available.",
     serviceStyle: "Plated Dinner Course"
   },
   {
     id: 4,
     title: "Pacific Coast Artisanal Grazing Board",
     category: "grazing",
+    isSignature: true,
+    isChefSpecial: false,
     badges: [
       { text: "GRAZING TABLE", type: "tan" },
-      { text: "VEGETARIAN & CHARCUTERIE OPTIONS", type: "green" }
+      { text: "VEGETARIAN & CHARCUTERIE", type: "green" },
+      { text: "SIGNATURE", type: "gold" }
     ],
     description: "Smoked trout mousse, Salt Spring Island goat cheese, cured salumi, pickled samphire, Vancouver Island honeycomb, and organic artisan breads.",
+    ingredients: ["Smoked Steelhead Trout", "Salt Spring Goat Cheese", "Local Charcuterie", "Vancouver Island Honeycomb", "Pickled Samphire", "Artisan Sourdough"],
+    allergens: ["Dairy (Cheeses)", "Fish (Trout Mousse)", "Gluten (Breads)"],
+    allergenSafetyNote: "Separate gluten-free crackers and nut-isolated platter provided simultaneously.",
     serviceStyle: "Grazing Table / Platter"
   },
   {
     id: 5,
     title: "Charred Spot Prawn & Mango Skewers",
     category: "canapes",
+    isSignature: true,
+    isChefSpecial: false,
     badges: [
       { text: "CANAPÉS", type: "blue" },
-      { text: "LOCALLY CAUGHT SPOT PRAWN", type: "tan" }
+      { text: "LOCALLY CAUGHT SPOT PRAWN", type: "tan" },
+      { text: "SIGNATURE", type: "gold" }
     ],
     description: "Spot prawns glazed with kaffir lime, chili, and cilantro reduction, served with sweet mango salsa and coconut cream dipping sauce.",
+    ingredients: ["Wild BC Spot Prawns", "Kaffir Lime", "Chili Glaze", "Fresh Mango Salsa", "Coconut Cream"],
+    allergens: ["Shellfish (Prawns)"],
+    allergenSafetyNote: "Contains shellfish. Strictly separated from non-seafood canapé trays.",
     serviceStyle: "Passed Cocktail Canapé"
   },
   {
     id: 6,
     title: "Caramelized Tahitian Vanilla Bean Brûlée",
     category: "desserts",
+    isSignature: false,
+    isChefSpecial: false,
     badges: [
       { text: "PLATED DESSERT", type: "tan" },
       { text: "VEGETARIAN", type: "green" }
     ],
     description: "Silky Madagascar custard infused with Tahitian vanilla bean, topped with a crackling caramel shell, served with Cowichan Bay wild blackberries.",
+    ingredients: ["Farm Egg Yolks", "Heavy Cream", "Tahitian Vanilla Beans", "Caramel Shell", "Cowichan Bay Blackberries"],
+    allergens: ["Dairy (Cream)", "Eggs"],
+    allergenSafetyNote: "Vegetarian and naturally gluten-free. Contains dairy and eggs.",
     serviceStyle: "Individual Dessert / Platter"
+  },
+  {
+    id: 7,
+    title: "Fraser Valley Farm Egg & Smoked Trout Frittata",
+    category: "breakfast",
+    isSignature: false,
+    isChefSpecial: true,
+    badges: [
+      { text: "BREAKFAST & BRUNCH", type: "tan" },
+      { text: "GLUTEN-FREE", type: "green" },
+      { text: "CHEF SPECIAL", type: "gold" }
+    ],
+    description: "Free-range Fraser Valley eggs whisked with hot-smoked Pacific trout, baby leeks, and Vancouver Island sheep feta. Served with roasted fingerling potatoes.",
+    ingredients: ["Fraser Valley Free-Range Eggs", "Hot-Smoked Trout", "Baby Leeks", "Vancouver Island Feta", "Organic Fingerling Potatoes"],
+    allergens: ["Eggs", "Fish (Trout)", "Dairy (Feta)"],
+    allergenSafetyNote: "Naturally gluten-free. Dairy-free egg white scramble option available.",
+    serviceStyle: "Hot Breakfast Buffet & Plated Brunch"
+  },
+  {
+    id: 8,
+    title: "Artisan Brioche Breakfast Sliders",
+    category: "breakfast",
+    isSignature: false,
+    isChefSpecial: false,
+    badges: [
+      { text: "BREAKFAST CALL", type: "tan" },
+      { text: "CREW FAVORITE", type: "blue" }
+    ],
+    description: "Toasted house-made brioche buns with thick-cut double-smoked bacon, aged white cheddar, soft scrambled eggs, and Okanagan apple-chili relish.",
+    ingredients: ["House Brioche", "Double-Smoked Bacon", "Aged BC White Cheddar", "Farm Eggs", "Apple-Chili Relish"],
+    allergens: ["Gluten (Brioche)", "Dairy (Cheddar)", "Eggs"],
+    allergenSafetyNote: "Vegetarian avocado substitution and gluten-free wraps available on request.",
+    serviceStyle: "Passed Breakfast & Hot Station"
+  },
+  {
+    id: 9,
+    title: "Pacific Rim Wild Salmon & Soba Noodle Bowl",
+    category: "lunch",
+    isSignature: false,
+    isChefSpecial: true,
+    badges: [
+      { text: "LUNCH FEATURE", type: "blue" },
+      { text: "DAIRY-FREE", type: "green" },
+      { text: "CHEF SPECIAL", type: "gold" }
+    ],
+    description: "Grilled wild salmon fillet over chilled buckwheat soba noodles, crisp snap peas, shaved radish, and sesame-ginger vinaigrette with scallion oil.",
+    ingredients: ["Wild BC Salmon", "Buckwheat Soba", "Snap Peas", "Daikon Radish", "Sesame Vinaigrette", "Scallion Oil"],
+    allergens: ["Fish (Salmon)", "Sesame", "Soy"],
+    allergenSafetyNote: "Dairy-free. Can be prepared gluten-free with certified tamari and 100% buckwheat.",
+    serviceStyle: "Individual Boxed Lunch or Buffet Station"
+  },
+  {
+    id: 10,
+    title: "Artisanal Porchetta & Rosemary Focaccia Platter",
+    category: "lunch",
+    isSignature: true,
+    isChefSpecial: false,
+    badges: [
+      { text: "LUNCH BUFFET", type: "tan" },
+      { text: "SIGNATURE", type: "gold" }
+    ],
+    description: "Slow-roasted Fraser Valley pork loin with crispy crackling and fennel-herb stuffing, carved thin on fresh rosemary sea salt focaccia with salsa verde.",
+    ingredients: ["Fraser Valley Pork", "Rosemary Focaccia", "Fennel & Herbs", "Salsa Verde", "Arugula"],
+    allergens: ["Gluten (Focaccia)"],
+    allergenSafetyNote: "Gluten-free focaccia provided in individually sealed containers.",
+    serviceStyle: "Carvery Station & Sandwich Platter"
+  },
+  {
+    id: 11,
+    title: "Pan-Seared Pacific Halibut & Saffron Glaze",
+    category: "dinner",
+    isSignature: false,
+    isChefSpecial: true,
+    badges: [
+      { text: "HAIDA GWAII HALIBUT", type: "blue" },
+      { text: "GLUTEN-FREE", type: "green" },
+      { text: "CHEF SPECIAL", type: "gold" }
+    ],
+    description: "Sustainably caught Haida Gwaii halibut with saffron citrus emulsion, served over creamy Meyer lemon risotto and baby fennel.",
+    ingredients: ["Haida Gwaii Halibut", "Saffron Citrus Emulsion", "Arborio Rice", "Meyer Lemon", "Baby Fennel"],
+    allergens: ["Fish (Halibut)", "Dairy (Risotto)"],
+    allergenSafetyNote: "Dairy-free saffron broth alternative available upon request.",
+    serviceStyle: "Plated Dinner Entrée"
+  },
+  {
+    id: 12,
+    title: "Wild Foraged Chanterelle & Truffle Tartlets",
+    category: "canapes",
+    isSignature: false,
+    isChefSpecial: false,
+    badges: [
+      { text: "CANAPÉS", type: "blue" },
+      { text: "VEGETARIAN", type: "green" }
+    ],
+    description: "Flaky puff pastry tartlets filled with sautéed Vancouver Island chanterelles, black truffle mousse, and micro herbs.",
+    ingredients: ["Foraged BC Chanterelles", "Puff Pastry", "Black Truffle Cream", "Thyme", "Micro Greens"],
+    allergens: ["Gluten (Pastry)", "Dairy (Cream)"],
+    allergenSafetyNote: "Vegetarian. Gluten-free polenta-base version available upon notice.",
+    serviceStyle: "Warm Passed Cocktail Canapé"
+  },
+  {
+    id: 13,
+    title: "Cowichan Bay Blackberry & Hazelnut Galette",
+    category: "desserts",
+    isSignature: true,
+    isChefSpecial: false,
+    badges: [
+      { text: "SEASONAL DESSERT", type: "tan" },
+      { text: "VEGETARIAN", type: "green" },
+      { text: "SIGNATURE", type: "gold" }
+    ],
+    description: "Rustic butter crust baked with wild Cowichan Bay blackberries, Frangelico essence, and roasted Agassiz hazelnuts. Served with vanilla cream.",
+    ingredients: ["Cowichan Wild Blackberries", "Rustic Butter Crust", "Agassiz Hazelnuts", "Frangelico", "House Whipped Cream"],
+    allergens: ["Dairy (Crust & Cream)", "Gluten (Flour)", "Tree Nuts (Hazelnuts)"],
+    allergenSafetyNote: "Contains hazelnuts and gluten. Nut-free individual berry crumbles provided on request.",
+    serviceStyle: "Plated Dessert & Station Platter"
   }
 ];
 
@@ -498,3 +649,232 @@ export const PACKAGE_COMPARISON = [
 ];
 
 
+
+
+// --------------------------------------------------------------------------
+// 7 Occasion Profiles for Discovery & Custom Inquiries (Module 1 & 3)
+// --------------------------------------------------------------------------
+export const OCCASIONS = [
+  {
+    id: "weddings",
+    name: "Weddings & Receptions",
+    badge: "Most Requested",
+    description: "Bespoke plated feasts, passed canapés, sommelier wine pairing, and late-night culinary stations.",
+    recommendedGuests: "40–350",
+    serviceStyle: "plated",
+    packageId: "wedding"
+  },
+  {
+    id: "corporate",
+    name: "Corporate & Galas",
+    badge: "Executive Service",
+    description: "Executive summits, awards galas, shareholder banquets, and VIP boardroom luncheons with precision timing.",
+    recommendedGuests: "30–500+",
+    serviceStyle: "plated",
+    packageId: "wedding"
+  },
+  {
+    id: "birthdays",
+    name: "Birthday Parties & Milestones",
+    badge: "Celebration",
+    description: "Celebratory passed cocktail fare, curated artisanal grazing tables, and custom dessert stations.",
+    recommendedGuests: "15–100",
+    serviceStyle: "cocktail",
+    packageId: "intimate"
+  },
+  {
+    id: "private_dining",
+    name: "Private Dining & Estates",
+    badge: "Exclusive Chef",
+    description: "Exclusive multi-course dinners prepared live by Executive Chef Michael Thomas in private residences.",
+    recommendedGuests: "8–24",
+    serviceStyle: "plated",
+    packageId: "intimate"
+  },
+  {
+    id: "family",
+    name: "Family Gatherings & Reunions",
+    badge: "Warm Feasts",
+    description: "Abundant harvest-style platters, multi-generational feasts, and wood-fired artisanal outdoor spreads.",
+    recommendedGuests: "20–80",
+    serviceStyle: "buffet",
+    packageId: "intimate"
+  },
+  {
+    id: "film",
+    name: "Film & Production Craft",
+    badge: "24/7 Hot Galley",
+    description: "Continuous rolling hot tables, high-velocity craft trucks, and IATSE/DGC union-compliant boxed meals.",
+    recommendedGuests: "25–400+",
+    serviceStyle: "craft services",
+    packageId: "film"
+  },
+  {
+    id: "custom",
+    name: "Other Custom Events",
+    badge: "Bespoke Service",
+    description: "Bespoke winery receptions, brand activations, coastal alfresco banquets, and customized celebrations.",
+    recommendedGuests: "Custom",
+    serviceStyle: "buffet",
+    packageId: "intimate"
+  }
+];
+
+// --------------------------------------------------------------------------
+// Seasonal Menus & Special Culinary Offerings (Module 1)
+// --------------------------------------------------------------------------
+export const SEASONAL_MENUS = [
+  {
+    id: "spring_summer",
+    title: "Pacific Coast Spring & Summer Bounty",
+    season: "May through September",
+    status: "Active Reservation Season",
+    description: "Spot prawns, line-caught wild salmon, Haida Gwaii halibut, and heirloom berries from Cowichan Valley.",
+    highlights: ["Chilled Spot Prawn Ceviche", "Wild Salmon with Citrus Reduction", "Tahitian Vanilla Brûlée"],
+    availabilityNote: "Booking peak weekend dates 4–8 months in advance."
+  },
+  {
+    id: "autumn_harvest",
+    title: "Autumn Wild Harvest & Foraged Mushroom",
+    season: "October through November",
+    status: "Fall Bookings Open",
+    description: "Slow-roasted Alberta AAA tenderloin, foraged BC morels and chanterelles, roasted Bosc pears, and root vegetable purées.",
+    highlights: ["Bosc Pear with Gorgonzola", "Angus Beef Medallions", "Wild Truffle Tartlets"],
+    availabilityNote: "Ideal for indoor vineyard banquets and intimate estate dinners."
+  },
+  {
+    id: "winter_gala",
+    title: "Winter Executive Gala & Holiday Banquets",
+    season: "November through January",
+    status: "Holiday Reservation Window",
+    description: "Festive multi-course plated galas, spiced Okanagan red wine reductions, artisanal charcuterie boards, and decadent desserts.",
+    highlights: ["Artisan Grazing Table", "Alberta Tenderloin", "Tahitian Vanilla Brûlée"],
+    availabilityNote: "Corporate holiday calendar is filling quickly; inquire early."
+  }
+];
+
+// --------------------------------------------------------------------------
+// Personalized Culinary Experiences & Chef Portfolio (Module 4)
+// --------------------------------------------------------------------------
+export const CULINARY_EXPERIENCES = [
+  {
+    id: "private_chef",
+    title: "Private Chef Estate Experience",
+    subtitle: "Executive Chef Michael Thomas Table-Side",
+    image: IMAGES.wedding,
+    desc: "An exclusive culinary experience in your private residence or rented estate. Chef Michael curates and cooks a personalized 4 to 6-course seasonal menu with course-by-course presentation.",
+    scale: "8 to 24 Guests",
+    inclusions: [
+      "Custom multi-course menu design around dietary preferences",
+      "Table-side plating & storytelling by Chef Michael Thomas",
+      "Full kitchen staging, linen service & spotless clean-down"
+    ],
+    experienceType: "Private Chef Request"
+  },
+  {
+    id: "live_stations",
+    title: "Live Interactive Culinary Stations",
+    subtitle: "Action Cooking & Searing",
+    image: IMAGES.platter,
+    desc: "Engage guests with sensory action stations: live cedar-planked wild salmon smoking, spot prawn flambé with Okanagan spirits, and hand-carved heritage beef stations.",
+    scale: "40 to 500+ Guests",
+    inclusions: [
+      "Live chef attendants at interactive food stations",
+      "Artisan carving stations with house-made jus & demis",
+      "Custom bamboo compostable or fine china presentation"
+    ],
+    experienceType: "Live Cooking Stations"
+  },
+  {
+    id: "curated_tasting",
+    title: "Chef-Curated Tasting Menus",
+    subtitle: "Multi-Sensory Pacific Northwest Degustation",
+    image: IMAGES.gala,
+    desc: "A formal 4 or 6-course gastronomic tasting showcasing British Columbia's micro-regions—from Haida Gwaii seafood to Fraser Valley duck and Okanagan vineyard pairings.",
+    scale: "12 to 120 Guests",
+    inclusions: [
+      "Sommelier-curated BC VQA wine pairings for each course",
+      "Bespoke printed menus with guest naming",
+      "Simultaneous fine-dining synchronized service"
+    ],
+    experienceType: "Chef-Curated Tasting Menus"
+  },
+  {
+    id: "custom_dining",
+    title: "Customized Waterfront & Outdoor Banquets",
+    subtitle: "Coastal British Columbia Alfresco Dining",
+    image: IMAGES.wedding,
+    desc: "Bespoke dining setups on oceanfront beaches, private docks, and remote vineyard bluffs. Self-sufficient mobile culinary staging ensures five-star dining in any landscape.",
+    scale: "20 to 250 Guests",
+    inclusions: [
+      "Complete mobile kitchen setup with independent power",
+      "Weather-resilient luxury dining coordination",
+      "Local seasonal seafood and artisan farm pairings"
+    ],
+    experienceType: "Customized Dining Experiences"
+  }
+];
+
+// --------------------------------------------------------------------------
+// Event Customization Options (Module 5)
+// --------------------------------------------------------------------------
+export const CUSTOMIZATION_OPTIONS = {
+  serviceStyles: [
+    { id: "plated", label: "Plated Multi-Course", desc: "Formal seated individual courses served simultaneously" },
+    { id: "family_style", label: "Luxury Family-Style", desc: "Elegantly plated sharing platters placed at center of tables" },
+    { id: "buffet", label: "Artisan Buffet Stations", desc: "Attended hot stations and chilled presentation tables" },
+    { id: "cocktail", label: "Cocktail Reception", desc: "Continuous passed canapés and stationary grazing boards" },
+    { id: "grazing", label: "Artisan Grazing Table", desc: "Abundant styled boards with local cheeses, cured meats & breads" },
+    { id: "craft", label: "Continuous Craft Services", desc: "Rolling 14-hour hot galley for film & media production" }
+  ],
+  tableSetups: [
+    { id: "rustic_pnw", label: "Rustic Pacific Northwest", desc: "Natural reclaimed cedar boards, warm linen, and muted gold accents" },
+    { id: "modern_minimal", label: "Modern Minimalist", desc: "Crisp white porcelain, brushed brass cutlery, and clean geometry" },
+    { id: "coastal_formal", label: "Coastal Formal Banquet", desc: "Formal bone china, crystal stemware, and white-glove table appointments" },
+    { id: "vineyard_casual", label: "Vineyard Alfresco", desc: "Casual stoneware, olivewood boards, and bistro glassware" }
+  ],
+  staffingOptions: [
+    { id: "chef_only", label: "Executive Chef Only", desc: "Chef Michael prepares and plates; host manages table service" },
+    { id: "chef_captain", label: "Chef + Dining Captain", desc: "Executive chef plus dedicated service captain for seamless flow" },
+    { id: "full_team", label: "Full White-Glove Team", desc: "Complete culinary crew and 1 professional server per 12–15 guests" },
+    { id: "craft_crew", label: "Film Galley Crew", desc: "Mobile kitchen truck drivers, line chefs, and barista attendants" }
+  ],
+  beveragePreferences: [
+    { id: "bc_wine", label: "BC VQA Sommelier Pairings", desc: "Okanagan and Similkameen Valley boutique winery pairings" },
+    { id: "craft_beer_cider", label: "Pacific NW Craft Beer & Cider", desc: "Locally brewed microbrews and small-batch heritage ciders" },
+    { id: "zero_proof", label: "Artisanal Mocktails & Espresso", desc: "Botanical cold-pressed sodas, fresh shrubs & Italian espresso bar" },
+    { id: "client_supplied", label: "Host-Supplied Alcohol", desc: "Client provides alcohol; Ocean West supplies certified Serving It Right bartenders" }
+  ],
+  decorPreferences: [
+    { id: "wildflowers", label: "Seasonal British Columbia Wildflowers", desc: "Hand-arranged regional seasonal florals in ceramic vases" },
+    { id: "candles", label: "Floating Candlelight & Brass Candelabras", desc: "Warm ambient candlelight along banquet tables" },
+    { id: "printed_menus", label: "Bespoke Printed Menus", desc: "Custom cardstock with event typography and client monogram" },
+    { id: "driftwood_evergreen", label: "Coastal Driftwood & Evergreen Sprigs", desc: "Subtle forest textures reflecting the Pacific Northwest shoreline" }
+  ]
+};
+
+
+// --------------------------------------------------------------------------
+// Chef Michael Thomas Profile & Portfolio (Module 4)
+// --------------------------------------------------------------------------
+export const CHEF_PROFILE = {
+  name: "Executive Chef Michael Thomas",
+  title: "Founder & Culinary Director",
+  headquarters: "Ocean West Commissary, Richmond, British Columbia",
+  experienceYears: "20+ Years Fine Dining & High-Volume Production",
+  credentials: [
+    "Canadian Red Seal Certified Executive Chef",
+    "B.C. FoodSafe Level 2 Certified & Allergen Protocol Lead",
+    "Serving It Right Certified Responsible Alcohol Management",
+    "Ocean Wise Seafood Culinary Ambassador Partner"
+  ],
+  bio: "Chef Michael Thomas brings two decades of celebrated West Coast dining expertise to Ocean West Catering. Having led luxury hotel kitchens and Vancouver high-end banquet operations, Chef Michael specializes in hyper-local British Columbia provenance—working directly with Haida Gwaii sustainable halibut longliners, Fraser Valley heritage livestock growers, and Okanagan Valley vintners. Whether cooking an intimate 10-guest beachfront tasting or directing a 450-crew hot production galley on remote film locations, Chef Michael delivers culinary excellence with flawless operational discipline.",
+  specialties: [
+    "Pacific Northwest Indigenous & Coastal Seafood Gastronomy",
+    "Wood-Smoke & Open-Fired Artisanal Banquet Plating",
+    "Hyper-Seasonal 5-Course Wine-Paired Tasting Experiences",
+    "Comprehensive Allergy-Safe & Dietary-Specific Menu Execution",
+    "24/7 Mobile Hot Galley Logistics for Motion Picture Productions"
+  ],
+  quote: "Exceptional catering isn't just about delicious food—it's about orchestrating an unforgettable sensory journey rooted in the wild ingredients of British Columbia."
+};

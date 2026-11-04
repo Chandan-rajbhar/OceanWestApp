@@ -17,7 +17,7 @@ import ContactShortcutsModal from './components/ContactShortcutsModal';
 import PolicyModal from './components/PolicyModal';
 import Toast from './components/Toast';
 
-// New Catering Features Components
+// Catering Features Components
 import BudgetEstimatorModal from './components/BudgetEstimatorModal';
 import PackageComparisonModal from './components/PackageComparisonModal';
 import EventChecklistModal from './components/EventChecklistModal';
@@ -25,6 +25,12 @@ import InquiryStatusModal from './components/InquiryStatusModal';
 import ServingGuideModal from './components/ServingGuideModal';
 import PhotoGalleryModal from './components/PhotoGalleryModal';
 import ResetConfirmModal from './components/ResetConfirmModal';
+
+// Modules 4, 5, 6 & 8 Components
+import CulinaryExperiencesModal from './components/CulinaryExperiencesModal';
+import EventCustomizationModal from './components/EventCustomizationModal';
+import QuotationPaymentModal from './components/QuotationPaymentModal';
+import CustomerSupportModal from './components/CustomerSupportModal';
 
 import HomePage from './pages/HomePage';
 import DisciplinesPage from './pages/DisciplinesPage';
@@ -43,7 +49,7 @@ const DEFAULT_FORM_DATA = {
   fullName: '',
   email: '',
   phone: '',
-  category: 'The Grand Wedding Banquet',
+  category: 'Weddings & Receptions',
   eventDate: '',
   guestCount: '75',
   location: 'Richmond / Metro Vancouver',
@@ -58,7 +64,15 @@ const DEFAULT_FORM_DATA = {
   crewSize: '120',
   mealCalls: ['Hot Breakfast Call', 'Seated Hot Lunch'],
   locationMoves: '',
-  craftNeeds: 'Hot Galley Truck & Continuous Espresso'
+  craftNeeds: 'Hot Galley Truck & Continuous Espresso',
+  customizations: {
+    serviceStyle: 'plated',
+    tableSetup: 'rustic_pnw',
+    staffingTier: 'full_team',
+    beveragePreference: 'bc_wine',
+    decorPreferences: ['wildflowers'],
+    uploadedImages: []
+  }
 };
 
 export default function App() {
@@ -77,7 +91,7 @@ export default function App() {
     }, 4200);
   };
 
-  // 2. Saved Planning Draft State in LocalStorage (Feature 12)
+  // 2. Saved Planning Draft State in LocalStorage
   const [formData, setFormData] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_FORM);
@@ -88,7 +102,7 @@ export default function App() {
     return DEFAULT_FORM_DATA;
   });
 
-  // Selected dishes in My Menu (Feature 1)
+  // Selected dishes in My Menu
   const [selectedDishes, setSelectedDishes] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_DISHES);
@@ -99,7 +113,7 @@ export default function App() {
     return [];
   });
 
-  // Saved Favorite Dishes (Feature 5)
+  // Saved Favorite Dishes
   const [favoriteDishes, setFavoriteDishes] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_FAVORITES);
@@ -171,7 +185,7 @@ export default function App() {
   const [isMyMenuOpen, setIsMyMenuOpen] = useState(false);
   const [policyModal, setPolicyModal] = useState({ open: false, type: 'privacy' });
 
-  // New Modals State
+  // Catering Modals State
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [budgetModalPackage, setBudgetModalPackage] = useState('wedding');
   const [isComparisonModalOpen, setIsComparisonModalOpen] = useState(false);
@@ -181,13 +195,20 @@ export default function App() {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
 
-  // 5. Menu Builder handlers (Feature 1)
+  // Customer App Features State (Modules 4, 5, 6, 8)
+  const [isExperiencesModalOpen, setIsExperiencesModalOpen] = useState(false);
+  const [isCustomizationModalOpen, setIsCustomizationModalOpen] = useState(false);
+  const [isQuotationModalOpen, setIsQuotationModalOpen] = useState(false);
+  const [quotationModalPackage, setQuotationModalPackage] = useState('corporate');
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
+
+  // 5. Menu Builder handlers
   const handleToggleDishInMenu = (dish) => {
-    setSelectedDishes(prev => {
-      const exists = prev.some(d => d.id === dish.id);
+    setSelectedDishes((prev) => {
+      const exists = prev.some((d) => d.id === dish.id);
       if (exists) {
         showToast(`Removed "${dish.title}" from My Menu.`);
-        return prev.filter(d => d.id !== dish.id);
+        return prev.filter((d) => d.id !== dish.id);
       } else {
         showToast(`Added "${dish.title}" to My Menu!`);
         return [...prev, dish];
@@ -196,7 +217,7 @@ export default function App() {
   };
 
   const handleRemoveDish = (dishId) => {
-    setSelectedDishes(prev => prev.filter(d => d.id !== dishId));
+    setSelectedDishes((prev) => prev.filter((d) => d.id !== dishId));
     showToast('Removed dish from My Menu.');
   };
 
@@ -207,22 +228,26 @@ export default function App() {
 
   const handleApplyMenuToInquiry = () => {
     if (selectedDishes.length === 0) return;
-    const dishListFormatted = selectedDishes.map(d => `• ${d.title} (${d.serviceStyle || d.category})`).join('\n');
-    setFormData(prev => ({
+    const dishListFormatted = selectedDishes
+      .map((d) => `• ${d.title} (${d.serviceStyle || d.category})`)
+      .join('\n');
+    setFormData((prev) => ({
       ...prev,
-      notes: (prev.notes ? prev.notes + '\n\n' : '') + `[Selected Tasting Menu Courses:\n${dishListFormatted}]`
+      notes:
+        (prev.notes ? prev.notes + '\n\n' : '') +
+        `[Selected Tasting Menu Courses:\n${dishListFormatted}]`
     }));
     showToast(`${selectedDishes.length} menu items attached to your inquiry notes!`);
   };
 
-  // 6. Favorites handlers (Feature 5)
+  // 6. Favorites handlers
   const handleToggleFavorite = (dish, alsoAddToMenu = false) => {
-    setFavoriteDishes(prev => {
+    setFavoriteDishes((prev) => {
       const exists = prev.includes(dish.id);
       let next;
       if (exists && !alsoAddToMenu) {
         showToast(`Removed "${dish.title}" from saved favorites.`);
-        next = prev.filter(id => id !== dish.id);
+        next = prev.filter((id) => id !== dish.id);
       } else {
         if (!exists) {
           showToast(`Saved "${dish.title}" to your favorites!`);
@@ -240,18 +265,18 @@ export default function App() {
   };
 
   const handleAddAllFavoritesToMenu = () => {
-    const favoriteObjects = MENU_COURSES.filter(d => favoriteDishes.includes(d.id));
+    const favoriteObjects = MENU_COURSES.filter((d) => favoriteDishes.includes(d.id));
     if (favoriteObjects.length === 0) return;
-    setSelectedDishes(prev => {
-      const newItems = favoriteObjects.filter(f => !prev.some(p => p.id === f.id));
+    setSelectedDishes((prev) => {
+      const newItems = favoriteObjects.filter((f) => !prev.some((p) => p.id === f.id));
       return [...prev, ...newItems];
     });
     showToast(`Added ${favoriteObjects.length} favorites into My Menu!`);
   };
 
-  // 7. Event Planner handler (Feature 2)
+  // 7. Event Planner handler
   const handleApplyPlan = (planResult) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       category: planResult.category || prev.category,
       guestCount: planResult.guestCount || prev.guestCount,
@@ -263,9 +288,9 @@ export default function App() {
     showToast(`Planner applied: ${planResult.category} (${planResult.guestCount} guests).`);
   };
 
-  // 8. Budget Estimator handler (Feature 3)
+  // 8. Budget Estimator handler
   const handleApplyEstimate = (estResult) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       category: estResult.packageName || prev.category,
       guestCount: estResult.guestCount || prev.guestCount,
@@ -274,7 +299,22 @@ export default function App() {
     showToast(`Estimate applied: ${estResult.packageName} for ${estResult.guestCount} guests.`);
   };
 
-  // 9. Reset Planning Draft handler with confirmation (Feature 12)
+  // 9. Save Customizations handler (Module 5)
+  const handleSaveCustomizations = (customizedData) => {
+    setFormData((prev) => ({
+      ...prev,
+      customizations: customizedData,
+      serviceStyle: customizedData.serviceStyle || prev.serviceStyle,
+      severeAllergies: customizedData.dietaryAllergyNotes || prev.severeAllergies,
+      notes:
+        (prev.notes ? prev.notes + '\n\n' : '') +
+        (customizedData.specialInstructions
+          ? `[Custom Logistics & Style Notes: ${customizedData.specialInstructions}]`
+          : '')
+    }));
+  };
+
+  // 10. Reset Planning Draft handler with confirmation
   const handleConfirmReset = () => {
     setFormData(DEFAULT_FORM_DATA);
     setSelectedDishes([]);
@@ -291,10 +331,10 @@ export default function App() {
     showToast('Planning draft, tasting menus, and saved favorites have been reset.');
   };
 
-  // 10. Form handlers
+  // 11. Form handlers
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFormSubmit = (e) => {
@@ -315,7 +355,7 @@ export default function App() {
       <ScrollToTop scrollContainerRef={scrollContainerRef} />
 
       <div className="oceanwest-mobile-app">
-        {/* Compact Sticky Header with sleek dropdown navigation matching reference */}
+        {/* Compact Sticky Header with sleek dropdown navigation */}
         <Header
           isScrolled={isScrolled}
           selectedDishesCount={selectedDishes.length}
@@ -331,6 +371,10 @@ export default function App() {
           onOpenGalleryModal={() => setIsGalleryOpen(true)}
           onOpenChecklistModal={() => setIsChecklistModalOpen(true)}
           onOpenServingGuideModal={() => setIsServingGuideOpen(true)}
+          onOpenExperiencesModal={() => setIsExperiencesModalOpen(true)}
+          onOpenQuotationModal={() => setIsQuotationModalOpen(true)}
+          onOpenCustomizationModal={() => setIsCustomizationModalOpen(true)}
+          onOpenSupportModal={() => setIsSupportModalOpen(true)}
           drawerOpen={drawerOpen}
           onToggleDrawer={() => setDrawerOpen(!drawerOpen)}
           onCloseDrawer={() => setDrawerOpen(false)}
@@ -355,18 +399,24 @@ export default function App() {
                   onOpenServingGuide={() => setIsServingGuideOpen(true)}
                   onOpenGallery={() => setIsGalleryOpen(true)}
                   onOpenChecklistModal={() => setIsChecklistModalOpen(true)}
+                  onOpenExperiencesModal={() => setIsExperiencesModalOpen(true)}
+                  onOpenQuotationModal={(pkgId) => {
+                    if (pkgId) setQuotationModalPackage(pkgId);
+                    setIsQuotationModalOpen(true);
+                  }}
+                  onOpenCustomizationModal={() => setIsCustomizationModalOpen(true)}
+                  onOpenSupportModal={() => setIsSupportModalOpen(true)}
                   favoriteDishes={favoriteDishes}
                   onToggleFavorite={handleToggleFavorite}
                   selectedDishes={selectedDishes}
                   onToggleDishInMenu={handleToggleDishInMenu}
+                  formData={formData}
+                  setFormData={setFormData}
                   showToast={showToast}
                 />
               }
             />
-            <Route
-              path="/disciplines"
-              element={<DisciplinesPage />}
-            />
+            <Route path="/disciplines" element={<DisciplinesPage />} />
             <Route
               path="/courses"
               element={
@@ -403,12 +453,7 @@ export default function App() {
             />
             <Route
               path="/film-catering"
-              element={
-                <FilmCateringPage
-                  setFormData={setFormData}
-                  showToast={showToast}
-                />
-              }
+              element={<FilmCateringPage setFormData={setFormData} showToast={showToast} />}
             />
             <Route
               path="/inquiry"
@@ -425,6 +470,8 @@ export default function App() {
                   onOpenResetConfirm={() => setIsResetConfirmOpen(true)}
                   onOpenStatusModal={() => setIsStatusModalOpen(true)}
                   onOpenChecklistModal={() => setIsChecklistModalOpen(true)}
+                  onOpenCustomizationModal={() => setIsCustomizationModalOpen(true)}
+                  onOpenQuotationModal={() => setIsQuotationModalOpen(true)}
                   showToast={showToast}
                 />
               }
@@ -433,18 +480,64 @@ export default function App() {
           </Routes>
         </main>
 
-        {/* Luxury Footer (Commented out as requested in previous turn) */}
-        {/*
-        <Footer
-          onOpenPolicyModal={(type) => setPolicyModal({ open: true, type })}
+        {/* ------------------------------------------------------------------ */}
+        {/* Modals & Dialogs                                                   */}
+        {/* ------------------------------------------------------------------ */}
+
+        {/* Module 4: Culinary Experiences & Chef Portfolio */}
+        <CulinaryExperiencesModal
+          isOpen={isExperiencesModalOpen}
+          onClose={() => setIsExperiencesModalOpen(false)}
+          onSelectExperience={(exp) => {
+            setFormData((prev) => ({
+              ...prev,
+              category: exp.title,
+              notes: (prev.notes ? prev.notes + '\n\n' : '') + `[Requested Experience: ${exp.title} - ${exp.subtitle}]`
+            }));
+            showToast(`Selected "${exp.title}" for your inquiry draft!`);
+            navigate('/inquiry');
+          }}
+          onOpenConsultation={() => setIsConsultModalOpen(true)}
         />
-        */}
 
-        {/* ------------------------------------------------------------------ */}
-        {/* Modals & Dialogs - All 14 Interactive Features                     */}
-        {/* ------------------------------------------------------------------ */}
+        {/* Module 5: Event Customization & Planning */}
+        <EventCustomizationModal
+          isOpen={isCustomizationModalOpen}
+          onClose={() => setIsCustomizationModalOpen(false)}
+          initialCustomizations={formData.customizations || {}}
+          onSaveCustomizations={handleSaveCustomizations}
+          showToast={showToast}
+        />
 
-        {/* Feature 1 & 5: My Menu Builder & Saved Favorites Sheet */}
+        {/* Module 6: Indicative Quotation & Invoicing Terms */}
+        <QuotationPaymentModal
+          isOpen={isQuotationModalOpen}
+          onClose={() => setIsQuotationModalOpen(false)}
+          initialPackageId={quotationModalPackage}
+          initialGuestCount={Number(formData.guestCount) || 50}
+          onProceedToInquiry={(quoteDetails) => {
+            setFormData((prev) => ({
+              ...prev,
+              category: quoteDetails.category === 'weddings' ? 'Weddings & Receptions' : 'Corporate & Galas',
+              guestCount: quoteDetails.guestCount,
+              notes:
+                (prev.notes ? prev.notes + '\n\n' : '') +
+                (quoteDetails.estimatedAmount
+                  ? `[Estimated Ballpark: $${quoteDetails.estimatedAmount.toLocaleString()} CAD for ${quoteDetails.guestCount} guests]`
+                  : '')
+            }));
+            navigate('/inquiry');
+          }}
+        />
+
+        {/* Module 8: Customer Support & Concierge */}
+        <CustomerSupportModal
+          isOpen={isSupportModalOpen}
+          onClose={() => setIsSupportModalOpen(false)}
+          showToast={showToast}
+        />
+
+        {/* Menu Builder Drawer */}
         <MyMenuDrawer
           isOpen={isMyMenuOpen}
           onClose={() => setIsMyMenuOpen(false)}
@@ -457,7 +550,7 @@ export default function App() {
           onAddAllFavoritesToMenu={handleAddAllFavoritesToMenu}
         />
 
-        {/* Feature 2: Guided Event Planner */}
+        {/* Guided Event Planner */}
         <EventPlannerModal
           isOpen={isPlannerModalOpen}
           onClose={() => setIsPlannerModalOpen(false)}
@@ -465,7 +558,7 @@ export default function App() {
           onApplyPlan={handleApplyPlan}
         />
 
-        {/* Feature 3: Indicative Budget Estimator */}
+        {/* Indicative Budget Estimator */}
         <BudgetEstimatorModal
           isOpen={isBudgetModalOpen}
           onClose={() => setIsBudgetModalOpen(false)}
@@ -474,12 +567,12 @@ export default function App() {
           onApplyEstimate={handleApplyEstimate}
         />
 
-        {/* Feature 6: Side-by-Side Package Comparison */}
+        {/* Side-by-Side Package Comparison */}
         <PackageComparisonModal
           isOpen={isComparisonModalOpen}
           onClose={() => setIsComparisonModalOpen(false)}
           onSelectPackage={(pkgName, minG) => {
-            setFormData(prev => ({ ...prev, category: pkgName, guestCount: minG }));
+            setFormData((prev) => ({ ...prev, category: pkgName, guestCount: minG }));
             showToast(`Selected "${pkgName}".`);
           }}
           onOpenBudgetEstimator={(pkgId) => {
@@ -488,39 +581,40 @@ export default function App() {
           }}
         />
 
-        {/* Feature 7: Event Planning Milestone Checklist */}
+        {/* Event Planning Milestone Checklist */}
         <EventChecklistModal
           isOpen={isChecklistModalOpen}
           onClose={() => setIsChecklistModalOpen(false)}
           showToast={showToast}
         />
 
-        {/* Feature 8: Inquiry Status Tracker & Client Portal Demo */}
+        {/* Module 7: Inquiry Status Tracker & Post-Event Feedback */}
         <InquiryStatusModal
           isOpen={isStatusModalOpen}
           onClose={() => setIsStatusModalOpen(false)}
           currentInquiryRef="OW-2026-7841"
+          showToast={showToast}
         />
 
-        {/* Feature 9: Serving-Size & Quantity Planning Guide */}
+        {/* Serving-Size & Quantity Planning Guide */}
         <ServingGuideModal
           isOpen={isServingGuideOpen}
           onClose={() => setIsServingGuideOpen(false)}
           initialGuestCount={formData.guestCount}
           onApplyGuestCount={(count) => {
-            setFormData(prev => ({ ...prev, guestCount: count }));
+            setFormData((prev) => ({ ...prev, guestCount: count }));
             showToast(`Applied ${count} guests to inquiry.`);
           }}
         />
 
-        {/* Feature 10: Culinary & Event Photo Gallery */}
+        {/* Culinary & Event Photo Gallery */}
         <PhotoGalleryModal
           isOpen={isGalleryOpen}
           onClose={() => setIsGalleryOpen(false)}
           onSelectDishToMenu={handleToggleDishInMenu}
         />
 
-        {/* Feature 12: Clear Draft Confirmation Dialog */}
+        {/* Clear Draft Confirmation Dialog */}
         <ResetConfirmModal
           isOpen={isResetConfirmOpen}
           onClose={() => setIsResetConfirmOpen(false)}
@@ -532,29 +626,26 @@ export default function App() {
           isOpen={isAvailabilityModalOpen}
           onClose={() => setIsAvailabilityModalOpen(false)}
           onApplyDate={(date) => {
-            setFormData(prev => ({ ...prev, eventDate: date }));
+            setFormData((prev) => ({ ...prev, eventDate: date }));
             showToast(`Applied date ${date} to your inquiry!`);
           }}
         />
 
         {/* PDF Guide Requester */}
-        <PdfGuideModal
-          isOpen={isPdfModalOpen}
-          onClose={() => setIsPdfModalOpen(false)}
-        />
+        <PdfGuideModal isOpen={isPdfModalOpen} onClose={() => setIsPdfModalOpen(false)} />
 
-        {/* Feature 14: Private Chef Consultation & Tasting Request */}
+        {/* Private Chef Consultation & Tasting Request */}
         <ConsultationModal
           isOpen={isConsultModalOpen}
           onClose={() => setIsConsultModalOpen(false)}
           initialData={formData}
           onApplyConsultation={(data) => {
-            setFormData(prev => ({ ...prev, ...data }));
+            setFormData((prev) => ({ ...prev, ...data }));
             showToast('Consultation request specifications attached to inquiry.');
           }}
         />
 
-        {/* Feature 11: Contact Shortcuts Sheet */}
+        {/* Contact Shortcuts Sheet */}
         <ContactShortcutsModal
           isOpen={isContactModalOpen}
           onClose={() => setIsContactModalOpen(false)}
@@ -568,10 +659,7 @@ export default function App() {
         />
 
         {/* Toast Notification */}
-        <Toast
-          message={toastMessage}
-          onDismiss={() => setToastMessage('')}
-        />
+        <Toast message={toastMessage} onDismiss={() => setToastMessage('')} />
       </div>
     </MobileFrame>
   );

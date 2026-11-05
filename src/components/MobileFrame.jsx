@@ -9,8 +9,9 @@ export default function MobileFrame({
     <div className="desktop-viewport-wrapper">
       {/* The Phone Device Mockup Container */}
       <div className="device-outer-frame">
-        {/* Device Bezel & Side Buttons Detail */}
+        {/* Device Bezel Detail */}
         <div className="device-hardware-bezel">
+<<<<<<< Updated upstream
           {/* Top Speaker / Dynamic Island */}
           <div className="device-dynamic-island" aria-hidden="true">
             <div className="device-camera-lens"></div>
@@ -20,6 +21,8 @@ export default function MobileFrame({
           {/* Device Mobile Status Bar safe area */}
           <div className="device-status-bar" aria-hidden="true" />
 
+=======
+>>>>>>> Stashed changes
           {/* Scrollable Screen Content */}
           <div className="device-screen-scrollable" ref={scrollContainerRef}>
             {children}

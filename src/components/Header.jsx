@@ -40,13 +40,13 @@ export default function Header({
 }) {
   return (
     <>
-      {/* Sleek Native Mobile App Header matching Reference screen.png */}
+      {/* Compact Clean Native Mobile Header */}
       <header className={`app-main-header ${isScrolled ? 'is-scrolled' : ''}`}>
         <div className="app-header-inner">
           {/* Brand Logo with circular plum badge and refined typography */}
           <Link to="/" className="app-brand-link" onClick={onCloseDrawer}>
             <div className="app-brand-icon-circle">
-              <Utensils size={14} strokeWidth={2.4} />
+              <Utensils size={13} strokeWidth={2.2} />
             </div>
             <div className="app-brand-text">
               <span className="app-brand-title">OCEAN WEST</span>
@@ -54,16 +54,22 @@ export default function Header({
             </div>
           </Link>
 
+<<<<<<< Updated upstream
           {/* Action Icons Group: Only 2 Options - Contact & Profile */}
           <div className="app-header-actions">
             {/* 1. Contact / Quick Call Button */}
+=======
+          {/* Action Icons Group: Small, Consistent, Proportionate */}
+          <div className="app-header-actions">
+            {/* Quick Call Button */}
+>>>>>>> Stashed changes
             <a
               href="tel:6047224857"
               className="app-header-circle-btn"
               title="Call Chef Michael Direct (604-722-4857)"
               aria-label="Contact Direct"
             >
-              <Phone size={14} />
+              <Phone size={13} />
             </a>
 
             {/* 2. Profile Button: Navigates Directly to the Client Profile Page */}
@@ -75,8 +81,16 @@ export default function Header({
               title="Client Profile & Account"
               aria-label="Open Client Profile"
             >
+<<<<<<< Updated upstream
               <User size={15} />
             </NavLink>
+=======
+              {drawerOpen ? <X size={13} /> : <User size={13} />}
+              {selectedDishesCount > 0 && !drawerOpen && (
+                <span className="header-badge-count">{selectedDishesCount}</span>
+              )}
+            </button>
+>>>>>>> Stashed changes
           </div>
         </div>
 

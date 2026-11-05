@@ -1,6 +1,10 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+<<<<<<< Updated upstream
 import { Home, BookOpen, Sparkles, Calendar, ShoppingBag } from 'lucide-react';
+=======
+import { Utensils, BookOpen, Sparkles, Calendar } from 'lucide-react';
+>>>>>>> Stashed changes
 
 export default function BottomNav({
   cartCount = 0,
@@ -16,7 +20,11 @@ export default function BottomNav({
         className={({ isActive }) => `bottom-tab-link ${isActive ? 'active' : ''}`}
       >
         <div className="tab-icon-wrap">
+<<<<<<< Updated upstream
           <Home size={18} strokeWidth={2.2} />
+=======
+          <Utensils size={18} strokeWidth={2} />
+>>>>>>> Stashed changes
         </div>
         <span className="tab-label">Home</span>
       </NavLink>
@@ -27,7 +35,7 @@ export default function BottomNav({
         className={({ isActive }) => `bottom-tab-link ${isActive ? 'active' : ''}`}
       >
         <div className="tab-icon-wrap">
-          <BookOpen size={18} strokeWidth={2.2} />
+          <BookOpen size={18} strokeWidth={2} />
         </div>
         <span className="tab-label">Menus</span>
       </NavLink>
@@ -53,7 +61,7 @@ export default function BottomNav({
         className={({ isActive }) => `bottom-tab-link ${isActive ? 'active' : ''}`}
       >
         <div className="tab-icon-wrap">
-          <Sparkles size={18} strokeWidth={2.2} />
+          <Sparkles size={18} strokeWidth={2} />
         </div>
         <span className="tab-label">Services</span>
       </NavLink>
@@ -64,10 +72,17 @@ export default function BottomNav({
         className={({ isActive }) => `bottom-tab-link ${isActive ? 'active' : ''}`}
       >
         <div className="tab-icon-wrap relative">
+<<<<<<< Updated upstream
           <Calendar size={18} strokeWidth={2.2} />
           <span className="bottom-tab-badge">
             {inquiryBadgeCount > 0 ? inquiryBadgeCount : 2}
           </span>
+=======
+          <Calendar size={18} strokeWidth={2} />
+          {inquiryBadgeCount > 0 && (
+            <span className="bottom-tab-badge">{inquiryBadgeCount}</span>
+          )}
+>>>>>>> Stashed changes
         </div>
         <span className="tab-label">Book</span>
       </NavLink>

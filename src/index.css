@@ -1,160 +1,93 @@
-:root {
-  color-scheme: light;
-  --font-serif: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  
-  /* Color Palette - Pacific Northwest Artisanal Mobile App System */
-  --color-bg-base: #FAF8F5;
-  --color-cream: #FAF8F5;
-  --color-bg-card: #FFFFFF;
-  --color-card-bg: #FFFFFF;
-  --color-bg-card-subtle: #F6F3EC;
-  --color-bg-warm: #F4EFE6;
-  --color-border: #EADFCE;
-  --color-border-light: #F0EBE1;
-  --color-border-dark: #37463D;
-  
-  --color-plum: #280829;
-  --color-plum-hover: #3D0D3F;
-  --color-gold: #BA8D5B;
-  --color-gold-hover: #A97C4B;
-  --color-gold-light: #FAF2E6;
-  
-  --color-text: #192720;
-  --color-text-main: #192720;
-  --color-text-muted: #636D66;
-  --color-muted: #636D66;
-  --color-text-light: #8E9992;
-  
-  --color-primary-dark: #192720;
-  --color-primary-darker: #131E19;
-  --color-primary-card: #1D2C24;
-  --color-primary-light: #2A3B31;
-  
-  --color-accent-gold: #BA8D5B;
-  --color-accent-gold-hover: #A97C4B;
-  --color-accent-gold-light: #FAF2E6;
-  --color-accent-gold-border: #EADFCE;
-  
-  /* Spacing Scale */
-  --space-4: 4px;
-  --space-8: 8px;
-  --space-12: 12px;
-  --space-16: 16px;
-  --space-24: 24px;
-  --space-32: 32px;
+@import "tailwindcss";
 
-  /* Radius Scale */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-full: 999px;
+@layer base {
+  :root {
+    --bg-marshmallow: #F0F0F0;
+    --brand-galactic: #4A2373;
+    --brand-bubblegum: #FE8500;
+  }
 
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(25, 39, 32, 0.05);
-  --shadow-md: 0 4px 14px rgba(25, 39, 32, 0.08);
-  --shadow-lg: 0 10px 24px rgba(25, 39, 32, 0.12);
+  body {
+    background-color: #0c1017;
+    color: #1a1c22;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-  --color-badge-green-bg: #EAF0EC;
-  --color-badge-green-text: #244933;
+  /* Lock viewport on mobile devices so only <main> scrolls */
+  @media (max-width: 639px) {
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      width: 100%;
+      overflow: hidden;
+      position: fixed;
+      inset: 0;
+      overscroll-behavior: none;
+    }
+    #root {
+      height: 100%;
+      height: 100dvh;
+      width: 100%;
+      overflow: hidden;
+    }
+  }
 
-  /* Safe areas for mobile devices */
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  /* Custom scrollbar for mobile container */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  max-width: 100%;
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-html, body {
-  overflow-x: hidden !important;
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
-  word-break: break-word;
-  overflow-wrap: anywhere;
+.glass-dark {
+  background: rgba(12, 16, 26, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-img, video, canvas, svg {
-  max-width: 100%;
-  height: auto;
-  display: block;
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(230, 235, 245, 0.8);
 }
 
-input, button, textarea, select {
-  font: inherit;
-  max-width: 100%;
+/* Glowing effects */
+.glow-galactic {
+  box-shadow: 0 8px 24px -4px rgba(74, 35, 115, 0.35);
 }
 
-html {
-  font-family: var(--font-sans);
-  background-color: #EDE8DF; /* Warm neutral desktop backdrop */
-  color: var(--color-text-main);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  width: 100%;
-  height: 100%;
+.glow-bubblegum {
+  box-shadow: 0 8px 20px -4px rgba(254, 133, 0, 0.4);
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  line-height: 1.6;
-  background-color: #EDE8DF;
-  color: var(--color-text-main);
-  width: 100%;
-  min-height: 100%;
-  overflow-x: hidden;
+.glow-subtle {
+  box-shadow: 0 10px 30px -10px rgba(74, 35, 115, 0.15);
 }
 
-#root {
-  width: 100%;
-  min-height: 100vh;
-}
-
-/* Typography Helpers */
-.font-serif {
-  font-family: var(--font-serif);
-}
-
-.font-sans {
-  font-family: var(--font-sans);
-}
-
-/* Button & interactive resets */
-button {
-  font-family: inherit;
-  cursor: pointer;
-  border: none;
-  background: none;
-}
-
-input, select, textarea {
-  font-family: inherit;
-  max-width: 100%;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-/* Sleek Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #F4EFE6;
-}
-::-webkit-scrollbar-thumb {
-  background: #C8BFB0;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #B0A593;
+/* Custom device styling on desktop */
+@media (min-width: 640px) {
+  .mobile-device-frame {
+    box-shadow: 
+      0 0 0 10px #1f2533,
+      0 0 0 12px #2f3647,
+      0 25px 60px -15px rgba(0, 0, 0, 0.7),
+      0 0 80px 10px rgba(74, 35, 115, 0.15);
+  }
 }
 

@@ -1,92 +1,161 @@
-# Ocean West Catering - Mobile-First Web Application
+# Ocean West Catering – Premium Mobile Application
 
-An artisanal, mobile-first web application for **Ocean West Catering**, recreating the culinary and film craft experience founded by Executive Chef Michael Thomas in British Columbia.
+[![React](https://img.shields.io/badge/React-19.3-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.3-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Deployed on Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&logoColor=white)](https://vercel.com/)
 
----
-
-## Highlights & Architecture
-
-- **Desktop Realistic Device Mockup**: When viewed on desktop browsers, the app renders inside a realistic mobile phone frame with a hardware bezel, dynamic island camera notch, live status bar (time, battery, wifi, cellular), and vertical touch scroll container. Includes an optional toggle to expand to full browser width.
-- **Mobile Responsive Viewport**: On actual mobile devices (`<= 600px`), the outer mockup bezel and margins disappear automatically so the app seamlessly occupies 100% of the mobile screen.
-- **Pacific Northwest Brand Identity**: Warm ivory (`#FAF8F5`), deep evergreen (`#192720`), and muted gold accents (`#BA8D5B`), paired with Cormorant Garamond / Playfair Display serif headings and Plus Jakarta Sans body typography.
-- **Pure Client-Side React 19 + Vite**: Fast, clean architecture with React Router 7, modular components, and lucide-react icons.
+A modern, responsive, mobile-first catering application built for **Ocean West Catering** (Richmond & White Rock, British Columbia), based on verified business operations, menus, and services of Executive Chef Michael Thomas.
 
 ---
 
-## Page Routes
+## 🌟 Key Features
 
-1. **Home (`/`)**: Brand introduction, chef highlight, automated rotating showcase of 5 signature dishes (4-second cycle with pause/play toggle and reduced-motion support), 4 key credentials, quick event planner trigger, discipline preview cards, featured courses with quick-add, package cards, client testimonials, and inquiry CTA.
-2. **Disciplines (`/disciplines`)**: In-depth coverage of Bespoke Wedding Feasts, Film & Media Craft Services, Galas & Executive Summits, and Party Platters & Casual BBQs, along with Ocean West food-safety standards and Vancouver Coastal Health audit credentials.
-3. **Courses & Delicacies (`/courses`)**: Full culinary repertoire with horizontal filter tabs (All, First Courses & Starters, Artisanal Mains, Passed Hors d'oeuvres, Dessert & Grazing Boards). Includes "Add to My Menu" builder buttons, quick inquiry triggers, PDF guide download callout, and custom dietary adaptation philosophy.
-4. **Event Packages (`/packages`)**: Three structured package tiers:
-   - *The Intimate Gathering* (From $85/guest, 12–35 guests)
-   - *The Grand Wedding Banquet* (From $140/guest, 40–350 guests, marked Most Requested)
-   - *Movie & Film Production* (Daily call sheet rates, 25–400+ crew)
-   Includes package selection buttons that prefill inquiry state, booking guarantee notice, and date checker CTA.
-5. **Film & Media Catering (`/film-catering`)**: High-velocity craft catering capabilities for 14-hour production days, mobile all-weather commercial galleys, dietary labeling, union compliance (Teamsters 155, IATSE 891, DGC BC), production statistics (200+ shoots), and production manager testimonial.
-6. **Direct Inquiries (`/inquiry`)**: Comprehensive booking form with auto-save status, event category selection, target date, guest count, location, interactive dietary chips, attached tasting menu preview, pre-submission review summary, clear success receipt, and direct commissary contact links.
-
----
-
-## 6 New Catering-Focused Features
-
-1. **Event Menu Builder ("My Menu")**:
-   - Tap "Add to Menu" on any course to curate a personalized tasting list.
-   - Access the My Menu drawer via header or floating pill to view items, inspect service styles, remove items, or clear the selection.
-   - One-tap "Transfer Menu to Inquiry" appends all chosen courses to your inquiry notes.
-2. **Interactive Event Planner**:
-   - Choose event category, slide guest count from 10 to 450+, pick date/location, and select preferred service style.
-   - Instantly calculates recommended tier, staffing ratio (executive chefs, captains, waitstaff), and service timeline.
-   - "Apply Plan & Proceed to Inquiry" prefills form fields.
-3. **Dietary Preference Quick Chips**:
-   - Interactive multi-select chips on the inquiry page (Gluten-Free Celiac Safe, Plant-Based / Vegan, Vegetarian, Dairy-Free, Halal, Kosher, Nut Free, Shellfish Free, Low Sodium, Other).
-   - Toggles state dynamically while preserving free-text notes.
-4. **Inquiry Pre-Submission Summary**:
-   - Concise verification card displayed directly above the submit button on `/inquiry` summarizing package, guests, date, location, selected dishes, and dietary accommodations.
-   - Renders a clean receipt card upon submission.
-5. **Contact Shortcuts**:
-   - Convenient one-tap communication sheet providing direct dialer links to Chef Michael (`604-722-4857`), Kitchen Office (`604-456-4481`), email (`info@oceanwestcatering.com`), and Google Maps directions to the Richmond commissary (`482 Panorama, Richmond, BC V6X 0E7`).
-6. **Saved Planning State in LocalStorage**:
-   - Draft inquiry inputs and curated menu dishes automatically persist in browser `localStorage`.
-   - Accidental page reloads or tab navigation will not erase your planning work.
-   - Includes an explicit "Reset Draft" button with instant feedback.
+* **Mobile-First Experience**: Centered smartphone viewport frame on desktop with ambient lighting, expanding seamlessly to 100% on native mobile devices.
+* **Home Dashboard**:
+  * Hero card with outer luminous glow, ambient spotlight shine, and quick quote triggers.
+  * Executive chef highlights (25+ years experience, 25 to 1,200+ guests, 100% local BC ingredients).
+  * 6 Signature catering services carousel.
+  * British Columbia service area coverage hubs (Richmond base, White Rock HQ, Vancouver, film set mobile kitchens).
+* **Food & Catering Catalog**:
+  * 14 authentic culinary categories (Buffets, BBQ, Lunches, Seafood, First Courses, Hors d'oeuvres, Platters, etc.).
+  * 2-cards-in-a-row responsive grid with dietary badges (*Ocean-Wise*, *Gluten-Free*, *Locally Sourced*).
+  * Real-time item selection with active brand orange button states (`✓ Selected`).
+  * Dish details bottom sheet modal.
+* **Custom Event Menu Builder**:
+  * Real-time course curation with editable menu title.
+  * Uncluttered, readable food cards with portion scale (`Min 25 guests`).
+  * Sticky summary pill bar and instant quote attachment.
+* **Specialized Catering Divisions**:
+  * Weddings & Receptions, Movie & Film Catering (Teamsters Union 155), Company Events & Galas, Private Parties, Summer & Fall BBQs, and Celebration of Life.
+  * Compact, mobile-friendly cards with capacity badges and direct quote triggers.
+* **4-Step Booking Inquiry Wizard**:
+  * Event Details & Venue selection.
+  * Guest count slider & catering service format.
+  * Customer contact information.
+  * Real-time review summary & inquiry confirmation with reference number.
+* **Live Notification Center**:
+  * Header bell button with live unread indicator dot.
+  * Slide-up notifications drawer for Chef proposals, seasonal tastings, and peak date openings.
+  * "Mark as Read", dismiss, and persistent `localStorage` support.
+* **Saved & Favorites**:
+  * Quick heart bookmarking across dishes, venues, and services.
+  * Live badge counters synchronized with the bottom navigation bar.
 
 ---
 
-## Demo-Only Behaviors & Disclosures
+## 🎨 Brand Design & 60/30/10 Color Palette
 
-To preserve honesty and transparency (as there is no backend server or database connected):
-- **Date Availability Checker**: Simulates calendar verification and marks dates available for demo purposes; prompts users to proceed to the inquiry form to request a formal date hold.
-- **PDF Menu Guide Modal**: Simulates sending the 24-page package catalog to the entered email address with a success confirmation state.
-- **Inquiry Submission**: Validates fields and generates an on-screen confirmation receipt and toast notification; does not dispatch real outbound SMTP emails.
-- **Client Portal Button**: Displays a toast notice explaining that portal login is reserved for contracted event clients.
+| Usage | Role | Hex Code | Visual Sample |
+| :--- | :--- | :--- | :--- |
+| **60% Primary Background** | Light surfaces, card bodies, app container | `#F0F0F0` | Marshmallow White |
+| **30% Primary Brand** | Primary buttons, active tabs, header badge, brand highlights | `#4A2373` | Deep Galactic Violet |
+| **10% Brand Accent** | Selected states, primary CTAs, notification badges, star ratings | `#FE8500` | Bubblegum Orange |
 
 ---
 
-## Getting Started & Local Development
+## 🛠️ Technology Stack
+
+* **Framework**: React 19 (JavaScript JSX strictly – no TypeScript)
+* **Build Tool**: Vite 8 with Hot Module Replacement (HMR)
+* **Routing**: React Router DOM v7 (SPA with `vercel.json` rewrites)
+* **Styling**: Tailwind CSS v4
+* **Icons**: Lucide React
+* **State Management**: React Context API (`AppContext`, `MenuContext`, `FavoritesContext`, `BookingContext`)
+* **Persistence**: Web `localStorage` for offline session persistence
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18+ or v20+)
-- npm (v9+ or v10+)
+
+* Node.js 18+ installed on your machine.
+* npm (bundled with Node.js) or yarn / pnpm.
 
 ### Installation
-```bash
-# Navigate to the project directory
-cd "OceanWestCatering App"
 
-# Install dependencies
-npm install
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/oceanwest-catering.git
+   cd oceanwest-catering
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start development server:
+   ```bash
+   npm run dev
+   ```
+   Open `http://localhost:5173` in your browser.
+
+4. Build for production:
+   ```bash
+   npm run build
+   ```
+
+5. Preview production build locally:
+   ```bash
+   npm run preview
+   ```
+
+---
+
+## ☁️ Deployment to Vercel
+
+This repository includes a pre-configured `vercel.json` for seamless client-side routing on Vercel.
+
+### Deploy with Vercel CLI:
+```bash
+npm install -g vercel
+vercel
 ```
 
-### Running Locally
-```bash
-npm run dev
-```
-Open your browser at `http://localhost:5173`.
+### Deploy via GitHub (Recommended):
+1. Push this project to a new GitHub repository.
+2. Visit [Vercel Dashboard](https://vercel.com/dashboard) and click **"Add New"** > **"Project"**.
+3. Import your GitHub repository.
+4. Framework Preset will auto-detect as **Vite**.
+5. Click **"Deploy"**.
 
-### Production Build
-```bash
-npm run build
-npm run preview
+---
+
+## 📁 Project Structure
+
+```
+OceanWest/
+├── public/                 # Static public assets
+├── src/
+│   ├── components/
+│   │   ├── booking/        # 4-step event booking wizard components
+│   │   ├── common/         # Button, Badge, Modal, BottomSheet, Toast, EmptyState
+│   │   ├── home/           # Hero, Highlights, SignatureServices, ServiceAreas, etc.
+│   │   ├── layout/         # Header, BottomNavigation, AppLayout
+│   │   ├── menus/          # FoodItemCard, FoodDetailsModal, MenuSummaryBar
+│   │   ├── notifications/  # NotificationsModal drawer
+│   │   └── services/       # ServiceCard component
+│   ├── context/            # AppContext, MenuContext, FavoritesContext, BookingContext
+│   ├── data/               # Authentic menus, services, venues, FAQs data
+│   ├── pages/              # Home, Menus, MenuBuilder, Services, Book, Favorites, etc.
+│   ├── index.css           # Tailwind CSS imports & global styles
+│   └── main.jsx            # React root mount & BrowserRouter
+├── vercel.json             # Vercel SPA routing configuration
+├── vite.config.js          # Vite & Tailwind configuration
+├── package.json            # Project dependencies & build scripts
+└── README.md
 ```
 
+---
+
+## 📞 Business Information
+
+* **Business**: Ocean West Catering
+* **Tagline**: RICHMOND • FINE CATERING
+* **Executive Chef**: Michael Thomas
+* **Affiliation**: Teamsters Union 155 (Movie & Film Productions)
+* **Headquarters**: 842 Parker St, White Rock, BC V4B 4R2
+* **Telephone**: (604) 722-4857
+* **Website**: [oceanwestcatering.com](https://www.oceanwestcatering.com/)

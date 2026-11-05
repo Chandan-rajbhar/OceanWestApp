@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import {
+  ArrowLeft,
   X,
   Phone,
-  Mail,
-  MapPin,
-  Clock,
   MessageSquare,
-  Send,
+  MessageCircle,
+  Paperclip,
   CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  ShieldCheck,
-  Radio
+  Send,
+  Clock
 } from 'lucide-react';
 
 export default function CustomerSupportModal({
@@ -19,59 +16,56 @@ export default function CustomerSupportModal({
   onClose,
   showToast
 }) {
-  const [activeTab, setActiveTab] = useState('direct'); // 'direct' | 'ticket'
-  const [ticketData, setTicketData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    referenceCode: '',
-    topic: 'Menu Consultation',
-    message: ''
-  });
+  const [selectedBooking, setSelectedBooking] = useState('Wedding Catering - 24 Jan 2026');
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [attachedFileName, setAttachedFileName] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [ticketRef, setTicketRef] = useState('');
 
   if (!isOpen) return null;
 
-  const handleSubmitTicket = (e) => {
-    e.preventDefault();
-    if (!ticketData.name || !ticketData.email || !ticketData.message) {
-      if (showToast) showToast('Please enter your name, email, and message.', 'info');
-      return;
-    }
-
-    const generatedTicket = `TKT-${Math.floor(1000 + Math.random() * 9000)}`;
-    setTicketRef(generatedTicket);
-    setIsSubmitted(true);
-
-    // Save to local storage for persistence
-    try {
-      const existing = JSON.parse(localStorage.getItem('ow_support_tickets') || '[]');
-      existing.push({
-        ...ticketData,
-        ticketId: generatedTicket,
-        createdAt: new Date().toISOString()
-      });
-      localStorage.setItem('ow_support_tickets', JSON.stringify(existing));
-    } catch (err) {
-      // LocalStorage access fallback
-    }
-
-    if (showToast) {
-      showToast(`Support query logged as ${generatedTicket}`, 'success');
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setAttachedFileName(e.target.files[0].name);
+      if (showToast) showToast(`Attached: ${e.target.files[0].name}`);
     }
   };
 
-  const handleResetTicket = () => {
+  const handleSubmitTicket = (e) => {
+    e.preventDefault();
+    if (!subject.trim() || !message.trim()) {
+      if (showToast) showToast('Please enter both subject and message.', 'info');
+      return;
+    }
+
+    const generatedId = `TKT-${Math.floor(1000 + Math.random() * 9000)}`;
+    setTicketRef(generatedId);
+    setIsSubmitted(true);
+
+    try {
+      const existing = JSON.parse(localStorage.getItem('ow_support_tickets') || '[]');
+      existing.push({
+        ticketId: generatedId,
+        booking: selectedBooking,
+        subject,
+        message,
+        attachedFileName,
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem('ow_support_tickets', JSON.stringify(existing));
+    } catch (err) {}
+
+    if (showToast) {
+      showToast(`Support ticket ${generatedId} submitted!`, 'success');
+    }
+  };
+
+  const handleReset = () => {
     setIsSubmitted(false);
-    setTicketData({
-      name: '',
-      email: '',
-      phone: '',
-      referenceCode: '',
-      topic: 'Menu Consultation',
-      message: ''
-    });
+    setSubject('');
+    setMessage('');
+    setAttachedFileName('');
   };
 
   return (
@@ -80,306 +74,171 @@ export default function CustomerSupportModal({
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Customer Support and Direct Communication"
+      aria-label="Support & Help"
     >
       <div
-        className="modal-content-box support-modal-box"
+        className="modal-content-box support-help-sheet"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="modal-top-header">
-          <div className="modal-title-lockup">
-            <span className="modal-kicker">Ocean West Client Concierge</span>
-            <h2 className="modal-headline">Customer Support</h2>
-          </div>
+        {/* Screen 10 Top Bar */}
+        <div className="support-sheet-top-bar">
           <button
             type="button"
-            className="modal-close-round-btn"
+            className="sheet-back-icon-btn"
             onClick={onClose}
-            aria-label="Close customer support modal"
+            aria-label="Back"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <h2 className="support-sheet-title">Support &amp; Help</h2>
+          <button
+            type="button"
+            className="sheet-close-icon-btn"
+            onClick={onClose}
+            aria-label="Close"
           >
             <X size={18} />
           </button>
         </div>
 
-        {/* Tab switcher */}
-        <div className="experiences-tab-nav" role="tablist">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'direct'}
-            className={`exp-tab-btn ${activeTab === 'direct' ? 'is-active' : ''}`}
-            onClick={() => setActiveTab('direct')}
-          >
-            <Phone size={14} />
-            <span>Direct Hotline &amp; Dispatch</span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'ticket'}
-            className={`exp-tab-btn ${activeTab === 'ticket' ? 'is-active' : ''}`}
-            onClick={() => setActiveTab('ticket')}
-          >
-            <MessageSquare size={14} />
-            <span>Submit Concierge Query</span>
-          </button>
-        </div>
+        <div className="support-sheet-scrollable">
+          <p className="support-sheet-subtext">
+            We're here to make your event seamless.
+          </p>
 
-        {/* Body */}
-        <div className="modal-scroll-body support-modal-body">
-          {activeTab === 'direct' ? (
-            <div className="support-direct-view">
-              {/* Direct Call Card */}
-              <div className="support-hotline-card">
-                <div className="hotline-icon-badge">
-                  <Phone size={24} />
-                </div>
-                <div className="hotline-info">
-                  <span className="hotline-tag">Direct Commissary Hotline</span>
-                  <a href="tel:6047224857" className="hotline-phone-number">
-                    604-722-4857
-                  </a>
-                  <p className="hotline-desc">
-                    Connects directly with Executive Chef Michael Thomas and the Pacific Coast
-                    kitchen dispatch team.
-                  </p>
-                  <div className="hotline-hours">
-                    <Clock size={12} />
-                    <span>Operating Daily: 6:00 AM – 10:00 PM PST</span>
-                  </div>
-                </div>
+          {/* 3 Quick Contact Tiles */}
+          <div className="support-quick-contact-grid">
+            {/* Tile 1: Chat */}
+            <button
+              type="button"
+              className="support-contact-tile"
+              onClick={() => {
+                if (showToast) showToast('Live concierge chat connecting...');
+              }}
+            >
+              <div className="contact-tile-icon-wrap">
+                <MessageSquare size={18} />
               </div>
+              <span className="contact-tile-title">Chat</span>
+              <span className="contact-tile-sub">Message us</span>
+            </button>
 
-              {/* Direct Email Card */}
-              <div className="support-hotline-card">
-                <div className="hotline-icon-badge">
-                  <Mail size={24} />
-                </div>
-                <div className="hotline-info">
-                  <span className="hotline-tag">Inquiries &amp; Menu Revisions</span>
-                  <a href="mailto:info@oceanwestcatering.com" className="hotline-email-address">
-                    info@oceanwestcatering.com
-                  </a>
-                  <p className="hotline-desc">
-                    For detailed tasting notes, contract queries, and call sheet attachments.
-                    Average email turnaround is under 4 business hours.
-                  </p>
-                </div>
+            {/* Tile 2: WhatsApp */}
+            <a
+              href="https://wa.me/16047224857"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="support-contact-tile"
+            >
+              <div className="contact-tile-icon-wrap whatsapp">
+                <MessageCircle size={18} />
               </div>
+              <span className="contact-tile-title">WhatsApp</span>
+              <span className="contact-tile-sub">Quick chat</span>
+            </a>
 
-              {/* Location Card */}
-              <div className="support-hotline-card">
-                <div className="hotline-icon-badge">
-                  <MapPin size={24} />
-                </div>
-                <div className="hotline-info">
-                  <span className="hotline-tag">Production Kitchen &amp; Tasting Suite</span>
-                  <p className="hotline-address">
-                    <strong>Ocean West Commissary</strong>
-                    <br />
-                    11300 River Road, Richmond, BC V6X 1Z5
-                  </p>
-                  <span className="location-note">
-                    By appointment only for confirmed bridal and corporate client tastings.
-                  </span>
-                </div>
+            {/* Tile 3: Call Us */}
+            <a href="tel:16045550199" className="support-contact-tile">
+              <div className="contact-tile-icon-wrap phone">
+                <Phone size={18} />
               </div>
-
-              {/* Status Notice about Live Chat & WhatsApp */}
-              <div className="channel-transparency-card">
-                <div className="channel-header">
-                  <AlertCircle size={14} />
-                  <span>Channel Integration Status</span>
-                </div>
-                <ul className="channel-status-list">
-                  <li>
-                    <span className="channel-dot is-active"></span>
-                    <span>
-                      <strong>Direct Voice Hotline:</strong> Active &amp; Attended
-                    </span>
-                  </li>
-                  <li>
-                    <span className="channel-dot is-active"></span>
-                    <span>
-                      <strong>Email Concierge:</strong> Active &amp; Attended
-                    </span>
-                  </li>
-                  <li>
-                    <span className="channel-dot is-pending"></span>
-                    <span>
-                      <strong>Automated Web Live Chat:</strong> In development for Phase 2
-                    </span>
-                  </li>
-                  <li>
-                    <span className="channel-dot is-pending"></span>
-                    <span>
-                      <strong>WhatsApp Crew Dispatch:</strong> Reserved for contracted film productions
-                    </span>
-                  </li>
-                  <li>
-                    <span className="channel-dot is-pending"></span>
-                    <span>
-                      <strong>Mobile Push Alerts:</strong> Native SMS alerts trigger upon event dispatch
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          ) : (
-            <div className="support-ticket-view">
-              {isSubmitted ? (
-                <div className="ticket-success-card">
-                  <CheckCircle2 size={36} className="success-icon" />
-                  <h3>Support Query Logged</h3>
-                  <div className="ticket-id-pill">
-                    <span>Reference #{ticketRef}</span>
-                  </div>
-                  <p>
-                    Thank you, <strong>{ticketData.name}</strong>. Your message regarding{' '}
-                    <strong>{ticketData.topic}</strong> has been forwarded to our client concierge and
-                    Executive Chef Michael Thomas.
-                  </p>
-                  <div className="success-turnaround-box">
-                    <Clock size={14} />
-                    <span>Expected response time: 2 to 4 business hours to {ticketData.email}</span>
-                  </div>
-                  <button
-                    type="button"
-                    className="btn-new-ticket"
-                    onClick={handleResetTicket}
-                  >
-                    Submit Another Query
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmitTicket} className="ticket-form">
-                  <div className="ticket-form-intro">
-                    <p>
-                      Have questions regarding a menu draft, dietary requirement, or billing statement?
-                      Send a message directly to our commissary desk.
-                    </p>
-                  </div>
-
-                  <div className="ticket-form-fields">
-                    <div className="form-group-field">
-                      <label htmlFor="tkt-name" className="field-label-text">
-                        Your Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        id="tkt-name"
-                        required
-                        value={ticketData.name}
-                        onChange={(e) => setTicketData({ ...ticketData, name: e.target.value })}
-                        placeholder="e.g. Jordan Matthews"
-                        className="custom-text-input"
-                      />
-                    </div>
-
-                    <div className="form-group-field">
-                      <label htmlFor="tkt-email" className="field-label-text">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        id="tkt-email"
-                        required
-                        value={ticketData.email}
-                        onChange={(e) => setTicketData({ ...ticketData, email: e.target.value })}
-                        placeholder="e.g. jordan@example.com"
-                        className="custom-text-input"
-                      />
-                    </div>
-
-                    <div className="form-group-field">
-                      <label htmlFor="tkt-phone" className="field-label-text">
-                        Phone Number (Optional)
-                      </label>
-                      <input
-                        type="tel"
-                        id="tkt-phone"
-                        value={ticketData.phone}
-                        onChange={(e) => setTicketData({ ...ticketData, phone: e.target.value })}
-                        placeholder="e.g. 604-555-0199"
-                        className="custom-text-input"
-                      />
-                    </div>
-
-                    <div className="form-group-field">
-                      <label htmlFor="tkt-ref" className="field-label-text">
-                        Inquiry / Booking Code (Optional)
-                      </label>
-                      <input
-                        type="text"
-                        id="tkt-ref"
-                        value={ticketData.referenceCode}
-                        onChange={(e) =>
-                          setTicketData({ ...ticketData, referenceCode: e.target.value.toUpperCase() })
-                        }
-                        placeholder="e.g. OW-2026-7841"
-                        className="custom-text-input uppercase-text"
-                      />
-                    </div>
-
-                    <div className="form-group-field">
-                      <label htmlFor="tkt-topic" className="field-label-text">
-                        Inquiry Topic *
-                      </label>
-                      <select
-                        id="tkt-topic"
-                        value={ticketData.topic}
-                        onChange={(e) => setTicketData({ ...ticketData, topic: e.target.value })}
-                        className="custom-select-input"
-                      >
-                        <option value="Menu Consultation">Menu Consultation &amp; Tasting</option>
-                        <option value="Date Availability">Event Date Availability &amp; Hold</option>
-                        <option value="Dietary Question">Severe Allergy &amp; Dietary Protocol</option>
-                        <option value="Invoice & Billing">Invoicing, Deposit &amp; Payment</option>
-                        <option value="Film Craft Logistics">Film Production Daily Call Sheets</option>
-                        <option value="Urgent Assistance">Urgent Day-Of Event Assistance</option>
-                      </select>
-                    </div>
-
-                    <div className="form-group-field">
-                      <label htmlFor="tkt-msg" className="field-label-text">
-                        Your Message *
-                      </label>
-                      <textarea
-                        id="tkt-msg"
-                        required
-                        rows={4}
-                        value={ticketData.message}
-                        onChange={(e) => setTicketData({ ...ticketData, message: e.target.value })}
-                        placeholder="Describe your question or requirement in detail..."
-                        className="custom-textarea-input"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="ticket-form-footer">
-                    <button type="submit" className="btn-submit-ticket">
-                      <Send size={15} />
-                      <span>Send Message to Concierge</span>
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="modal-bottom-footer-bar">
-          <div className="footer-disclaimer-text">
-            <span>Direct Line: 604-722-4857 • Ocean West Commissary, Richmond BC</span>
+              <span className="contact-tile-title">Call Us</span>
+              <span className="contact-tile-sub">+1 604 555 0199</span>
+            </a>
           </div>
-          <button type="button" className="footer-close-btn" onClick={onClose}>
-            Close
-          </button>
+
+          {/* Form: Create a Support Ticket */}
+          <div className="support-ticket-form-card">
+            <h3 className="ticket-form-headline">Create a Support Ticket</h3>
+
+            {isSubmitted ? (
+              <div className="ticket-submitted-success">
+                <CheckCircle2 size={36} className="ticket-check-icon" />
+                <h4>Ticket #{ticketRef} Created</h4>
+                <p>
+                  Our dedicated event manager and Chef Michael Thomas will follow up within 2 to 4 business hours.
+                </p>
+                <button
+                  type="button"
+                  className="btn-create-another-ticket"
+                  onClick={handleReset}
+                >
+                  Create Another Ticket
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmitTicket} className="support-ticket-form">
+                {/* Related Booking Dropdown */}
+                <div className="support-form-field">
+                  <label htmlFor="supportBookingSelect">Related Booking (Optional)</label>
+                  <select
+                    id="supportBookingSelect"
+                    className="support-select-input"
+                    value={selectedBooking}
+                    onChange={(e) => setSelectedBooking(e.target.value)}
+                  >
+                    <option value="Wedding Catering - 24 Jan 2026">
+                      Wedding Catering – 24 Jan 2026
+                    </option>
+                    <option value="Corporate Event - 10 Feb 2026">
+                      Corporate Event – 10 Feb 2026
+                    </option>
+                    <option value="General Inquiry / Future Event">
+                      General Inquiry / Future Event
+                    </option>
+                  </select>
+                </div>
+
+                {/* Subject */}
+                <div className="support-form-field">
+                  <label htmlFor="supportSubjectInput">Subject</label>
+                  <input
+                    type="text"
+                    id="supportSubjectInput"
+                    className="support-text-input"
+                    placeholder="Menu Modification"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    required
+                  />
+                </div>
+
+                {/* Message */}
+                <div className="support-form-field">
+                  <label htmlFor="supportMessageInput">Message</label>
+                  <textarea
+                    id="supportMessageInput"
+                    className="support-textarea-input"
+                    placeholder="I would like to add a vegetarian option to our menu."
+                    rows={4}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    required
+                  />
+                </div>
+
+                {/* File Attachment */}
+                <div className="support-form-field">
+                  <label className="btn-attach-file-label">
+                    <Paperclip size={14} />
+                    <span>{attachedFileName ? attachedFileName : 'Attach File (Optional)'}</span>
+                    <input
+                      type="file"
+                      className="sr-only-input"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                </div>
+
+                {/* Submit Button */}
+                <button type="submit" className="btn-submit-support-ticket">
+                  <span>Submit Ticket</span>
+                </button>
+              </form>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 }
-

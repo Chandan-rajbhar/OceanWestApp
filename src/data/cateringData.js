@@ -50,11 +50,92 @@ export const IMAGES = {
   platter: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=800&q=80"
 };
 
+export const MENU_CATEGORIES = [
+  {
+    id: "starters",
+    name: "Starters",
+    image: heroPearAi,
+    count: 4
+  },
+  {
+    id: "dinner",
+    name: "Main Course",
+    image: heroSalmonAi,
+    count: 5
+  },
+  {
+    id: "desserts",
+    name: "Desserts",
+    image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=400&q=80",
+    count: 3
+  },
+  {
+    id: "beverages",
+    name: "Beverages",
+    image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=400&q=80",
+    count: 4
+  },
+  {
+    id: "vegetarian",
+    name: "Vegetarian",
+    image: heroPearAi,
+    count: 4
+  },
+  {
+    id: "chef_specials",
+    name: "Chef Specials",
+    image: heroHalibutAi,
+    count: 4
+  }
+];
+
 export const MENU_COURSES = [
+  {
+    id: 101,
+    title: "Seared Scallops",
+    rate: "$28 / person",
+    price: 28,
+    category: "starters",
+    isSignature: true,
+    isChefSpecial: true,
+    badges: [
+      { text: "Signature", type: "gold" },
+      { text: "Gluten Free", type: "green" },
+      { text: "Seafood", type: "blue" }
+    ],
+    image: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=800&q=80",
+    description: "Pan-seared scallops with cauliflower purée, seasonal greens and citrus beurre blanc.",
+    ingredients: ["Scallops", "Cauliflower", "Seasonal Greens", "Citrus", "Butter", "Herbs"],
+    allergens: ["Contains dairy (Butter)", "May contain shellfish (Scallops)"],
+    allergenSafetyNote: "Contains dairy and shellfish. Prepared in a dedicated seafood station.",
+    serviceStyle: "Plated Course & Platter"
+  },
+  {
+    id: 102,
+    title: "Herb Crusted Salmon",
+    rate: "$32 / person",
+    price: 32,
+    category: "dinner",
+    isSignature: true,
+    isChefSpecial: false,
+    badges: [
+      { text: "Signature", type: "gold" },
+      { text: "Gluten Free", type: "green" },
+      { text: "Seafood", type: "blue" }
+    ],
+    image: heroSalmonAi,
+    description: "Crispy herb-crusted wild salmon served with blistered shallots, lemon thyme emulsion, and asparagus.",
+    ingredients: ["Wild BC Salmon", "Fresh Dill & Thyme", "Blistered Shallots", "Cold-Pressed Olive Oil", "Asparagus"],
+    allergens: ["Fish (Salmon)"],
+    allergenSafetyNote: "Naturally gluten-free. Dairy-free olive oil emulsion.",
+    serviceStyle: "Plated Dinner Course"
+  },
   {
     id: 1,
     title: "Roasted Anjou Pear with Gorgonzola",
     category: "starters",
+    price: 18,
+    image: heroPearAi,
     isSignature: true,
     isChefSpecial: false,
     badges: [
@@ -72,6 +153,8 @@ export const MENU_COURSES = [
     id: 2,
     title: "Wild Pacific Salmon with Citrus Herb Glaze",
     category: "dinner",
+    price: 30,
+    image: heroSalmonAi,
     isSignature: true,
     isChefSpecial: false,
     badges: [
@@ -89,6 +172,8 @@ export const MENU_COURSES = [
     id: 3,
     title: "Prime Angus Beef Medallions & Truffle Demi",
     category: "dinner",
+    price: 36,
+    image: heroBeefAi,
     isSignature: false,
     isChefSpecial: true,
     badges: [
@@ -106,6 +191,7 @@ export const MENU_COURSES = [
     id: 4,
     title: "Pacific Coast Artisanal Grazing Board",
     category: "grazing",
+    price: 95,
     isSignature: true,
     isChefSpecial: false,
     badges: [
@@ -123,6 +209,7 @@ export const MENU_COURSES = [
     id: 5,
     title: "Charred Spot Prawn & Mango Skewers",
     category: "canapes",
+    price: 24,
     isSignature: true,
     isChefSpecial: false,
     badges: [
@@ -140,6 +227,7 @@ export const MENU_COURSES = [
     id: 6,
     title: "Caramelized Tahitian Vanilla Bean Brûlée",
     category: "desserts",
+    price: 14,
     isSignature: false,
     isChefSpecial: false,
     badges: [
@@ -156,6 +244,7 @@ export const MENU_COURSES = [
     id: 7,
     title: "Fraser Valley Farm Egg & Smoked Trout Frittata",
     category: "breakfast",
+    price: 20,
     isSignature: false,
     isChefSpecial: true,
     badges: [
@@ -173,6 +262,7 @@ export const MENU_COURSES = [
     id: 8,
     title: "Artisan Brioche Breakfast Sliders",
     category: "breakfast",
+    price: 18,
     isSignature: false,
     isChefSpecial: false,
     badges: [
@@ -189,6 +279,7 @@ export const MENU_COURSES = [
     id: 9,
     title: "Pacific Rim Wild Salmon & Soba Noodle Bowl",
     category: "lunch",
+    price: 26,
     isSignature: false,
     isChefSpecial: true,
     badges: [
@@ -206,6 +297,7 @@ export const MENU_COURSES = [
     id: 10,
     title: "Artisanal Porchetta & Rosemary Focaccia Platter",
     category: "lunch",
+    price: 32,
     isSignature: true,
     isChefSpecial: false,
     badges: [
@@ -222,6 +314,7 @@ export const MENU_COURSES = [
     id: 11,
     title: "Pan-Seared Pacific Halibut & Saffron Glaze",
     category: "dinner",
+    price: 34,
     isSignature: false,
     isChefSpecial: true,
     badges: [
@@ -239,6 +332,7 @@ export const MENU_COURSES = [
     id: 12,
     title: "Wild Foraged Chanterelle & Truffle Tartlets",
     category: "canapes",
+    price: 22,
     isSignature: false,
     isChefSpecial: false,
     badges: [
@@ -255,6 +349,7 @@ export const MENU_COURSES = [
     id: 13,
     title: "Cowichan Bay Blackberry & Hazelnut Galette",
     category: "desserts",
+    price: 16,
     isSignature: true,
     isChefSpecial: false,
     badges: [
@@ -878,3 +973,45 @@ export const CHEF_PROFILE = {
   ],
   quote: "Exceptional catering isn't just about delicious food—it's about orchestrating an unforgettable sensory journey rooted in the wild ingredients of British Columbia."
 };
+
+// --------------------------------------------------------------------------
+// Cart & Menu Pricing Helpers
+// --------------------------------------------------------------------------
+export function getDishPrice(dish) {
+  if (!dish) return 0;
+  if (typeof dish.price === 'number') return dish.price;
+  if (typeof dish.rate === 'string') {
+    const parsed = parseInt(dish.rate.replace(/\D/g, ''), 10);
+    if (!isNaN(parsed) && parsed > 0) return parsed;
+  }
+  const match = MENU_COURSES.find((c) => c.id === dish.id);
+  if (match && typeof match.price === 'number') return match.price;
+  if (dish.category === 'starters') return 18;
+  if (dish.category === 'dinner' || dish.category === 'mains') return 30;
+  if (dish.category === 'grazing' || dish.category === 'platters') return 95;
+  if (dish.category === 'lunch') return 24;
+  if (dish.category === 'breakfast') return 20;
+  if (dish.category === 'canapes') return 22;
+  if (dish.category === 'desserts') return 14;
+  return 24;
+}
+
+export function calculateCartTotal(dishes) {
+  if (!Array.isArray(dishes)) return 0;
+  return dishes.reduce((sum, dish) => sum + getDishPrice(dish), 0);
+}
+
+export function getDishImage(dish) {
+  if (!dish) return HERO_SLIDES[0].image;
+  if (dish.image) return dish.image;
+  if (dish.id === 1 || dish.id === '1') return heroPearAi;
+  if (dish.id === 2 || dish.id === '2') return heroSalmonAi;
+  if (dish.id === 3 || dish.id === '3') return heroBeefAi;
+  if (dish.id === 4 || dish.id === '4') return heroTacosAi;
+  if (dish.id === 5 || dish.id === '5') return heroHalibutAi;
+  if (dish.category === 'desserts') return 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80';
+  if (dish.category === 'canapes' || dish.category === 'grazing' || dish.category === 'platters') return IMAGES.platter;
+  if (dish.category === 'lunch') return heroSalmonAi;
+  if (dish.category === 'breakfast') return heroPearAi;
+  return heroPearAi;
+}

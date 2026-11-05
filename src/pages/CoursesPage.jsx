@@ -1,28 +1,22 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
-  Utensils,
-  ChevronRight,
-  FileText,
-  Download,
-  Check,
-  Sparkles,
-  ArrowRight,
+  ArrowLeft,
+  Bell,
+  Search,
+  Sliders,
   Plus,
-  ShoppingBag,
+  Check,
   Heart,
-  Scale,
-  Camera,
-  Info,
-  ShieldAlert,
-  X,
-  Filter,
-  CheckCircle2,
-  ChefHat,
-  Flame
+  ArrowRight
 } from 'lucide-react';
-import { MENU_COURSES, IMAGES, HERO_SLIDES } from '../data/cateringData';
-import ImageWithFallback from '../components/ImageWithFallback';
+import {
+  MENU_COURSES,
+  MENU_CATEGORIES,
+  getDishPrice,
+  getDishImage
+} from '../data/cateringData';
+import DishInspectModal from '../components/DishInspectModal';
 
 function getDeduplicatedBadges(course) {
   const list = [];
@@ -42,720 +36,426 @@ function getDeduplicatedBadges(course) {
       list.push(b);
     }
   }
-  return list.slice(0, 3);
+  return list;
 }
 
 export default function CoursesPage({
-  setIsPdfModalOpen,
   selectedDishes = [],
   onToggleDishInMenu,
-  onOpenMyMenu,
   favoriteDishes = [],
   onToggleFavorite,
-  onOpenServingGuide,
-  onOpenGallery,
-  setFormData,
-  showToast
+  showToast,
+  onOpenNotificationsModal
 }) {
   const [activeCategory, setActiveCategory] = useState('all');
-  const [activeDietaryFilter, setActiveDietaryFilter] = useState('all'); // 'all' | 'vegetarian' | 'vegan' | 'gluten_free' | 'signature' | 'chef_special'
+  const [activeDietaryFilter, setActiveDietaryFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [inspectingDish, setInspectingDish] = useState(null);
   const navigate = useNavigate();
 
-  // Featured event platters mapped to existing dish data with authentic pricing
-  const FEATURED_PLATTERS = [
-    {
-      id: 2,
-      title: 'Wild Pacific Sockeye Platter',
-      rate: '$140',
-      dietaryTag: 'GLUTEN-FREE',
-      image: HERO_SLIDES[1]?.image || IMAGES.platter,
-      description: 'Cedar plank wild sockeye salmon, blistered shallots, caper berries, whipped herbed cream.'
+  // Two canonical Popular Dishes matching Reference Screen 2 & prompt
+  const POPULAR_DISHES = [
+    MENU_COURSES.find((d) => d.id === 101) || {
+      id: 101,
+      title: 'Seared Scallops',
+      price: 28,
+      rate: '$28 / person',
+      category: 'starters',
+      description: 'Pan-seared scallops with cauliflower purée, seasonal greens and citrus beurre blanc.',
+      image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=800&q=80',
+      badges: [{ text: 'Signature', type: 'gold' }, { text: 'Gluten Free', type: 'green' }]
     },
-    {
-      id: 4,
-      title: 'Okanagan Artisanal Charcuterie',
-      rate: '$95',
-      dietaryTag: 'GRAZING BOARD',
-      image: IMAGES.platter,
-      description: 'Cured meats, aged cheeses, raw honeycomb, spiced nuts, fig preserves, artisan sourdough.'
-    },
-    {
-      id: 1,
-      title: 'Farm Harvest Organic Crudité',
-      rate: '$75',
-      dietaryTag: 'VEGAN / GLUTEN-FREE',
-      image: HERO_SLIDES[0]?.image || IMAGES.platter,
-      description: 'Crisp market vegetables, preserved lemon labneh, smoked paprika hummus, seed crisps.'
+    MENU_COURSES.find((d) => d.id === 102) || {
+      id: 102,
+      title: 'Herb Crusted Salmon',
+      price: 32,
+      rate: '$32 / person',
+      category: 'dinner',
+      description: 'Crispy herb-crusted wild salmon served with blistered shallots, lemon thyme emulsion, and asparagus.',
+      image: MENU_COURSES[1]?.image,
+      badges: [{ text: 'Signature', type: 'gold' }, { text: 'Gluten Free', type: 'green' }]
     }
   ];
 
-  // Filter logic
+  // Filtering for the full catalog
   const filteredCourses = MENU_COURSES.filter((course) => {
-    // Category check
+    // 1. Search Query
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      const matchTitle = course.title?.toLowerCase().includes(q);
+      const matchDesc = course.description?.toLowerCase().includes(q);
+      const matchCat = course.category?.toLowerCase().includes(q);
+      const matchIng = course.ingredients?.some((ing) => ing.toLowerCase().includes(q));
+      if (!matchTitle && !matchDesc && !matchCat && !matchIng) return false;
+    }
+
+    // 2. Category Filter (All, Breakfast, Lunch, Dinner, Desserts, Starters, etc.)
     if (activeCategory === 'favorites') {
       if (!favoriteDishes.includes(course.id)) return false;
     } else if (activeCategory !== 'all') {
-      if (activeCategory === 'mains') {
-        if (course.category !== 'mains' && course.category !== 'dinner') return false;
+      if (activeCategory === 'dinner' || activeCategory === 'mains') {
+        if (course.category !== 'dinner' && course.category !== 'mains') return false;
+      } else if (activeCategory === 'chef_specials') {
+        if (!course.isChefSpecial) return false;
+      } else if (activeCategory === 'vegetarian') {
+        const isVeg = course.badges?.some((b) => b.text.toLowerCase().includes('vegetarian'));
+        if (!isVeg) return false;
+      } else if (activeCategory === 'beverages') {
+        if (course.category !== 'beverages' && course.category !== 'canapes') return false;
       } else if (course.category !== activeCategory) {
         return false;
       }
     }
 
-    // Dietary filter check
+    // 3. Dietary Filter toggle
     if (activeDietaryFilter === 'vegetarian') {
-      const isVeg = course.badges.some((b) => b.text.toLowerCase().includes('vegetarian'));
+      const isVeg = course.badges?.some((b) => b.text.toLowerCase().includes('vegetarian'));
       if (!isVeg) return false;
-    } else if (activeDietaryFilter === 'vegan') {
-      const isVegan = course.badges.some((b) => b.text.toLowerCase().includes('vegan'));
-      if (!isVegan) return false;
     } else if (activeDietaryFilter === 'gluten_free') {
-      const isGf = course.badges.some((b) => b.text.toLowerCase().includes('gluten-free'));
+      const isGf = course.badges?.some((b) => b.text.toLowerCase().includes('gluten-free') || b.text.toLowerCase().includes('gluten free'));
       if (!isGf) return false;
-    } else if (activeDietaryFilter === 'signature') {
-      if (!course.isSignature) return false;
-    } else if (activeDietaryFilter === 'chef_special') {
-      if (!course.isChefSpecial) return false;
     }
 
     return true;
   });
 
-  const handleQuickInquire = (courseTitle) => {
-    setFormData((prev) => ({
-      ...prev,
-      notes: `Interested in including: ${courseTitle}\n` + (prev.notes || '')
-    }));
-    showToast(`Added "${courseTitle}" to your inquiry preferences!`);
-    navigate('/inquiry');
-  };
-
   return (
-    <div className="courses-page">
+    <div className="menus-redesign-screen">
       {/* ------------------------------------------------------------------ */}
-      {/* 1. COMPACT ROUNDED HERO CARD WITH GLOW & SHINE (HOME PAGE LAYOUT)  */}
+      {/* 1. AUTHENTIC SCREEN 2 TOP BAR (NO HEADER CARD)                     */}
       {/* ------------------------------------------------------------------ */}
-      <section className="app-hero-card-wrap" style={{ padding: '12px 14px 4px' }}>
-        <div className="app-hero-card">
-          <div className="app-hero-shine" aria-hidden="true" />
-          <img
-            src={HERO_SLIDES[1]?.image || IMAGES.halibut || IMAGES.platter}
-            alt="Ocean West Signature Courses"
-            className="app-hero-bg-img"
-            loading="eager"
+      <header className="menus-screen-top-bar" aria-label="Menu Header">
+        <div className="menus-top-left-group">
+          <button
+            type="button"
+            className="menus-top-icon-btn menus-top-back-btn"
+            onClick={() => navigate('/')}
+            aria-label="Back to Home"
+          >
+            <ArrowLeft size={22} strokeWidth={2.2} />
+          </button>
+          <h1 className="menus-top-bar-title">Menus</h1>
+        </div>
+
+        <button
+          type="button"
+          className="menus-top-icon-btn menus-top-bell-btn"
+          onClick={() => {
+            if (onOpenNotificationsModal) {
+              onOpenNotificationsModal();
+            } else {
+              navigate('/profile');
+            }
+          }}
+          aria-label="Notifications"
+        >
+          <Bell size={20} strokeWidth={2} />
+          <span className="menus-bell-unread-dot" aria-hidden="true" />
+        </button>
+      </header>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* 2. HORIZONTALLY SCROLLABLE FILTER CHIPS (All, Breakfast, Lunch...) */}
+      {/* ------------------------------------------------------------------ */}
+      <div className="menus-filter-chips-wrap">
+        <div className="menus-filter-chips-row" role="tablist" aria-label="Menu Course Filters">
+          {[
+            { id: 'all', label: 'All' },
+            { id: 'breakfast', label: 'Breakfast' },
+            { id: 'lunch', label: 'Lunch' },
+            { id: 'dinner', label: 'Dinner' },
+            { id: 'desserts', label: 'Desserts' }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeCategory === tab.id}
+              className={`menus-category-chip ${activeCategory === tab.id ? 'is-active' : ''}`}
+              onClick={() => {
+                setActiveCategory(tab.id);
+                setSearchQuery('');
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+          {favoriteDishes.length > 0 && (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeCategory === 'favorites'}
+              className={`menus-category-chip ${activeCategory === 'favorites' ? 'is-active' : ''}`}
+              onClick={() => setActiveCategory('favorites')}
+            >
+              Saved ({favoriteDishes.length})
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* 3. SEARCH FIELD (48px, RADIUS 14px) WITH FILTER ICON               */}
+      {/* ------------------------------------------------------------------ */}
+      <div className="menus-search-wrapper">
+        <div className="menus-search-input-field">
+          <Search size={18} className="menus-search-lens-icon" />
+          <input
+            type="text"
+            className="menus-search-text-input"
+            placeholder="Search dishes, cuisine or ingredient..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Search dishes"
           />
-          <div className="app-hero-gradient-overlay" />
+          <button
+            type="button"
+            className={`menus-search-filter-btn ${activeDietaryFilter !== 'all' ? 'is-filtering' : ''}`}
+            onClick={() => {
+              setActiveDietaryFilter((prev) => (prev === 'all' ? 'vegetarian' : 'all'));
+              if (showToast) {
+                showToast(activeDietaryFilter === 'all' ? 'Filtered by Vegetarian options' : 'Cleared dietary filter');
+              }
+            }}
+            title="Filter by Dietary Preference"
+            aria-label="Toggle dietary filter"
+          >
+            <Sliders size={18} />
+          </button>
+        </div>
+      </div>
 
-          <div className="app-hero-card-content">
-            <div className="hero-location-chip">
-              <Sparkles size={9} className="chip-pin-icon" />
-              <span>CULINARY REPERTOIRE • PACIFIC NORTHWEST</span>
-            </div>
-
-            <h1 className="hero-app-headline">
-              Signature Courses &amp; Delicacies
-            </h1>
-            <p className="hero-app-subtext">
-              Haida Gwaii halibut, Cowichan Valley organic orchards &amp; artisan display platters.
-            </p>
-
-            <div className="hero-app-actions-row">
+      {/* ------------------------------------------------------------------ */}
+      {/* 4. "MENU CATEGORIES": WHITE CARD WITH 3x2 GRID OF 64px CIRCULAR IMAGES */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="menus-section-block">
+        <h2 className="menus-section-title">Menu Categories</h2>
+        <div className="menu-categories-card">
+          <div className="menu-categories-3x2-grid">
+            {MENU_CATEGORIES.map((cat) => (
               <button
+                key={cat.id}
                 type="button"
-                className="btn-hero-explore"
-                onClick={onOpenServingGuide}
-                title="Portion calculator for banquets and courses"
+                className={`menu-category-grid-tile ${activeCategory === cat.id ? 'is-selected' : ''}`}
+                onClick={() => {
+                  setActiveCategory(cat.id);
+                  setSearchQuery('');
+                }}
+                aria-label={`Filter by ${cat.name}`}
               >
-                <Scale size={11} />
-                <span>Serving Guide</span>
+                <div className="category-circle-avatar">
+                  <img src={cat.image} alt={cat.name} loading="lazy" />
+                </div>
+                <span className="category-tile-name">{cat.name}</span>
               </button>
-              <button
-                type="button"
-                className="btn-hero-quote"
-                onClick={onOpenGallery}
-                title="Browse plated course photography"
-              >
-                <Camera size={11} />
-                <span>Photo Gallery</span>
-              </button>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* 2. CATERING HIGHLIGHTS STRIP (MATCHING HOME PAGE)                  */}
+      {/* 5. "POPULAR DISHES" + "View all →": 2-COLUMN GRID OF IDENTICAL CARDS*/}
       {/* ------------------------------------------------------------------ */}
-      <section className="menu-highlights-strip" style={{ padding: '8px 14px 4px' }}>
-        <div className="menu-trust-metrics-row">
-          <div className="menu-trust-metric-chip">
-            <Sparkles size={12} style={{ color: '#BA8D5B' }} />
-            <span>100% Ocean Wise®</span>
-          </div>
-          <div className="menu-trust-metric-chip">
-            <ChefHat size={12} style={{ color: '#BA8D5B' }} />
-            <span>Chef Prepared</span>
-          </div>
-          <div className="menu-trust-metric-chip">
-            <CheckCircle2 size={12} style={{ color: '#BA8D5B' }} />
-            <span>Dietary Protocols</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* 3. FEATURED READY-TO-SERVE EVENT PLATTERS                          */}
-      {/* ------------------------------------------------------------------ */}
-      <section className="app-section event-platters-section" style={{ padding: '14px 14px 8px' }}>
-        <div className="app-section-header">
-          <div>
-            <span className="app-kicker">READY-TO-SERVE</span>
-            <h2 className="app-heading-serif">Featured Event Platters</h2>
-          </div>
-          <span style={{ fontSize: '10.5px', color: '#7A857E', fontWeight: 600 }}>
-            Chef Prepared &amp; Display Ready
-          </span>
+      <section className="menus-section-block">
+        <div className="menus-section-header-flex">
+          <h2 className="menus-section-title">Popular Dishes</h2>
+          <button
+            type="button"
+            className="menus-view-all-link"
+            onClick={() => {
+              setActiveCategory('all');
+              setSearchQuery('');
+              const el = document.getElementById('full-catalog-heading');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            <span>View all</span>
+            <ArrowRight size={14} />
+          </button>
         </div>
 
-        <div className="platters-compact-list">
-          {FEATURED_PLATTERS.map((platter) => {
-            const isAdded = selectedDishes.some((d) => d.id === platter.id);
-            const sourceDish = MENU_COURSES.find((c) => c.id === platter.id) || platter;
+        <div className="popular-dishes-2col-grid">
+          {POPULAR_DISHES.map((dish) => {
+            const isAdded = selectedDishes.some((d) => d.id === dish.id);
+            const price = getDishPrice(dish);
+            const img = getDishImage(dish);
 
             return (
-              <div
-                key={platter.id}
-                className="compact-platter-card"
-                onClick={() => setInspectingDish(sourceDish)}
+              <article
+                key={dish.id}
+                className="popular-dish-column-card"
+                onClick={() => setInspectingDish(dish)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
-                    setInspectingDish(sourceDish);
+                    setInspectingDish(dish);
                   }
                 }}
               >
-                <div className="platter-thumbnail-box">
-                  <ImageWithFallback
-                    src={platter.image}
-                    alt={platter.title}
-                    aspect="1:1"
-                  />
+                {/* Fixed height 112px photo */}
+                <div className="popular-dish-photo-box">
+                  <img src={img} alt={dish.title} className="popular-dish-cover-img" loading="lazy" />
                 </div>
 
-                <div className="platter-info-box">
-                  <div className="platter-title-price-row">
-                    <h3 className="platter-title">{platter.title}</h3>
-                    <span className="platter-rate-pill">{platter.rate}</span>
-                  </div>
+                <div className="popular-dish-info-body">
+                  {/* Title: 19px serif, fixed 2-line height with ellipsis */}
+                  <h3 className="popular-dish-serif-title">{dish.title}</h3>
 
-                  <p className="platter-desc">{platter.description}</p>
-
-                  <div className="platter-action-row">
-                    <span className="platter-dietary-pill">{platter.dietaryTag}</span>
+                  {/* Bottom row: price "$32" (17px, 600) + "/person" & 44px round "+" button */}
+                  <div className="popular-dish-card-bottom-row">
+                    <div className="dish-rate-lockup">
+                      <span className="rate-num">${price}</span>
+                      <span className="rate-unit">/person</span>
+                    </div>
 
                     <button
                       type="button"
-                      className={`btn-add-platter ${isAdded ? 'is-added' : ''}`}
+                      className={`btn-round-44px-action ${isAdded ? 'is-added' : ''}`}
                       onClick={(e) => {
                         e.stopPropagation();
-                        onToggleDishInMenu(sourceDish);
+                        onToggleDishInMenu(dish);
                       }}
-                      aria-label={isAdded ? `Remove ${platter.title}` : `Add ${platter.title}`}
+                      aria-label={isAdded ? `Remove ${dish.title} from cart` : `Add ${dish.title} to cart`}
                     >
                       {isAdded ? (
-                        <>
-                          <Check size={12} strokeWidth={3} />
-                          <span>Added</span>
-                        </>
+                        <Check size={18} strokeWidth={2.8} />
                       ) : (
-                        <>
-                          <Plus size={12} strokeWidth={2.5} />
-                          <span>Add</span>
-                        </>
+                        <Plus size={18} strokeWidth={2.4} />
                       )}
                     </button>
                   </div>
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* MENU REPERTOIRE SECTION                                            */}
+      {/* 6. "FULL CATALOG / Chef Tasting Selections" + "15 dishes"           */}
       {/* ------------------------------------------------------------------ */}
-      <section className="ow-section courses-section">
-        <div className="ow-container">
-          {/* Sticky Filter Header Bar with Fade Hint */}
-          <div className="sticky-menu-filters-bar">
-            {/* Category Tabs */}
-            <div className="courses-filter-tabs-wrapper">
-              <div className="courses-filter-tabs" role="tablist" aria-label="Course categories">
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeCategory === 'all'}
-                  className={`filter-tab-pill ${activeCategory === 'all' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('all')}
-                >
-                  All Courses ({MENU_COURSES.length})
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeCategory === 'starters'}
-                  className={`filter-tab-pill ${activeCategory === 'starters' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('starters')}
-                >
-                  Starters
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeCategory === 'mains'}
-                  className={`filter-tab-pill ${activeCategory === 'mains' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('mains')}
-                >
-                  Dinner Mains
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeCategory === 'lunch'}
-                  className={`filter-tab-pill ${activeCategory === 'lunch' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('lunch')}
-                >
-                  Lunch
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeCategory === 'breakfast'}
-                  className={`filter-tab-pill ${activeCategory === 'breakfast' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('breakfast')}
-                >
-                  Breakfast
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeCategory === 'canapes'}
-                  className={`filter-tab-pill ${activeCategory === 'canapes' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('canapes')}
-                >
-                  Canapés
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeCategory === 'grazing'}
-                  className={`filter-tab-pill ${activeCategory === 'grazing' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('grazing')}
-                >
-                  Grazing
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={activeCategory === 'desserts'}
-                  className={`filter-tab-pill ${activeCategory === 'desserts' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('desserts')}
-                >
-                  Desserts
-                </button>
-                {favoriteDishes.length > 0 && (
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={activeCategory === 'favorites'}
-                    className={`filter-tab-pill ${activeCategory === 'favorites' ? 'active' : ''}`}
-                    onClick={() => setActiveCategory('favorites')}
-                  >
-                    Favorites ({favoriteDishes.length})
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Secondary Dietary & Specials Filter Strip */}
-            <div className="dietary-filter-substrip">
-              <span className="filter-substrip-label">
-                <Filter size={12} />
-                <span>Filter:</span>
-              </span>
-              <div className="dietary-filter-pills">
-                <button
-                  type="button"
-                  className={`sub-filter-pill ${activeDietaryFilter === 'all' ? 'is-active' : ''}`}
-                  onClick={() => setActiveDietaryFilter('all')}
-                >
-                  All Dietary
-                </button>
-                <button
-                  type="button"
-                  className={`sub-filter-pill ${activeDietaryFilter === 'vegetarian' ? 'is-active' : ''}`}
-                  onClick={() =>
-                    setActiveDietaryFilter(activeDietaryFilter === 'vegetarian' ? 'all' : 'vegetarian')
-                  }
-                >
-                  Vegetarian
-                </button>
-                <button
-                  type="button"
-                  className={`sub-filter-pill ${activeDietaryFilter === 'vegan' ? 'is-active' : ''}`}
-                  onClick={() =>
-                    setActiveDietaryFilter(activeDietaryFilter === 'vegan' ? 'all' : 'vegan')
-                  }
-                >
-                  Vegan
-                </button>
-                <button
-                  type="button"
-                  className={`sub-filter-pill ${activeDietaryFilter === 'gluten_free' ? 'is-active' : ''}`}
-                  onClick={() =>
-                    setActiveDietaryFilter(activeDietaryFilter === 'gluten_free' ? 'all' : 'gluten_free')
-                  }
-                >
-                  Gluten-Free
-                </button>
-                <button
-                  type="button"
-                  className={`sub-filter-pill ${activeDietaryFilter === 'signature' ? 'is-active' : ''}`}
-                  onClick={() =>
-                    setActiveDietaryFilter(activeDietaryFilter === 'signature' ? 'all' : 'signature')
-                  }
-                >
-                  <Sparkles size={11} />
-                  <span>Signatures</span>
-                </button>
-                <button
-                  type="button"
-                  className={`sub-filter-pill ${activeDietaryFilter === 'chef_special' ? 'is-active' : ''}`}
-                  onClick={() =>
-                    setActiveDietaryFilter(activeDietaryFilter === 'chef_special' ? 'all' : 'chef_special')
-                  }
-                >
-                  <ChefHat size={11} />
-                  <span>Chef Specials</span>
-                </button>
-              </div>
-            </div>
+      <section className="menus-section-block" id="full-catalog-heading">
+        <div className="menus-section-header-flex">
+          <div>
+            <span className="menus-kicker-tag">FULL CATALOG</span>
+            <h2 className="menus-section-title">Chef Tasting Selections</h2>
           </div>
+          <span className="menus-catalog-count-badge">
+            {filteredCourses.length} dishes
+          </span>
+        </div>
 
-          {/* Menu Cards Grid */}
-          <div className="courses-grid">
-            {filteredCourses.length === 0 ? (
-              <div className="my-menu-empty-state" style={{ gridColumn: '1 / -1', padding: '36px 16px' }}>
-                <Heart size={32} style={{ color: '#BA8D5B', margin: '0 auto 12px' }} />
-                <h4 className="empty-state-title">No Matching Dishes Found</h4>
-                <p className="empty-state-desc">
-                  Try adjusting your category or dietary filters to view more culinary selections.
-                </p>
+        <div className="catalog-vertical-cards-stack">
+          {filteredCourses.map((course) => {
+            const isAdded = selectedDishes.some((d) => d.id === course.id);
+            const isFavorite = favoriteDishes.includes(course.id);
+            const badges = getDeduplicatedBadges(course).slice(0, 2); // max 2 visible
+            const price = getDishPrice(course);
+            const img = getDishImage(course);
+
+            return (
+              <article
+                key={course.id}
+                className="catalog-horizontal-card"
+                onClick={() => setInspectingDish(course)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setInspectingDish(course);
+                  }
+                }}
+              >
+                {/* 44px hit-area Favorite Heart at top-right */}
                 <button
                   type="button"
-                  className="btn-outline-subtle"
-                  onClick={() => {
-                    setActiveCategory('all');
-                    setActiveDietaryFilter('all');
+                  className={`catalog-card-fav-btn ${isFavorite ? 'is-fav' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onToggleFavorite) onToggleFavorite(course);
                   }}
-                  style={{ margin: '0 auto' }}
+                  aria-label={isFavorite ? `Remove ${course.title} from favorites` : `Add ${course.title} to favorites`}
                 >
-                  Reset All Filters
+                  <Heart
+                    size={18}
+                    fill={isFavorite ? '#8A5A2B' : 'none'}
+                    color={isFavorite ? '#8A5A2B' : '#A3998C'}
+                  />
                 </button>
-              </div>
-            ) : (
-              filteredCourses.map((course) => {
-                const isSelected = selectedDishes.some((d) => d.id === course.id);
-                const isFavorite = favoriteDishes.includes(course.id);
-                const displayBadges = getDeduplicatedBadges(course);
 
-                return (
-                  <div key={course.id} className="course-card">
-                    <div className="course-card-top-row">
-                      <div className="course-badges-row">
-                        {displayBadges.map((b, idx) => (
-                          <span key={idx} className={`course-badge ${b.type || 'gold'}`}>
-                            {b.text}
-                          </span>
-                        ))}
-                      </div>
+                {/* Left: 88x88 rounded thumbnail */}
+                <div className="catalog-thumb-88px">
+                  <img src={img} alt={course.title} className="catalog-thumb-img" loading="lazy" />
+                </div>
 
-                      {/* Favorite Button: 44x44 tap target with smooth scale */}
-                      <button
-                        type="button"
-                        className={`course-fav-btn ${isFavorite ? 'favorited' : ''}`}
-                        onClick={() => {
-                          if (onToggleFavorite) onToggleFavorite(course);
-                          if (showToast) {
-                            showToast(
-                              isFavorite
-                                ? `Removed "${course.title}" from favorites`
-                                : `Saved "${course.title}" to favorites`
-                            );
-                          }
-                        }}
-                        title={
-                          isFavorite
-                            ? `Remove ${course.title} from favorites`
-                            : `Save ${course.title} to favorites`
-                        }
-                        aria-label={isFavorite ? `Unfavorite ${course.title}` : `Favorite ${course.title}`}
-                      >
-                        <Heart
-                          size={18}
-                          fill={isFavorite ? '#BA8D5B' : 'none'}
-                          color={isFavorite ? '#BA8D5B' : '#76837A'}
-                        />
-                      </button>
+                {/* Right: Tag chips row > title > 2-line description > price + "+ Add" pill */}
+                <div className="catalog-details-column">
+                  {/* Tag chips row: small uppercase 11px, green-tinted for dietary, max 2 */}
+                  {badges.length > 0 && (
+                    <div className="catalog-tags-row">
+                      {badges.map((b, idx) => (
+                        <span key={idx} className="catalog-tag-chip">
+                          {b.text}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Title (19px serif) */}
+                  <h3 className="catalog-dish-title">{course.title}</h3>
+
+                  {/* 2-line description (13px, muted) */}
+                  <p className="catalog-dish-desc">{course.description}</p>
+
+                  {/* Row with price on left and "+ Add" pill on right (turns green "✓ Added" in cart) */}
+                  <div className="catalog-bottom-action-row">
+                    <div className="dish-rate-lockup">
+                      <span className="rate-num">${price}</span>
+                      <span className="rate-unit">/person</span>
                     </div>
 
-                    <h3
-                      className="course-title clickable-dish-title"
-                      onClick={() => setInspectingDish(course)}
-                      title="Click to view ingredients and allergens"
+                    <button
+                      type="button"
+                      className={`btn-catalog-add-pill ${isAdded ? 'is-added' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleDishInMenu(course);
+                      }}
+                      aria-label={isAdded ? `Remove ${course.title} from cart` : `Add ${course.title} to cart`}
                     >
-                      {course.title}
-                    </h3>
-                    <p className="course-desc">{course.description}</p>
-
-                    {/* Quick Ingredients & Allergen Pill Preview */}
-                    <div className="course-provenance-bar">
-                      <button
-                        type="button"
-                        className="btn-inspect-ingredients"
-                        onClick={() => setInspectingDish(course)}
-                      >
-                        <Info size={12} />
-                        <span>View Ingredients &amp; Allergens</span>
-                      </button>
-                    </div>
-
-                    <div className="course-card-footer">
-                      <span className="course-style-label">
-                        <Utensils size={12} />
-                        <span>{course.serviceStyle}</span>
-                      </span>
-
-                      <div className="course-action-btns">
-                        <button
-                          type="button"
-                          className={`btn-dish-builder-toggle ${isSelected ? 'selected' : ''}`}
-                          onClick={() => onToggleDishInMenu(course)}
-                          title={isSelected ? 'Remove from My Menu' : 'Add to My Menu Builder'}
-                          aria-label={
-                            isSelected ? `Remove ${course.title} from menu` : `Add ${course.title} to menu`
-                          }
-                        >
-                          {isSelected ? (
-                            <>
-                              <Check size={12} strokeWidth={3} />
-                              <span>In Menu</span>
-                            </>
-                          ) : (
-                            <>
-                              <Plus size={12} strokeWidth={2.5} />
-                              <span>Add</span>
-                            </>
-                          )}
-                        </button>
-
-                        <button
-                          type="button"
-                          title="Add this dish and inquire immediately"
-                          onClick={() => handleQuickInquire(course.title)}
-                          className="btn-dish-inquire"
-                        >
-                          <span>Inquire</span>
-                          <ChevronRight size={14} />
-                        </button>
-                      </div>
-                    </div>
+                      {isAdded ? (
+                        <>
+                          <Check size={16} strokeWidth={2.8} />
+                          <span>Added</span>
+                        </>
+                      ) : (
+                        <>
+                          <Plus size={16} strokeWidth={2.5} />
+                          <span>Add</span>
+                        </>
+                      )}
+                    </button>
                   </div>
-                );
-              })
-            )}
-          </div>
-
-          {/* PDF Catalog banner */}
-          <div className="menu-guide-banner" style={{ marginTop: '36px' }}>
-            <div className="banner-left">
-              <div className="banner-icon-box">
-                <FileText size={22} />
-              </div>
-              <div>
-                <h4 className="banner-title">Seasonal Catering &amp; Wine Pairing Guide</h4>
-                <p className="banner-subtitle">
-                  Download our complete 24-page catalog with tasting notes, full ingredient origins, and
-                  dietary pairings.
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              className="banner-btn"
-              onClick={() => setIsPdfModalOpen(true)}
-            >
-              <span>Request PDF Catalog</span>
-              <Download size={15} />
-            </button>
-          </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* DISH DETAILS, INGREDIENTS & ALLERGEN MODAL                         */}
+      {/* DISH INSPECT DETAIL MODAL (WHEN OPEN, COVERS FROM VERY TOP)         */}
       {/* ------------------------------------------------------------------ */}
       {inspectingDish && (
-        <div
-          className="modal-overlay-backdrop active"
-          onClick={() => setInspectingDish(null)}
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Detailed specifications for ${inspectingDish.title}`}
-        >
-          <div
-            className="modal-content-box dish-inspect-modal-box"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-top-header">
-              <div className="modal-title-lockup">
-                <span className="modal-kicker">Course Specification</span>
-                <h2 className="modal-headline" style={{ fontSize: '1.25rem' }}>
-                  {inspectingDish.title}
-                </h2>
-              </div>
-              <button
-                type="button"
-                className="modal-close-round-btn"
-                onClick={() => setInspectingDish(null)}
-                aria-label="Close dish details"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className="modal-scroll-body dish-inspect-body">
-              {/* Badges Row */}
-              <div className="course-badges-row" style={{ marginBottom: '12px' }}>
-                {getDeduplicatedBadges(inspectingDish).map((b, idx) => (
-                  <span key={idx} className={`course-badge ${b.type || 'gold'}`}>
-                    {b.text}
-                  </span>
-                ))}
-              </div>
-
-              <p className="dish-full-desc">{inspectingDish.description}</p>
-
-              {/* Service Style Info */}
-              <div className="dish-meta-row">
-                <div className="dish-meta-item">
-                  <span className="meta-item-label">Course Category:</span>
-                  <span className="meta-item-val" style={{ textTransform: 'capitalize' }}>
-                    {inspectingDish.category}
-                  </span>
-                </div>
-                <div className="dish-meta-item">
-                  <span className="meta-item-label">Serving Format:</span>
-                  <span className="meta-item-val">{inspectingDish.serviceStyle}</span>
-                </div>
-              </div>
-
-              {/* Ingredients List */}
-              <div className="dish-ingredients-card">
-                <h4 className="card-sub-header">
-                  <Utensils size={14} />
-                  <span>Key Ingredients &amp; Regional Provenance</span>
-                </h4>
-                {inspectingDish.ingredients && inspectingDish.ingredients.length > 0 ? (
-                  <ul className="dish-ingredients-list">
-                    {inspectingDish.ingredients.map((ing, i) => (
-                      <li key={i}>
-                        <CheckCircle2 size={13} className="ing-check-icon" />
-                        <span>{ing}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="provenance-unavailable-note">
-                    Full ingredient provenance specification available upon seasonal menu consultation.
-                  </p>
-                )}
-              </div>
-
-              {/* Allergens & Safety Protocol */}
-              <div className="dish-allergens-card">
-                <h4 className="card-sub-header allergen-header">
-                  <ShieldAlert size={14} />
-                  <span>Allergen Declaration &amp; Safety Protocol</span>
-                </h4>
-                <div className="allergens-tags-row">
-                  {inspectingDish.allergens && inspectingDish.allergens.length > 0 ? (
-                    inspectingDish.allergens.map((alg, i) => (
-                      <span key={i} className="allergen-danger-tag">
-                        Contains {alg}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="allergen-none-tag">No Common Top Allergens Declared</span>
-                  )}
-                </div>
-
-                <div className="allergen-policy-box">
-                  <p className="allergen-safety-text">
-                    <strong>Kitchen Safety Note:</strong>{' '}
-                    {inspectingDish.allergenSafetyNote ||
-                      'Never infer allergen safety without source confirmation. Our commercial kitchen processes gluten, shellfish, and tree nuts.'}
-                  </p>
-                  <span className="strict-disclaimer-sub">
-                    Individual sealed dietary meal boxes can be prepared under dedicated sterile sanitization
-                    protocols upon notice.
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Modal Bottom Actions */}
-            <div className="modal-bottom-footer-bar custom-footer-bar">
-              <button
-                type="button"
-                className={`footer-save-btn ${
-                  selectedDishes.some((d) => d.id === inspectingDish.id) ? 'is-in-menu' : ''
-                }`}
-                onClick={() => {
-                  onToggleDishInMenu(inspectingDish);
-                }}
-              >
-                {selectedDishes.some((d) => d.id === inspectingDish.id) ? (
-                  <>
-                    <Check size={14} />
-                    <span>In My Menu</span>
-                  </>
-                ) : (
-                  <>
-                    <Plus size={14} />
-                    <span>Add to My Menu</span>
-                  </>
-                )}
-              </button>
-
-              <button
-                type="button"
-                className="footer-cancel-btn"
-                onClick={() => {
-                  const title = inspectingDish.title;
-                  setInspectingDish(null);
-                  handleQuickInquire(title);
-                }}
-              >
-                <span>Inquire Dish</span>
-                <ChevronRight size={14} />
-              </button>
-            </div>
-          </div>
-        </div>
+        <DishInspectModal
+          dish={inspectingDish}
+          onClose={() => setInspectingDish(null)}
+          selectedDishes={selectedDishes}
+          onToggleDishInMenu={onToggleDishInMenu}
+          favoriteDishes={favoriteDishes}
+          onToggleFavorite={onToggleFavorite}
+        />
       )}
     </div>
   );

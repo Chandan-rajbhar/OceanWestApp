@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 
 import MobileFrame from './components/MobileFrame';
@@ -31,6 +31,7 @@ import CulinaryExperiencesModal from './components/CulinaryExperiencesModal';
 import EventCustomizationModal from './components/EventCustomizationModal';
 import QuotationPaymentModal from './components/QuotationPaymentModal';
 import CustomerSupportModal from './components/CustomerSupportModal';
+import NotificationsModal from './components/NotificationsModal';
 
 import HomePage from './pages/HomePage';
 import DisciplinesPage from './pages/DisciplinesPage';
@@ -39,7 +40,8 @@ import PackagesPage from './pages/PackagesPage';
 import FilmCateringPage from './pages/FilmCateringPage';
 import InquiryPage from './pages/InquiryPage';
 import ProfilePage from './pages/ProfilePage';
-import { MENU_COURSES } from './data/cateringData';
+import CartPage from './pages/CartPage';
+import { MENU_COURSES, calculateCartTotal } from './data/cateringData';
 
 const STORAGE_KEY_FORM = 'oceanwest_inquiry_draft_v1';
 const STORAGE_KEY_DISHES = 'oceanwest_selected_dishes_v1';
@@ -78,6 +80,7 @@ const DEFAULT_FORM_DATA = {
 
 export default function App() {
   const navigate = useNavigate();
+  const location = useLocation();
   const scrollContainerRef = useRef(null);
 
   // 1. Toast State
@@ -152,6 +155,15 @@ export default function App() {
     }
   }, [favoriteDishes]);
 
+  // Automatically remove any dish from favorites if it is added to the cart
+  useEffect(() => {
+    if (selectedDishes.length === 0 || favoriteDishes.length === 0) return;
+    setFavoriteDishes((prevFavs) => {
+      const filtered = prevFavs.filter((favId) => !selectedDishes.some((d) => d.id === favId));
+      return filtered.length === prevFavs.length ? prevFavs : filtered;
+    });
+  }, [selectedDishes]);
+
   // Form submission state
   const [formSubmitted, setFormSubmitted] = useState(false);
 
@@ -202,16 +214,19 @@ export default function App() {
   const [isQuotationModalOpen, setIsQuotationModalOpen] = useState(false);
   const [quotationModalPackage, setQuotationModalPackage] = useState('corporate');
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
+  const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
 
   // 5. Menu Builder handlers
   const handleToggleDishInMenu = (dish) => {
     setSelectedDishes((prev) => {
       const exists = prev.some((d) => d.id === dish.id);
       if (exists) {
-        showToast(`Removed "${dish.title}" from My Menu.`);
+        showToast(`Removed "${dish.title}" from Cart.`);
         return prev.filter((d) => d.id !== dish.id);
       } else {
-        showToast(`Added "${dish.title}" to My Menu!`);
+        // When favorite items are added in the cart, remove from favorites
+        setFavoriteDishes((favs) => favs.filter((id) => id !== dish.id));
+        showToast(`Added "${dish.title}" to Cart!`);
         return [...prev, dish];
       }
     });
@@ -263,7 +278,11 @@ export default function App() {
       const newItems = favoriteObjects.filter((f) => !prev.some((p) => p.id === f.id));
       return [...prev, ...newItems];
     });
-    showToast(`Added ${favoriteObjects.length} favorites into My Menu!`);
+    // Remove all added favorites from favorites
+    setFavoriteDishes((prevFavs) =>
+      prevFavs.filter((id) => !favoriteObjects.some((f) => f.id === id))
+    );
+    showToast(`Added ${favoriteObjects.length} favorites to Cart!`);
   };
 
   // 7. Event Planner handler
@@ -342,7 +361,14 @@ export default function App() {
   return (
     <MobileFrame
       scrollContainerRef={scrollContainerRef}
-      bottomBar={<BottomNav inquiryBadgeCount={selectedDishes.length} />}
+      bottomBar={
+        <BottomNav
+          cartCount={selectedDishes.length}
+          cartTotal={calculateCartTotal(selectedDishes)}
+          onOpenCart={() => navigate('/cart')}
+          inquiryBadgeCount={selectedDishes.length}
+        />
+      }
     >
       <ScrollToTop scrollContainerRef={scrollContainerRef} />
 
@@ -351,7 +377,7 @@ export default function App() {
         <Header
           isScrolled={isScrolled}
           selectedDishesCount={selectedDishes.length}
-          onOpenMyMenu={() => setIsMyMenuOpen(true)}
+          onOpenMyMenu={() => navigate('/cart')}
           onOpenContactModal={() => setIsContactModalOpen(true)}
           onOpenConsultModal={() => setIsConsultModalOpen(true)}
           onOpenStatusModal={() => setIsStatusModalOpen(true)}
@@ -428,11 +454,12 @@ export default function App() {
                   setIsPdfModalOpen={setIsPdfModalOpen}
                   selectedDishes={selectedDishes}
                   onToggleDishInMenu={handleToggleDishInMenu}
-                  onOpenMyMenu={() => setIsMyMenuOpen(true)}
+                  onOpenMyMenu={() => navigate('/cart')}
                   favoriteDishes={favoriteDishes}
                   onToggleFavorite={handleToggleFavorite}
                   onOpenServingGuide={() => setIsServingGuideOpen(true)}
                   onOpenGallery={() => setIsGalleryOpen(true)}
+                  onOpenNotificationsModal={() => setIsNotificationsModalOpen(true)}
                   setFormData={setFormData}
                   showToast={showToast}
                 />
@@ -460,6 +487,22 @@ export default function App() {
               element={<FilmCateringPage setFormData={setFormData} showToast={showToast} />}
             />
             <Route
+              path="/cart"
+              element={
+                <CartPage
+                  selectedDishes={selectedDishes}
+                  onRemoveDish={handleRemoveDish}
+                  onClearMenu={handleClearMenu}
+                  onApplyMenuToInquiry={handleApplyMenuToInquiry}
+                  favoriteDishes={favoriteDishes}
+                  onToggleFavorite={handleToggleFavorite}
+                  onAddAllFavoritesToMenu={handleAddAllFavoritesToMenu}
+                  onToggleDishInMenu={handleToggleDishInMenu}
+                  showToast={showToast}
+                />
+              }
+            />
+            <Route
               path="/inquiry"
               element={
                 <InquiryPage
@@ -470,7 +513,7 @@ export default function App() {
                   handleFormChange={handleFormChange}
                   handleFormSubmit={handleFormSubmit}
                   selectedDishes={selectedDishes}
-                  onOpenMyMenu={() => setIsMyMenuOpen(true)}
+                  onOpenMyMenu={() => navigate('/cart')}
                   onOpenResetConfirm={() => setIsResetConfirmOpen(true)}
                   onOpenStatusModal={() => setIsStatusModalOpen(true)}
                   onOpenChecklistModal={() => setIsChecklistModalOpen(true)}
@@ -490,7 +533,7 @@ export default function App() {
                   selectedDishes={selectedDishes}
                   favoriteDishes={favoriteDishes}
                   onOpenStatusModal={() => setIsStatusModalOpen(true)}
-                  onOpenMyMenu={() => setIsMyMenuOpen(true)}
+                  onOpenMyMenu={() => navigate('/cart')}
                   onOpenSupportModal={() => setIsSupportModalOpen(true)}
                   onOpenConsultModal={() => setIsConsultModalOpen(true)}
                   onOpenChecklistModal={() => setIsChecklistModalOpen(true)}
@@ -499,6 +542,7 @@ export default function App() {
                   onOpenServingGuideModal={() => setIsServingGuideOpen(true)}
                   onOpenPdfModal={() => setIsPdfModalOpen(true)}
                   onOpenResetConfirm={() => setIsResetConfirmOpen(true)}
+                  onOpenNotificationsModal={() => setIsNotificationsModalOpen(true)}
                   showToast={showToast}
                 />
               }
@@ -564,6 +608,12 @@ export default function App() {
           showToast={showToast}
         />
 
+        {/* Notifications Modal (Screen 12) */}
+        <NotificationsModal
+          isOpen={isNotificationsModalOpen}
+          onClose={() => setIsNotificationsModalOpen(false)}
+        />
+
         {/* Menu Builder Drawer */}
         <MyMenuDrawer
           isOpen={isMyMenuOpen}
@@ -575,6 +625,7 @@ export default function App() {
           favoriteDishes={favoriteDishes}
           onToggleFavorite={handleToggleFavorite}
           onAddAllFavoritesToMenu={handleAddAllFavoritesToMenu}
+          onToggleDishInMenu={handleToggleDishInMenu}
         />
 
         {/* Guided Event Planner */}

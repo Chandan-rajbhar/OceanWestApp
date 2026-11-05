@@ -1,25 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Wifi, Battery, Signal } from 'lucide-react';
+import React from 'react';
 
 export default function MobileFrame({
   children,
   bottomBar,
   scrollContainerRef
 }) {
-  const [currentTime, setCurrentTime] = useState('9:41');
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      setCurrentTime(`${hours % 12 || 12}:${minutes}`);
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="desktop-viewport-wrapper">
       {/* The Phone Device Mockup Container */}
@@ -32,16 +17,8 @@ export default function MobileFrame({
             <div className="device-speaker-slit"></div>
           </div>
 
-          {/* Device Mobile Status Bar */}
-          <div className="device-status-bar" aria-hidden="true">
-            <span className="status-time">{currentTime}</span>
-            <div className="status-icons">
-              <Signal size={12} strokeWidth={2.4} />
-              <Wifi size={13} strokeWidth={2.4} />
-              <Battery size={14} strokeWidth={2.4} />
-              <span className="status-battery-pct">82%</span>
-            </div>
-          </div>
+          {/* Device Mobile Status Bar safe area */}
+          <div className="device-status-bar" aria-hidden="true" />
 
           {/* Scrollable Screen Content */}
           <div className="device-screen-scrollable" ref={scrollContainerRef}>
